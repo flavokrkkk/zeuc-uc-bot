@@ -1,20 +1,12 @@
 from datetime import datetime, timedelta
-from functools import wraps
-from time import perf_counter
 
 from fastapi.security import HTTPBearer
-from jwt import InvalidTokenError, encode, decode
 from passlib.context import CryptContext
-from requests import get
 
-from backend.dto.auth_dto import LoginForm, RegisterForm
+from backend.repositories.user_repository import UserRepository
 from backend.dto.user_dto import BaseUserModel
 from backend.database.models import User
-from backend.services.base_service import BaseService
-from backend.utils.config.config import (
-    load_here_geocoding_api_key,
-    load_jwt_config,
-)
+from backend.utils.config.config import load_jwt_config
 from backend.errors.auth_errors import (
     InvalidLoginData,
     InvalidToken,
@@ -23,10 +15,9 @@ from backend.errors.auth_errors import (
 )
 
 
-class AuthService(BaseService):
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-
+class AuthService:
+    def __init__(self, repository: UserRepository) -> None:
+        self.repository = repository
         self.config = load_jwt_config()
         self.context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -44,16 +35,14 @@ class AuthService(BaseService):
     ) -> bool:
         return self.context.verify(password, hashed_password)
 
-    async def authenticate_user(self, form: LoginForm) -> User:
+    async def authenticate_user(self, form) -> User:
         user = await self.get_user_by_email(form.email)
 
         if not user:
             raise UserAlreadyNotRegister
-        time = perf_counter()
         if not await self.verify_password(form.password, user.password):
             raise InvalidLoginData
 
-        print(f"authenticate_user: {perf_counter() - time:.10f} seconds")
         return await self.model_dump(user, BaseUserModel)
 
     async def create_access_token(self, email: str) -> str:
@@ -91,7 +80,7 @@ class AuthService(BaseService):
 
         return user
 
-    async def register_user(self, form: RegisterForm) -> User:
+    async def register_user(self, form) -> User:
         user = await self.get_user_by_email(form.email)
 
         if user:
@@ -101,16 +90,3 @@ class AuthService(BaseService):
         new_user = await self.repository.add_item(**form.model_dump())
 
         return await self.model_dump(new_user, BaseUserModel)
-
-    async def search_cities(self, city: str) -> list[str]:
-        url = "https://autocomplete.search.hereapi.com/v1/autocomplete"
-        params = {
-            "apiKey": await load_here_geocoding_api_key(),
-            "q": city,
-            "types": "city",
-            "lang": "ru-RU",
-            "limit": 20,
-        }
-        response = get(url, params).json()
-
-        return [city["address"]["label"] for city in response.get("items")]
