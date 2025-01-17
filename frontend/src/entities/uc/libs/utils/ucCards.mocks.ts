@@ -1,6 +1,6 @@
-import { IUcCard } from "../../types/types";
+import { IPack } from "../../types/types";
 
-export const ucCardsMocks: Array<IUcCard> = [
+export const ucCardsMocks: Array<IPack> = [
   {
     id: 1,
     value: "60 UC",

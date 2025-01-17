@@ -1,8 +1,9 @@
-import { IUcCard } from "../../types/types";
+import { IPack } from "../../types/types";
 
-export interface IUcState {
+export interface IPackState {
   isSelected: boolean;
-  ucSelects: Array<IUcCard>;
+  packSelects: Array<IPack>;
   totalPrice: number;
-  totalUc: number;
+  totalPacks: number;
+  selectedPacks: Array<IPack>;
 }

@@ -1,4 +1,4 @@
-export interface IUcCard {
+export interface IPack {
   id: number;
   value: string;
   totalSum: number;

@@ -1,9 +1,9 @@
-import { ucActions } from "@/entities/uc/model/store/ucSlice";
+import { packActions } from "@/entities/uc/model/store/packSlice";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
 
 export const useActions = () => {
   const dispatch = useDispatch();
 
-  return bindActionCreators({ ...ucActions }, dispatch);
+  return bindActionCreators({ ...packActions }, dispatch);
 };
