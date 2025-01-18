@@ -18,6 +18,9 @@ const initialState: IUserState = {
 export const userSlice = createSliceWithThunks({
   name: "userSlice",
   initialState,
+  selectors: {
+    userInfo: (state) => state.user,
+  },
   reducers: (create) => ({
     setUserCredentials: create.asyncThunk<
       TelegramUser,
@@ -43,3 +46,4 @@ export const userSlice = createSliceWithThunks({
 }).injectInto(rootReducer);
 
 export const userActions = userSlice.actions;
+export const userSelectors = userSlice.selectors;

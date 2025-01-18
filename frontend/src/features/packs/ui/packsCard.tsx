@@ -1,4 +1,4 @@
-import { IPack } from "@/entities/uc/types/types";
+import { IPack } from "@/entities/packs/types/types";
 import { FC } from "react";
 
 interface IPacksCard {
