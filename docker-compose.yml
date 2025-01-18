@@ -12,10 +12,9 @@ services:
       - app-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d postgres -U postgres -h 127.0.0.1"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
-
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   nginx:
     image: nginx:latest
@@ -36,7 +35,7 @@ services:
     environment:
       - DB_NAME=postgres
       - DB_HOST=db
-      - DB_PORT=5432
+      - DB_PORT=5433
       - DB_USER=postgres
       - DB_PASS=postgres
 
@@ -44,7 +43,8 @@ services:
       - JWT_ACCESS_TOKEN_TIME=10000
       - JWT_ALGORITHM=HS256
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - app-network
 
