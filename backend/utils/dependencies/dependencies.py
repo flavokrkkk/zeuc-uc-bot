@@ -1,6 +1,6 @@
 from functools import wraps
 from time import perf_counter
-from typing import Annotated, Any, AsyncGenerator, Awaitable, Callable, TypeVar, Union
+from typing import Annotated, AsyncGenerator
 
 from fastapi import Depends, Request
 from fastapi.security import HTTPBearer
@@ -9,18 +9,10 @@ from starlette.requests import HTTPConnection
 
 import backend.services as services
 import backend.repositories as repositories
-from backend.dto.user_dto import BaseUserModel
 from backend.services import AuthService
-from backend.utils.clients.rabbit_client import RabbitClient
-from backend.utils.clients.redis_client import RedisCache
-from backend.utils.clients.s3_client import S3Client
-from backend.utils.config.config import load_redis_config
 
 
 bearer = HTTPBearer(auto_error=False)
-
-
-R = TypeVar("R")
 
 
 async def get_session(
@@ -42,8 +34,7 @@ async def get_current_user_dependency(
     token: Annotated[HTTPBearer, Depends(bearer)],
 ) -> str:
     user = await auth_service.verify_token(token)
-    user = await auth_service.check_user_exist(user)
-    return user.id
+    return user
 
 
 async def get_user_service(session=Depends(get_session)):

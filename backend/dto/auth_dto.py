@@ -1,5 +1,6 @@
-from datetime import datetime
-from uuid import uuid4
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
-from backend.dto.user_dto import BaseUserModel
+
+class LoginUserModel(BaseModel):
+    tg_id: int
+    username: str

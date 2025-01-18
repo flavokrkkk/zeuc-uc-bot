@@ -5,6 +5,5 @@ from handlers.admin import router as admin_router
 
 router = Router()
 
-
 router.include_router(commands_router)
 router.include_router(admin_router)

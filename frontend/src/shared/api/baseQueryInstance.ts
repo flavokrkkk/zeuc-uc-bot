@@ -122,5 +122,5 @@ export class AxiosClient {
     }
   }
 }
-
+ 
 export const axiosNoAuth = new AxiosClient(import.meta.env.VITE_SERVER_URL);
