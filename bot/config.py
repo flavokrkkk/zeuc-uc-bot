@@ -1,20 +1,32 @@
 from dataclasses import dataclass
 
 from environs import Env
+from pydantic import BaseModel
 
 
 env = Env()
 env.read_env()
 
 
-@dataclass
-class BotConfig:
+class BotConfig(BaseModel):
     BOT_TOKEN: str
 
 
-def load_bot_config() -> BotConfig:
-    return BotConfig(BOT_TOKEN=env.str("BOT_TOKEN"))
+class DatabaseConfig(BaseModel):
+    DB_NAME: str
+    DB_USER: str
+    DB_PASS: str
+    DB_HOST: str
+    DB_PORT: str
+
+    def get_url(self):
+        return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 
 
-def load_webapp_url() -> str:
-    return env.str("WEBAPP_URL")
+db_config = DatabaseConfig(
+    **{field: env.str(field.upper()) for field in DatabaseConfig.model_fields}
+)
+bot_config = BotConfig(
+    **{field: env.str(field.upper()) for field in BotConfig.model_fields}
+)
+webapp_url = env.str("WEBAPP_URL")

@@ -2,38 +2,29 @@ from environs import Env
 from pydantic import BaseModel
 
 
+class DatabaseConfig(BaseModel):
+    DB_NAME: str
+    DB_USER: str
+    DB_PASS: str
+    DB_HOST: str
+    DB_PORT: str
+
+    def get_url(self):
+        return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+
+
+class JwtConfig(BaseModel):
+    JWT_SECRET: str
+    JWT_ALGORITHM: str
+    JWT_ACCESS_TOKEN_TIME: int
+
 env = Env()
 env.read_env()
 
 
-class DatabaseConfig(BaseModel):
-    db_name: str
-    db_user: str
-    db_pass: str
-    db_host: str
-    db_port: str
-
-
-class JwtConfig(BaseModel):
-    jwt_secret: str
-    algorithm: str
-    access_token_time: int
-
-
-def load_database_config() -> DatabaseConfig:
-    return DatabaseConfig(
-        db_name=env.str("DB_NAME"),
-        db_user=env.str("DB_USER"),
-        db_pass=env.str("DB_PASS"),
-        db_host=env.str("DB_HOST"),
-        db_port=env.str("DB_PORT"),
-    )
-
-
-def load_jwt_config() -> JwtConfig:
-    return JwtConfig(
-        jwt_secret=env.str("JWT_SECRET"),
-        algorithm=env.str("JWT_ALGORITHM"),
-        access_token_time=int(env.str("JWT_ACCESS_TOKEN_TIME")),
-    )
-    
+db_config = DatabaseConfig(
+    **{field: env.str(field.upper()) for field in DatabaseConfig.model_fields}
+)
+jwt_config = JwtConfig(
+    **{field: env.str(field.upper()) for field in JwtConfig.model_fields}
+)

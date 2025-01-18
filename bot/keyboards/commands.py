@@ -1,7 +1,7 @@
 from aiogram import Bot
 from aiogram.types import BotCommand, InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
 
-from config import load_webapp_url
+from config import webapp_url
 
 
 async def set_bot_commands(bot: Bot) -> None:
@@ -20,7 +20,6 @@ async def set_bot_commands(bot: Bot) -> None:
 
 
 def main_menu_keyboard() -> InlineKeyboardMarkup:
-    webapp_url = load_webapp_url()
     buttons = [
         [
             InlineKeyboardButton(

@@ -1,21 +1,29 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, Request, Response
 
-from backend.dto.user_dto import BaseUserModel
-from backend.services.user_service import UserService
+from backend.dto.auth_dto import LoginUserModel
+from backend.dto.user_dto import UserModel
+from backend.services.auth_service import AuthService
 from backend.utils.dependencies.dependencies import (
+    get_auth_service,
     get_current_user_dependency,
-    get_user_service,
 )
 
-router = APIRouter(prefix="/api/auth", tags=["auth"])
+router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 @router.get("/current_user")
 async def get_current_user(
-    request: Request,
-    user_service: Annotated[UserService, Depends(get_user_service)],
     current_user: str = Depends(get_current_user_dependency),
-) -> BaseUserModel:
-    user = await user_service.get_user(current_user, dump=True)
-    return user
+) -> UserModel:
+    return current_user
+
+
+@router.post("/login")
+async def login(
+    form: LoginUserModel,
+    auth_service: Annotated[AuthService, Depends(get_auth_service)]
+) -> dict[str, str]:
+    await auth_service.authenticate_user(**form.model_dump())
+    token = await auth_service.create_access_token(**form.model_dump())
+    return {"access_token": token}
