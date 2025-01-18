@@ -68,9 +68,7 @@ class SqlAlchemyRepository[ModelType](BaseRepository):
         await self.session.delete(item)
         await self.session.commit()
 
-    async def update_item(
-        self, item_id: int | str | UUID4, **update_values
-    ) -> ModelType:
+    async def update_item(self, item_id: int | str | UUID4, **update_values) -> ModelType:
         query = (
             update(self.model)
             .where(self.model.id == item_id)
