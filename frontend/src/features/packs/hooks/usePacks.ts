@@ -1,4 +1,4 @@
-import { packSlectors } from "@/entities/uc/model/store/packSlice";
+import { packSlectors } from "@/entities/packs/model/store/packSlice";
 import { useActions } from "@/shared/hooks/useActions";
 import { useAppSelector } from "@/shared/hooks/useAppSelector";
 import { ERouteNames } from "@/shared/libs/utils/pathVariables";
@@ -10,6 +10,7 @@ export const usePacks = () => {
   const isSelected = useAppSelector(packSlectors.isSelected);
   const packs = useAppSelector(packSlectors.getPackSelects);
   const totalPrice = useAppSelector(packSlectors.totalPrice);
+  const { setUserCredentials } = useActions();
 
   const { setSelectPacks, setSelectedPacks } = useActions();
 
@@ -25,15 +26,10 @@ export const usePacks = () => {
 
   useEffect(() => {
     if (window.Telegram) {
-      window.Telegram.WebApp.init();
-
       const user = window.Telegram.WebApp.initDataUnsafe?.user;
       if (user) {
-        console.log("User Info:", user);
-        alert(JSON.stringify(user));
+        setUserCredentials(user);
       }
-      const language = window.Telegram.WebApp.initDataUnsafe?.lang;
-      console.log("Language:", language);
     }
   }, []);
 

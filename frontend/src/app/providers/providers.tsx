@@ -1,13 +1,20 @@
 import { RouterProvider } from "react-router-dom";
-import { routes } from "../pages/routes";
 import { Provider } from "react-redux";
 import { store } from "@/shared/store";
+import { routes } from "@/pages/routes";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@/shared/api/queryClient";
+import { ViewerProvider } from "@/entities/viewer/models/context/providers";
 
 const Providers = () => {
   return (
-    <Provider store={store}>
-      <RouterProvider router={routes} />
-    </Provider>
+    <QueryClientProvider client={queryClient}>
+      <ViewerProvider>
+        <Provider store={store}>
+          <RouterProvider router={routes} />
+        </Provider>
+      </ViewerProvider>
+    </QueryClientProvider>
   );
 };
 

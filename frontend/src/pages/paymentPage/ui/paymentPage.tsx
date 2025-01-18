@@ -1,4 +1,4 @@
-import { packSlectors } from "@/entities/uc/model/store/packSlice";
+import { packSlectors } from "@/entities/packs/model/store/packSlice";
 import PaymentInfo from "@/features/payment/ui/paymentInfo";
 import PaymentMethod from "@/features/payment/ui/paymentMethod";
 import { useAppSelector } from "@/shared/hooks/useAppSelector";
