@@ -17,7 +17,7 @@ app = FastAPI(lifespan=lifespan)
 app.include_router(api_router)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://3a8f-176-124-206-69.ngrok-free.app"],
+    allow_origins=["http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
