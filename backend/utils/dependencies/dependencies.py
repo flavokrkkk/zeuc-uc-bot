@@ -32,7 +32,7 @@ async def get_auth_service(session=Depends(get_session)):
 async def get_current_user_dependency(
     auth_service: Annotated[AuthService, Depends(get_auth_service)],
     token: Annotated[HTTPBearer, Depends(bearer)],
-) -> str:
+) -> dict:
     user = await auth_service.verify_token(token)
     return user
 
@@ -40,3 +40,18 @@ async def get_current_user_dependency(
 async def get_user_service(session=Depends(get_session)):
     return services.UserService(repositories.UserRepository(session=session))
  
+
+async def get_uc_code_service(session=Depends(get_session)):
+    return services.UCCodeService(repositories.UCCodeRepository(session=session))
+
+
+async def get_reward_service(session=Depends(get_session)):
+    return services.RewardService(repositories.RewardRepository(session=session))
+
+
+async def get_discount_service(session=Depends(get_session)):
+    return services.DiscountService(repositories.DiscountRepository(session=session))
+
+
+async def get_activation_service(session=Depends(get_session)):
+    return services.ActivationService(repositories.ActivationRepository(session=session))

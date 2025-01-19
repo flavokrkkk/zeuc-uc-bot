@@ -41,7 +41,7 @@ class SqlAlchemyRepository[ModelType](BaseRepository):
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get_item(self, item_id: int | UUID4 | str) -> ModelType | None:
+    async def get_item(self, item_id: int | UUID4 | str) -> ModelType:
         item = await self.session.get(self.model, item_id)
         return item
 
@@ -50,7 +50,7 @@ class SqlAlchemyRepository[ModelType](BaseRepository):
         items: Result = await self.session.execute(query)
         return items.scalars().all()
 
-    async def get_by_attributes(self, attributes: dict[MappedColumn[Any], Any]) -> list[ModelType] | None:
+    async def get_by_attributes(self, attributes: dict[MappedColumn[Any], Any]) -> list[ModelType]:
         query = select(self.model)
         for attribute, value in attributes.items():
             query = query.where(attribute == value)

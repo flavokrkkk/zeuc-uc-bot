@@ -9,6 +9,13 @@ class User(Base):
     tg_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     username: Mapped[str] = mapped_column(nullable=True)
     is_admin: Mapped[bool] = mapped_column(default=False)
+    referer_id: Mapped[int] = mapped_column(BigInteger, nullable=True)
+    bonuses: Mapped[int] = mapped_column(BigInteger, default=0)
+    discounts: Mapped[list['Discount']] = relationship(
+        back_populates='users', 
+        uselist=True, 
+        secondary='user_discounts'
+    )
 
 
 class Price(Base):
@@ -16,7 +23,6 @@ class Price(Base):
 
     product: Mapped[str] = mapped_column(primary_key=True)
     price: Mapped[float] = mapped_column(DECIMAL(10, 2))
-
 
 
 class Purchase(Base):
@@ -43,6 +49,7 @@ class UCCode(Base):
     code: Mapped[str] = mapped_column(primary_key=True)
     value: Mapped[int] = mapped_column(BigInteger)
 
+    rewards: Mapped[list['Reward']] = relationship(back_populates='uc_code', uselist=True)
 
 
 class Activation(Base):
@@ -58,4 +65,38 @@ class Activation(Base):
     )
 
     purchase: Mapped['Purchase'] = relationship(back_populates='activations')
+
+
+class Discount(Base):
+    __tablename__ = "discounts"
+
+    discount_id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    value: Mapped[int]
+    min_payment_value: Mapped[int]
+
+    rewards: Mapped[list['Reward']] = relationship(back_populates='discount', uselist=True)
+    users: Mapped[list['User']] = relationship(
+        back_populates='discounts', 
+        uselist=True,
+        secondary='user_discounts'
+    )
     
+
+class Reward(Base):
+    __tablename__ = "scores"
+
+    reward_id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    reward_type: Mapped[str]
+    discount_id: Mapped[int] = mapped_column(ForeignKey('discounts.discount_id'), nullable=True)
+    uc_pack_id: Mapped[str] = mapped_column(ForeignKey('uc_codes.code'), nullable=True)
+
+    uc_code: Mapped['UCCode'] = relationship(back_populates='rewards', uselist=False, lazy="selectin")
+    discount: Mapped['Discount'] = relationship(back_populates='rewards', uselist=False, lazy="selectin")
+
+
+class UserDiscounts(Base):
+    __tablename__ = "user_discounts"
+
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.tg_id'), primary_key=True)
+    discount_id: Mapped[int] = mapped_column(ForeignKey('discounts.discount_id'), primary_key=True)
+    count: Mapped[int] = mapped_column(default=0)

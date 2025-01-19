@@ -18,17 +18,14 @@ class AuthService:
         self.repository = repository
         self.context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-    async def get_user_by_attributes(self, *args) -> User | None:
-        user = await self.repository.get_by_attributes(*args)
-        return None if not user else user[0]
-
     async def hash_password(self, password: str) -> str:
         return self.context.hash(password)
 
     async def authenticate_user(self, tg_id: int, username: str) -> User:
-        user = await self.get_user_by_attributes(
+        user = await self.repository.get_by_attributes(
             (self.repository.model.tg_id, tg_id),
-            (self.repository.model.username, username)
+            (self.repository.model.username, username),
+            one_or_none=True
         )
         if not user:
             raise UserAlreadyNotRegister
@@ -38,7 +35,7 @@ class AuthService:
         expire = datetime.now() + timedelta(
             minutes=jwt_config.JWT_ACCESS_TOKEN_TIME
         )
-        data = {"sub": tg_id, "username": username, "exp": expire}
+        data = {"sub": str(tg_id), "username": username, "exp": expire}
         token = encode(
             data, jwt_config.JWT_SECRET, algorithm=jwt_config.JWT_ALGORITHM
         )
@@ -57,18 +54,16 @@ class AuthService:
             if tg_id is None or username is None:
                 raise InvalidToken
             
-            user = await self.authenticate_user(
-                (self.repository.model.tg_id, tg_id),
-                (self.repository.model.username, username)
-            )
+            user = await self.authenticate_user(tg_id=int(tg_id), username=username)
             return UserModel.model_validate(user, from_attributes=True)
         except (InvalidTokenError, AttributeError):
             raise InvalidToken
 
     async def check_user_exist(self, tg_id: int, username: str) -> User:
-        user = await self.get_user_by_attributes(
+        user = await self.repository.get_by_attributes(
             (self.repository.model.tg_id, tg_id),
-            (self.repository.model.username, username)
+            (self.repository.model.username, username),
+            one_or_none=True
         )
         if user is None: 
             raise InvalidToken

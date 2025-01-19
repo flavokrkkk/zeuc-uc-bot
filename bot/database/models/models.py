@@ -9,6 +9,8 @@ class User(Base):
     tg_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     username: Mapped[str] = mapped_column(nullable=True)
     is_admin: Mapped[bool] = mapped_column(default=False)
+    referer_id: Mapped[int] = mapped_column(BigInteger, nullable=True)
+    bonuses: Mapped[int] = mapped_column(BigInteger, default=0)
 
 
 class Price(Base):
@@ -16,7 +18,6 @@ class Price(Base):
 
     product: Mapped[str] = mapped_column(primary_key=True)
     price: Mapped[float] = mapped_column(DECIMAL(10, 2))
-
 
 
 class Purchase(Base):

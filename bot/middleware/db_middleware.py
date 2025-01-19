@@ -4,6 +4,7 @@ from typing import Callable, Awaitable, Any, Dict
 from aiogram import BaseMiddleware
 from aiogram.types import  CallbackQuery, Message, TelegramObject, Update
 
+from database.models.models import User
 from database.connection.pg_connection import DatabaseConnection
 from database.db_main import Database
 
@@ -23,12 +24,12 @@ class DatabaseMiddleware(BaseMiddleware):
             database = Database(session=session)
             data['database'] = database
             
-            if event.message.text and event.message.text == "/start":
+            if event.message and event.message.text.startswith("/start"):
                 return await handler(event, data)
             user_data = data["event_from_user"]
-            user_in_db = await database.users.get_item(item_id=user_data.id)
+            user_in_db: User = await database.users.get_item(item_id=user_data.id)
             
-            if user_in_db != user_data["username"]:
+            if user_in_db.username != user_data.username:
                 await database.users.update_item(
                     item_id=user_data.id,
                     username=user_data.username

@@ -50,12 +50,16 @@ class SqlAlchemyRepository[ModelType](BaseRepository):
         items: Result = await self.session.execute(query)
         return items.scalars().all()
 
-    async def get_by_attributes(self, *attributes: tuple[tuple[MappedColumn[Any], str]]) -> list[ModelType] | None:
+    async def get_by_attributes(
+        self, 
+        *attributes: tuple[tuple[MappedColumn[Any], str]],
+        one_or_none: bool = False
+    ) -> list[ModelType] | None:
         query = select(self.model)
         for attribute, value in attributes:
             query = query.where(attribute == value)
-        items: Result = await self.session.execute(query)
-        return items.scalars().all()
+        result: Result = await self.session.execute(query)
+        return result.scalars().all() if not one_or_none else result.scalar_one_or_none()
 
     async def add_item(self, **kwargs: int | str | UUID4) -> ModelType:
         item = self.model(**kwargs)
@@ -68,16 +72,18 @@ class SqlAlchemyRepository[ModelType](BaseRepository):
         await self.session.delete(item)
         await self.session.commit()
 
-    async def update_item(self, item_id: int | str | UUID4, **update_values) -> ModelType:
+    async def update_item(
+        self, 
+        item_fk: MappedColumn[Any], 
+        item_id: int | str, 
+        **update_values
+    ) -> ModelType:
         query = (
             update(self.model)
-            .where(self.model.id == item_id)
+            .where(item_fk == item_id)
             .values(update_values)
             .returning(self.model)
         )
         item: Result = await self.session.execute(query)
         await self.session.commit()
         return item.scalars().all()[0]
-
-    async def get_model(self, **kwargs: int | str | UUID4) -> ModelType:
-        return self.model(**kwargs)

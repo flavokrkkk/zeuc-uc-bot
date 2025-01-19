@@ -1,4 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from backend.database.connection.test_db import test_db
 from backend.database.models.base import Base
 from backend.utils.config.config import db_config
 
@@ -15,5 +16,7 @@ class DatabaseConnection:
     async def __call__(self):
         async with self._engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
+            
+        await test_db(await self.get_session())
         return self
     
