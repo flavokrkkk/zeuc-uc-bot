@@ -15,9 +15,8 @@ const PacksList: FC<IPacksList> = ({
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 p-1">
       {packs.map((card) => (
-        <div className="w-full space-y-1">
+        <div key={card.id} className="w-full space-y-1">
           <button
-            key={card.id}
             value={card.id}
             className="h-14 w-full cursor-pointer bg-gray-200 border border-gray-300 flex items-center justify-center rounded-md"
             onClick={handleSelectPack}

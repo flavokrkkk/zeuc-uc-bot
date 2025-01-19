@@ -1,10 +1,14 @@
+import { scoresSelectors } from "@/entities/scores/models/store/scoresSlice";
 import { spinWheel } from "@/features/helpers/spinWheel";
+import { useAppSelector } from "@/shared/hooks/useAppSelector";
 import { useRef, useState } from "react";
 
-export const useScopes = (segments: Array<string>) => {
+export const useScopes = () => {
   const [spinning, setSpinning] = useState(false);
   const [winnerIndex, setWinnerIndex] = useState<number | null>(null);
   const [winner, setWinner] = useState<string | null>(null);
+  const scoresValue = useAppSelector(scoresSelectors.scoresValue);
+
   const wheelRef = useRef<HTMLCanvasElement | null>(null);
 
   const onFinished = (winner: string, winnerIndex: number) => {
@@ -14,7 +18,7 @@ export const useScopes = (segments: Array<string>) => {
 
   const calcSpinWheel = () =>
     spinWheel(
-      segments,
+      scoresValue,
       wheelRef,
       spinning,
       onFinished,
@@ -24,6 +28,7 @@ export const useScopes = (segments: Array<string>) => {
 
   return {
     winner,
+    scores: scoresValue,
     spinning,
     wheelRef,
     winnerIndex,

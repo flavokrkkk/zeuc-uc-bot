@@ -3,31 +3,10 @@ import "./styles.css";
 import { ERouteNames } from "@/shared/libs/utils/pathVariables";
 import Wheel from "@/shared/ui/scores/scores";
 import { useScopes } from "@/features/scores/hooks/useScores";
-import { useEffect } from "react";
-import { axiosAuth } from "@/shared/api/baseQueryInstance";
 
 const ScoresPage = () => {
-  const segments = [
-    "60 UC",
-    "325 UC",
-    "660 UC",
-    "1200 UC",
-    "1800 UC",
-    "3850 UC",
-    "8100 UC",
-    "10200 UC",
-  ];
-
-  const { winner, spinning, wheelRef, winnerIndex, calcSpinWheel } =
-    useScopes(segments);
-  const handleXyi = async () => {
-    const { data } = await axiosAuth.get("reward/all");
-    return data;
-  };
-
-  useEffect(() => {
-    handleXyi();
-  }, []);
+  const { winner, scores, spinning, wheelRef, winnerIndex, calcSpinWheel } =
+    useScopes();
 
   return (
     <div className="flex relative justify-center items-center flex-col min-h-screen overflow-hidden">
@@ -52,7 +31,7 @@ const ScoresPage = () => {
       <h1 className="text-2xl font-bold mb-10">Wheel of Fortune</h1>
 
       <Wheel
-        segments={segments}
+        segments={scores}
         spinning={spinning}
         spinWheel={calcSpinWheel}
         winnerIndex={winnerIndex}
