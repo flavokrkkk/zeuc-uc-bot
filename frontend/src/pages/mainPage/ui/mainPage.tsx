@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { Outlet } from "react-router-dom";
 
 const MainPage = () => {
-  //   useUser();
+  // useUser();
   useRewards();
   return (
     <Suspense fallback={<div className="h-screen w-full">Loading..</div>}>

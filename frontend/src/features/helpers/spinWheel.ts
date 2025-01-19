@@ -20,8 +20,6 @@ export const spinWheel = (
   const randomSpin = Math.floor(Math.random() * 360) + 360 * 3;
   const rotationAngle = randomSpin;
 
-  console.log("Rotation Angle:", rotationAngle);
-
   const spinInterval = setInterval(() => {
     const elapsedTime = Date.now() - startTime;
     const progress = Math.min(elapsedTime / duration, 1);
