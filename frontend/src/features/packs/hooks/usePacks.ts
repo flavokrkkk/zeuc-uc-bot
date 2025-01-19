@@ -1,7 +1,9 @@
+import { getAllPacks } from "@/entities/packs/libs/packsService";
 import { packSlectors } from "@/entities/packs/model/store/packSlice";
 import { useActions } from "@/shared/hooks/useActions";
 import { useAppSelector } from "@/shared/hooks/useAppSelector";
 import { ERouteNames } from "@/shared/libs/utils/pathVariables";
+import { useQuery } from "@tanstack/react-query";
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -16,7 +18,17 @@ export const usePacks = () => {
     setSelectedPacks,
     resetTotalPacks,
     setUnSelectPacks,
+    setPacks,
   } = useActions();
+
+  const { data, isSuccess } = useQuery({
+    queryKey: ["packs"],
+    queryFn: (meta) => getAllPacks(meta),
+  });
+
+  if (isSuccess) {
+    setPacks(data);
+  }
 
   const handleSelectPack = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
