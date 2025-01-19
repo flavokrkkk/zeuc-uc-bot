@@ -10,9 +10,9 @@ const CatalogPage = () => {
     totalPrice,
     handleSelectPack,
     handleSelectPacks,
-    handleUnSelectPack,
     handleResetTotalPacks,
   } = usePacks();
+
   return (
     <section className="w-full space-y-2">
       <Link
@@ -21,15 +21,11 @@ const CatalogPage = () => {
       >
         Получить призы
       </Link>
-      <PacksList
-        packs={packs}
-        handleSelectPack={handleSelectPack}
-        setUnSelectPacks={handleUnSelectPack}
-      />
+      <PacksList packs={packs} handleSelectPack={handleSelectPack} />
       {isSelected && (
         <div className="w-full space-x-1 flex justify-center">
           <button
-            className="h-10  w-full  cursor-pointer bg-gray-200 border border-gray-300 flex items-center justify-center rounded-md"
+            className="h-10 w-full cursor-pointer bg-gray-200 border border-gray-300 flex items-center justify-center rounded-md"
             onClick={handleSelectPacks}
           >
             Перейти к оплате {totalPrice}

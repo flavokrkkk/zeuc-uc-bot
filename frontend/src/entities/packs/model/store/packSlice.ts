@@ -85,7 +85,7 @@ export const packSlice = createSlice({
       state.isSelected = false;
       state.packSelects = state.packSelects.map((item) => ({
         ...item,
-        multiplicationUc: 0,
+        multiplication_uc: 0,
       }));
     }),
     setPacks: create.reducer(

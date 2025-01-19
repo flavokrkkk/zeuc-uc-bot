@@ -37,7 +37,6 @@ export const scoresSlice = createSliceWithThunks({
 
           return "";
         });
-        console.log(scoresView);
         state.scoresValue = scoresView ?? [];
         state.scores = payload ?? [];
       }
