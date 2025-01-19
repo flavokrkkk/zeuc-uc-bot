@@ -21,8 +21,11 @@ class User(Base):
 class Price(Base):
     __tablename__ = "prices"
 
-    product: Mapped[str] = mapped_column(primary_key=True)
+    price_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     price: Mapped[float] = mapped_column(DECIMAL(10, 2))
+    point: Mapped[int]
+
+    uc_codes: Mapped[list['UCCode']] = relationship(back_populates='price_per_uc')
 
 
 class Purchase(Base):
@@ -48,8 +51,9 @@ class UCCode(Base):
 
     code: Mapped[str] = mapped_column(primary_key=True)
     ucinitial: Mapped[int]
-    price_per_uc: Mapped[int]
+    price_id: Mapped[str] = mapped_column(ForeignKey('prices.price_id'), nullable=True)
     
+    price_per_uc: Mapped['Price'] = relationship(back_populates='uc_codes', lazy="selectin")
     rewards: Mapped[list['Reward']] = relationship(back_populates='uc_code', uselist=True)
 
 
