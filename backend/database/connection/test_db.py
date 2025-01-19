@@ -12,12 +12,12 @@ async def test_db(session):
             await session.close()
             return
         
-        uc_codes_values = [60, 325, 660, 1200, 1800, 3850, 8100, 10200]
+        uc_codes_values = {60: 100, 325: 200, 660: 300, 1200: 500, 1800: 2000, 3850: 5000, 8100: 10000, 10200: 16000}
         
         uc_codes = []
         rewards = []
-        for value in uc_codes_values:
-            uc_codes.append(UCCode(code=f"uc_code_{value}", value=value))
+        for key, value in uc_codes_values.items():
+            uc_codes.append(UCCode(code=f"uc_code_{value}", ucinitial=key, price_per_uc=value))
         for uc_code in uc_codes[:3]:
             rewards.append(
                 Reward(

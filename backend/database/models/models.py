@@ -47,8 +47,9 @@ class UCCode(Base):
     __tablename__ = "uc_codes"
 
     code: Mapped[str] = mapped_column(primary_key=True)
-    value: Mapped[int] = mapped_column(BigInteger)
-
+    ucinitial: Mapped[int]
+    price_per_uc: Mapped[int]
+    
     rewards: Mapped[list['Reward']] = relationship(back_populates='uc_code', uselist=True)
 
 
