@@ -21,9 +21,9 @@ const PacksList: FC<IPacksList> = ({
             className="h-14 w-full cursor-pointer bg-gray-200 border border-gray-300 flex items-center justify-center rounded-md"
             onClick={handleSelectPack}
           >
-            {`${card.value} (x${card.multiplicationUc})`}
+            {`${card.ucinitial} UC (x${card.multiplication_uc})`}
           </button>
-          {!!card.multiplicationUc && (
+          {!!card.multiplication_uc && (
             <div className="flex space-x-1">
               <button
                 value={card.id}

@@ -4,7 +4,7 @@ import { useActions } from "@/shared/hooks/useActions";
 import { useAppSelector } from "@/shared/hooks/useAppSelector";
 import { ERouteNames } from "@/shared/libs/utils/pathVariables";
 import { useQuery } from "@tanstack/react-query";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const usePacks = () => {
@@ -26,14 +26,10 @@ export const usePacks = () => {
     queryFn: (meta) => getAllPacks(meta),
   });
 
-  if (isSuccess) {
-    setPacks(data);
-  }
-
   const handleSelectPack = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       if (!event.currentTarget.value) throw new Error("Invalidate id uc!");
-      setSelectPacks(Number(event.currentTarget.value));
+      setSelectPacks(event.currentTarget.value);
     },
     []
   );
@@ -41,7 +37,7 @@ export const usePacks = () => {
   const handleUnSelectPack = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       if (!event.currentTarget.value) throw new Error("Invalidate id uc!");
-      setUnSelectPacks(Number(event.currentTarget.value));
+      setUnSelectPacks(event.currentTarget.value);
     },
     []
   );
@@ -52,6 +48,12 @@ export const usePacks = () => {
   };
 
   const handleResetTotalPacks = () => resetTotalPacks();
+
+  useEffect(() => {
+    if (isSuccess && data) {
+      setPacks(data);
+    }
+  }, [isSuccess, data]);
 
   return {
     isSelected,

@@ -1,8 +1,8 @@
 export interface IPack {
-  id: number;
-  value: string;
-  totalSum: number;
-  ucInitial: number;
-  multiplicationUc: number;
-  pricePerUc: string;
+  id: string;
+  code: string;
+  ucinitial: number;
+  price_per_uc: number;
+  total_sum: number;
+  multiplication_uc: number;
 }

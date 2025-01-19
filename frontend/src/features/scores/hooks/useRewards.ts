@@ -1,6 +1,7 @@
 import { getAllReward } from "@/entities/scores/libs/scoresService";
 import { useActions } from "@/shared/hooks/useActions";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 export const useRewards = () => {
   const { setScores } = useActions();
@@ -9,7 +10,11 @@ export const useRewards = () => {
     queryFn: (meta) => getAllReward(meta),
   });
 
-  if (isSuccess) {
-    setScores(data);
-  }
+  useEffect(() => {
+    if (isSuccess && data) {
+      setScores(data);
+    }
+  }, [isSuccess, data, setScores]);
+
+  return { data, isSuccess };
 };

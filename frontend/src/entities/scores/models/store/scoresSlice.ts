@@ -32,7 +32,7 @@ export const scoresSlice = createSliceWithThunks({
             return `${score.discount?.value} скидка на покупку от ${score.discount?.min_payment_value}`;
           }
           if (score.reward_type === ERewardTypes.UC_CODE) {
-            return `${score.uc_code?.value} UC`;
+            return `${score.uc_code?.ucinitial} UC`;
           }
 
           return "";
