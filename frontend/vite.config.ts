@@ -17,7 +17,7 @@ export default defineConfig({
         svgo: false,
         titleProp: true,
       },
-      include: "**/*.svg",
+      include: ["**/*.svg", "react-wheel-of-prizes"],
     }),
   ],
   resolve: {

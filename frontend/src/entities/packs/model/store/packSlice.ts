@@ -48,10 +48,42 @@ export const packSlice = createSlice({
         }, 0);
       }
     ),
+    setUnSelectPacks: create.reducer(
+      (state, { payload }: PayloadAction<IPack["id"]>) => {
+        const searchUc = state.packSelects.findIndex((uc) => uc.id === payload);
+
+        if (~searchUc) {
+          const finishPrice =
+            state.packSelects[searchUc].totalSum -
+            Number(state.packSelects[searchUc].pricePerUc);
+
+          state.packSelects[searchUc].totalSum = finishPrice;
+
+          state.packSelects[searchUc].multiplicationUc = Math.round(
+            finishPrice / Number(state.packSelects[searchUc].pricePerUc)
+          );
+        }
+
+        state.totalPrice = state.packSelects.reduce((acc, item) => {
+          return acc + item.totalSum;
+        }, 0);
+        state.totalPacks = state.packSelects.reduce((acc, item) => {
+          return acc + item.multiplicationUc * item.ucInitial;
+        }, 0);
+
+        if (!state.totalPrice) state.isSelected = false;
+      }
+    ),
     setSelectedPacks: create.reducer((state) => {
       state.selectedPacks = state.packSelects.filter(
         (el) => el.multiplicationUc
       );
+    }),
+    resetTotalPacks: create.reducer((state) => {
+      state.totalPrice = 0;
+      state.totalPacks = 0;
+      state.selectedPacks = [];
+      state.isSelected = false;
     }),
   }),
 }).injectInto(rootReducer);

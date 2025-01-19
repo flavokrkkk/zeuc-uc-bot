@@ -1,11 +1,16 @@
 import { rootReducer } from "@/shared/store";
-import { asyncThunkCreator, buildCreateSlice } from "@reduxjs/toolkit";
+import {
+  asyncThunkCreator,
+  buildCreateSlice,
+  PayloadAction,
+} from "@reduxjs/toolkit";
 import { IUserState } from "./types";
 import { TelegramUser } from "@/shared/types/telegram";
 import { MutationObserver } from "@tanstack/react-query";
 import { queryClient } from "@/shared/api/queryClient";
 import { setUserCredentials } from "../../libs/userService";
 import { setAccessToken } from "@/entities/token/libs/tokenService";
+import { ICurrentUserResponse } from "../../types/types";
 
 const createSliceWithThunks = buildCreateSlice({
   creators: { asyncThunk: asyncThunkCreator },
@@ -13,6 +18,7 @@ const createSliceWithThunks = buildCreateSlice({
 
 const initialState: IUserState = {
   user: null,
+  currentUser: null,
 };
 
 export const userSlice = createSliceWithThunks({
@@ -26,22 +32,34 @@ export const userSlice = createSliceWithThunks({
       TelegramUser,
       Partial<TelegramUser> & { id: number; username: string },
       { rejectValue: string }
-    >(async (telegramUser, { rejectWithValue }) => {
-      try {
-        await new MutationObserver(queryClient, {
-          mutationFn: setUserCredentials,
-          mutationKey: ["telegram-user"],
-          onSuccess: (data) => {
-            if (data) {
-              setAccessToken(data.access_token);
-            }
-          },
-        }).mutate(telegramUser);
-        return telegramUser;
-      } catch (e) {
-        return rejectWithValue(String(e));
+    >(
+      async (telegramUser, { rejectWithValue }) => {
+        try {
+          await new MutationObserver(queryClient, {
+            mutationFn: setUserCredentials,
+            mutationKey: ["telegram-user"],
+            onSuccess: (data) => {
+              if (data) {
+                setAccessToken(data.access_token);
+              }
+            },
+          }).mutate(telegramUser);
+          return telegramUser;
+        } catch (e) {
+          return rejectWithValue(String(e));
+        }
+      },
+      {
+        fulfilled: (state, { payload }) => {
+          state.user = payload;
+        },
       }
-    }),
+    ),
+    setCurrentUser: create.reducer(
+      (state, { payload }: PayloadAction<ICurrentUserResponse>) => {
+        state.currentUser = payload;
+      }
+    ),
   }),
 }).injectInto(rootReducer);
 

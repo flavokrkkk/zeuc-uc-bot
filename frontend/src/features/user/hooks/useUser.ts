@@ -1,19 +1,15 @@
+import { getCurrentUser } from "@/entities/user/libs/userService";
 import { useActions } from "@/shared/hooks/useActions";
-import { ERouteNames } from "@/shared/libs/utils/pathVariables";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 
-export const useTelegramUser = () => {
-  const { setUserCredentials } = useActions();
-  const navigate = useNavigate();
+export const useUser = () => {
+  const { setCurrentUser } = useActions();
+  const { data, isSuccess } = useQuery({
+    queryKey: ["currentuser"],
+    queryFn: (meta) => getCurrentUser(meta),
+  });
 
-  useEffect(() => {
-    if (window.Telegram) {
-      const user = window.Telegram.WebApp.initDataUnsafe?.user;
-      if (user) {
-        setUserCredentials(user);
-        navigate(ERouteNames.CATALOG_PAGE);
-      }
-    }
-  }, []);
+  if (isSuccess) {
+    setCurrentUser(data);
+  }
 };

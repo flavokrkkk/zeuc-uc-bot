@@ -1,4 +1,4 @@
-import { useTelegramUser } from "@/features/user/hooks/useUser";
+import { useTelegramUser } from "@/features/user/hooks/useTelegramUser";
 import { Suspense } from "react";
 import { Outlet } from "react-router-dom";
 

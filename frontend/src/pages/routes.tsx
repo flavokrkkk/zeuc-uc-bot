@@ -9,6 +9,8 @@ import { publicPage } from "@/entities/viewer/libs/hoc/publicPage";
 
 const CatalogPage = lazy(() => import("@pages/catalogPage"));
 const PaymentPage = lazy(() => import("@pages/paymentPage"));
+const ScoresPage = lazy(() => import("@pages/scoresPage"));
+const MainPage = lazy(() => import("@pages/mainPage"));
 
 export const routes = createBrowserRouter([
   {
@@ -16,46 +18,60 @@ export const routes = createBrowserRouter([
     element: <RootPage />,
     errorElement: <ErrorPage />,
     children: [
-      ...routesWithHoc(privatePage, [
-        {
-          path: "",
-          element: <Navigate to={ERouteNames.CATALOG_PAGE} replace />,
-        },
-        {
-          path: ERouteNames.CATALOG_PAGE,
-          element: <CatalogPage />,
-        },
-        {
-          path: ERouteNames.PAYMENT_PAGE,
-          element: <PaymentPage />,
-        },
-      ]),
-    ],
-  },
-  {
-    path: ERouteNames.AUTH_PAGE,
-    element: (
-      <Suspense fallback={<div className="h-screen w-full">Loading..</div>}>
-        <Outlet />
-      </Suspense>
-    ),
-    children: [
-      ...routesWithHoc(publicPage, [
-        {
-          path: "",
-          element: <Navigate to={ERouteNames.AUTH_ERROR} replace />,
-        },
-        {
-          path: ERouteNames.AUTH_ERROR,
-          element: (
-            <div className="flex justify-center bg-purple-00 items-center w-full h-full">
-              <h1 className="text-purple-400 font-medium text-2xl">
-                Вход не возможен! Повторите попытку
-              </h1>
-            </div>
-          ),
-        },
-      ]),
+      {
+        path: "",
+        element: <Navigate to={"/main"} replace />,
+      },
+      {
+        path: "/main",
+        element: <MainPage />,
+        children: [
+          ...routesWithHoc(privatePage, [
+            {
+              path: "",
+              element: <Navigate to={ERouteNames.CATALOG_PAGE} replace />,
+            },
+            {
+              path: ERouteNames.CATALOG_PAGE,
+              element: <CatalogPage />,
+            },
+            {
+              path: ERouteNames.PAYMENT_PAGE,
+              element: <PaymentPage />,
+            },
+            {
+              path: ERouteNames.SCORES_PAGE,
+              element: <ScoresPage />,
+            },
+          ]),
+        ],
+      },
+      {
+        path: ERouteNames.AUTH_PAGE,
+        element: (
+          <Suspense fallback={<div className="h-screen w-full">Loading..</div>}>
+            <Outlet />
+          </Suspense>
+        ),
+        children: [
+          ...routesWithHoc(publicPage, [
+            {
+              path: "",
+              element: <Navigate to={ERouteNames.AUTH_ERROR} replace />,
+            },
+            {
+              path: ERouteNames.AUTH_ERROR,
+              element: (
+                <div className="flex justify-center bg-purple-00 items-center w-full h-full">
+                  <h1 className="text-purple-400 font-medium text-2xl">
+                    Вход не возможен! Повторите попытку
+                  </h1>
+                </div>
+              ),
+            },
+          ]),
+        ],
+      },
     ],
   },
 ]);
