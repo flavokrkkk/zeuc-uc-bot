@@ -38,12 +38,15 @@ const Wheel: React.FC<WheelProps> = ({
       context.arc(0, 0, radius, startAngle, endAngle);
       context.lineTo(0, 0);
 
+      const colors = ["#FFD700", "#FF6347", "#00BFFF", "#98FB98"];
+      const finalColors = segments.map((segment, index) => {
+        return colors[index % colors.length];
+      });
+
       context.fillStyle =
         index === winnerIndex
-          ? "#c084fc"
-          : index % 2 === 0
-          ? "#FFD700"
-          : "#FF6347";
+          ? "#c084fc" // Подсвечиваем выигравшую ячейку
+          : finalColors[index]; // Применяем равномерно распределенные цвета
 
       context.fill();
 
