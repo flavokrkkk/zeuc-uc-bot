@@ -18,6 +18,7 @@ const CatalogPage = () => {
     handleSelectPack,
     handleSelectPacks,
   } = usePacks();
+  console.log(packs);
   return (
     <section className="w-full space-y-2 h-[90vh] flex flex-col justify-between pt-2">
       <section className="space-y-5">

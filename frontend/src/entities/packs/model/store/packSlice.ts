@@ -32,15 +32,20 @@ export const packSlice = createSlice({
             Number(state.packSelects[searchUc].price_per_uc.price);
 
           state.packSelects[searchUc].total_sum = finishPrice;
-          console.log(
-            finishPrice,
-            Number(state.packSelects[searchUc].price_per_uc.price)
-          );
+
           state.packSelects[searchUc].multiplication_uc = Math.round(
             finishPrice / Number(state.packSelects[searchUc].price_per_uc.price)
           );
           state.isSelected = true;
         }
+
+        state.selectedPacks = state.selectedPacks.map((el) => {
+          if (el.id === state.packSelects[searchUc].id) {
+            console.log("eee");
+            return state.packSelects[searchUc];
+          }
+          return el;
+        });
 
         state.totalPrice = state.packSelects.reduce((acc, item) => {
           return acc + item.total_sum;
@@ -65,6 +70,14 @@ export const packSlice = createSlice({
             finishPrice / Number(state.packSelects[searchUc].price_per_uc.price)
           );
         }
+
+        state.selectedPacks = state.selectedPacks.map((el) => {
+          if (el.id === state.packSelects[searchUc].id) {
+            console.log("eee");
+            return state.packSelects[searchUc];
+          }
+          return el;
+        });
 
         state.totalPrice = state.packSelects.reduce((acc, item) => {
           return acc + item.total_sum;

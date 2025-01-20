@@ -11,9 +11,10 @@ export const usePacks = () => {
   const navigate = useNavigate();
   const isSelected = useAppSelector(packSlectors.isSelected);
   const packs = useAppSelector(packSlectors.getPackSelects);
+  const selectedPacks = useAppSelector(packSlectors.selectedPacks);
   const totalPrice = useAppSelector(packSlectors.totalPrice);
   const totalPacks = useAppSelector(packSlectors.totalPacks);
-
+  console.log(selectedPacks);
   const {
     setSelectPacks,
     setSelectedPacks,
