@@ -32,7 +32,10 @@ export const packSlice = createSlice({
             Number(state.packSelects[searchUc].price_per_uc);
 
           state.packSelects[searchUc].total_sum = finishPrice;
-
+          console.log(
+            finishPrice,
+            Number(state.packSelects[searchUc].price_per_uc)
+          );
           state.packSelects[searchUc].multiplication_uc = Math.round(
             finishPrice / Number(state.packSelects[searchUc].price_per_uc)
           );
@@ -86,6 +89,7 @@ export const packSlice = createSlice({
       state.packSelects = state.packSelects.map((item) => ({
         ...item,
         multiplication_uc: 0,
+        total_sum: 0,
       }));
     }),
     setPacks: create.reducer(

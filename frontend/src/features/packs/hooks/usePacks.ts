@@ -12,6 +12,7 @@ export const usePacks = () => {
   const isSelected = useAppSelector(packSlectors.isSelected);
   const packs = useAppSelector(packSlectors.getPackSelects);
   const totalPrice = useAppSelector(packSlectors.totalPrice);
+  const totalPacks = useAppSelector(packSlectors.totalPacks);
 
   const {
     setSelectPacks,
@@ -31,7 +32,7 @@ export const usePacks = () => {
       if (!event.currentTarget.value) throw new Error("Invalidate id uc!");
       setSelectPacks(event.currentTarget.value);
     },
-    []
+    [setSelectPacks]
   );
 
   const handleUnSelectPack = useCallback(
@@ -59,6 +60,7 @@ export const usePacks = () => {
     isSelected,
     packs,
     totalPrice,
+    totalPacks,
     handleSelectPack,
     handleUnSelectPack,
     handleSelectPacks,

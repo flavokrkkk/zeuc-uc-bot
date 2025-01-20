@@ -2,12 +2,14 @@ import UcOutlined from "../../../../../public/icons/uc-outlined.svg";
 import PointOutlined from "../../../../../public/icons/point-outlined.svg";
 import BgOutlined from "../../../../../public/icons/bg-outlined.svg";
 import BgUcOutlined from "../../../../../public/icons/uc-bg-outlined.svg";
+import AvatarkaOutlined from "../../../../../public/icons/avatarka-mock-outlined.svg";
 
 export const enum IconTypes {
   UC_OUTLINED,
   POINT_OUTLINED,
   BG_OUTLINED,
   BG_UC_OUTLINED,
+  AVATARKA_OUTLINED,
 }
 
 export type IconDictionaryType = {
@@ -19,6 +21,7 @@ export const IconDictionary: Record<string, string> = {
   [IconTypes.POINT_OUTLINED]: PointOutlined,
   [IconTypes.BG_OUTLINED]: BgOutlined,
   [IconTypes.BG_UC_OUTLINED]: BgUcOutlined,
+  [IconTypes.AVATARKA_OUTLINED]: AvatarkaOutlined,
 };
 export const enum IconSizes {
   SMALL,
