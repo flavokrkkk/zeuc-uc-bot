@@ -29,7 +29,7 @@ const PacksCard: FC<IPacksCard> = ({ card, handleSelectPack }) => {
               <Icon type={IconTypes.POINT_OUTLINED} />
             </span>
           </section>
-          <p className="text-xs">{card.price_per_uc} рублей</p>
+          <p className="text-xs">{card.price_per_uc.price} рублей</p>
         </section>
         <Button
           isDisabled={!!card.multiplication_uc}

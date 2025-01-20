@@ -29,15 +29,15 @@ export const packSlice = createSlice({
         if (~searchUc) {
           const finishPrice =
             state.packSelects[searchUc].total_sum +
-            Number(state.packSelects[searchUc].price_per_uc);
+            Number(state.packSelects[searchUc].price_per_uc.price);
 
           state.packSelects[searchUc].total_sum = finishPrice;
           console.log(
             finishPrice,
-            Number(state.packSelects[searchUc].price_per_uc)
+            Number(state.packSelects[searchUc].price_per_uc.price)
           );
           state.packSelects[searchUc].multiplication_uc = Math.round(
-            finishPrice / Number(state.packSelects[searchUc].price_per_uc)
+            finishPrice / Number(state.packSelects[searchUc].price_per_uc.price)
           );
           state.isSelected = true;
         }
@@ -57,12 +57,12 @@ export const packSlice = createSlice({
         if (~searchUc) {
           const finishPrice =
             state.packSelects[searchUc].total_sum -
-            Number(state.packSelects[searchUc].price_per_uc);
+            Number(state.packSelects[searchUc].price_per_uc.price);
 
           state.packSelects[searchUc].total_sum = finishPrice;
 
           state.packSelects[searchUc].multiplication_uc = Math.round(
-            finishPrice / Number(state.packSelects[searchUc].price_per_uc)
+            finishPrice / Number(state.packSelects[searchUc].price_per_uc.price)
           );
         }
 

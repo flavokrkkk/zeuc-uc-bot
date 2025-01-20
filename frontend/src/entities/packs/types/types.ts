@@ -1,8 +1,10 @@
 export interface IPack {
   id: string;
   code: string;
-  ucinitial: number;
-  price_per_uc: number;
-  total_sum: number;
   multiplication_uc: number;
+  price_per_uc: { price: number; point: number };
+  point: number;
+  price: number;
+  total_sum: number;
+  ucinitial: number;
 }
