@@ -8,6 +8,7 @@ class UserModel(BaseModel):
     tg_id: int
     is_admin: bool
     bonuses: int
+    referal_code: str
 
 
 class UpdateUserModel(BaseModel):

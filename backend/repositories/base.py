@@ -86,4 +86,4 @@ class SqlAlchemyRepository[ModelType](BaseRepository):
         )
         item: Result = await self.session.execute(query)
         await self.session.commit()
-        return item.scalars().all()[0]
+        return item.scalar_one_or_none()

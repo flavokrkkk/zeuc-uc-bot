@@ -3,9 +3,10 @@ from fastapi import APIRouter, Depends
 
 from backend.dto.user_dto import UserModel
 from backend.services.discount_service import DiscountService
+from backend.services.purchase_service import PurchaseService
 from backend.services.reward_service import RewardService
 from backend.services.user_service import UserService
-from backend.utils.dependencies.dependencies import get_current_user_dependency, get_discount_service, get_reward_service, get_user_service
+from backend.utils.dependencies.dependencies import get_current_user_dependency, get_discount_service, get_purchase_service, get_reward_service, get_user_service
 
 
 router = APIRouter(prefix="/user", tags=["users"])
@@ -41,3 +42,11 @@ async def activate_referal_code(
         referal_code, 
         current_user.bonuses
     )
+
+
+@router.get("/purchases")
+async def get_user_purchases(
+    purchase_service: Annotated[PurchaseService, Depends(get_purchase_service)],
+    current_user: UserModel = Depends(get_current_user_dependency),
+):
+    return await purchase_service.get_by_tg_id(current_user.tg_id)

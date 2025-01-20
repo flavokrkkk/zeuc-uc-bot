@@ -22,6 +22,13 @@ class User(Base):
     )
 
 
+# class Bonus(Base):
+#     __tablename__ = "bonuses"
+#     tg_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+#     value: Mapped[int]
+#     created_at: Mapped[int] 
+    
+
 class Price(Base):
     __tablename__ = "prices"
 
@@ -35,14 +42,14 @@ class Price(Base):
 class Purchase(Base):
     __tablename__ = "purchases"
     
-    payment_id: Mapped[int] = mapped_column(primary_key=True)
+    payment_id: Mapped[str] = mapped_column(primary_key=True)
     tg_id: Mapped[int] = mapped_column(BigInteger)
     player_id: Mapped[int] = mapped_column(BigInteger)
     uc_sum: Mapped[int] = mapped_column(BigInteger)
     price: Mapped[float] = mapped_column(DECIMAL(10, 2))
     payment_method: Mapped[str] = mapped_column(nullable=True)
     is_paid: Mapped[bool] = mapped_column(default=False)
-    status: Mapped[bool] = mapped_column(default=PurchaseStatuses.IN_PROGRESS.value)
+    status: Mapped[str] = mapped_column(default=PurchaseStatuses.IN_PROGRESS.value)
     metadata_: Mapped[str] = mapped_column(nullable=True)
 
     

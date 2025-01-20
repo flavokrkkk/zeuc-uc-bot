@@ -1,5 +1,7 @@
 from pydantic import BaseModel
 
+from backend.dto.purchase_dto import PurchaseModel
+
     
 class UCCodePrice(BaseModel):
     price: float
@@ -33,14 +35,23 @@ class UCCodeGetBuyUrlModel(BaseModel):
     amount: int
     player_id: int
     uc_packs: list[UCPackModel]
+    uc_sum: int
+    # price: float
 
+
+class MetadataModel(BaseModel):
+    tg_id: int
+    player_id: int
+    uc_packs: list[UCPackModel]
+    notification_url: str
+    
 
 class BuyUCCodeCallbackModel(BaseModel):
     order_id: str
     amount: float
     final_amount: float
     method: str
-    metadata: dict | str = None
+    metadata: MetadataModel
 
 
 class UCActivationResult(BaseModel):
@@ -52,3 +63,7 @@ class BuyUCCodeUrlModel(BaseModel):
     url: str
     order_id: str
     amount: float
+
+
+class PaymentUCCodeDataModel(BuyUCCodeUrlModel):
+    purchase: PurchaseModel
