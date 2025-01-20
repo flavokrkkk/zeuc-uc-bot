@@ -53,5 +53,8 @@ async def get_discount_service(session=Depends(get_session)):
     return services.DiscountService(repositories.DiscountRepository(session=session))
 
 
-async def get_activation_service(session=Depends(get_session)):
-    return services.ActivationService(repositories.ActivationRepository(session=session))
+async def get_purchase_service(session=Depends(get_session)):
+    return services.PurchaseService(repositories.PurchaseRepository(session=session))
+
+async def get_payment_service():
+    return services.PaymentService()

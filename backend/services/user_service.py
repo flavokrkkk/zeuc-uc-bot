@@ -1,7 +1,7 @@
 from backend.database.models.models import Reward
 from backend.dto.reward import DiscountModel
 from backend.dto.user_dto import UpdateUserModel, UserDiscountModel, UserModel
-from backend.errors.user_errors import UserNotFound
+from backend.errors.user_errors import UserNotFound, UserReferalCodeNotFound
 from backend.repositories import UserRepository
 
 
@@ -58,3 +58,26 @@ class UserService:
         elif reward.reward_type == "discount":
             await self.repository.add_discount(tg_id, reward.discount_id)
 
+    async def activate_referal_code(self, tg_id: int, referal_code: str, current_bonuses: int) -> None:
+        referer = await self.repository.get_by_attributes(
+            (self.repository.model.referal_code, referal_code),
+            one_or_none=True
+        )
+        referer_id = referer.tg_id
+        referer_bonuses = referer.bonuses
+        if not referer:
+            raise UserReferalCodeNotFound
+        
+        await self.repository.update_item(
+            self.repository.model.tg_id,
+            item_id=referer.tg_id,
+            bonuses=referer.bonuses + 20
+        )
+        
+        await self.repository.update_item(
+            self.repository.model.tg_id,
+            item_id=tg_id,
+            referer_id=referer_id,
+            bonuses=referer_bonuses
+        )
+    

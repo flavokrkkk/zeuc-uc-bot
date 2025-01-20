@@ -1,5 +1,5 @@
 from sqlalchemy import select
-from backend.database.models.models import Discount, Price, Reward
+from backend.database.models.models import Discount, Price, Reward, User
 from backend.database.models.models import UCCode
 
 
@@ -11,6 +11,8 @@ async def test_db(session):
         if db_exist:
             await session.close()
             return
+        
+        test_user = User(tg_id=1,username="test")
         
         uc_codes_values = {60: [100, 1], 325: [200, 4], 660: [300, 5], 1800: [2000, 8], 3850: [5500, 10], 8100: [10000, 20]}
         
@@ -49,6 +51,7 @@ async def test_db(session):
 
         session.add_all(uc_codes)
         session.add_all(rewards)
+        session.add(test_user)
         await session.commit()
         await session.close()
     except Exception as e:
