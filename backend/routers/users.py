@@ -28,3 +28,16 @@ async def get_user_discounts(
     current_user: UserModel = Depends(get_current_user_dependency),
 ):
     return await discount_service.get_user_discounts(current_user.tg_id)
+
+
+@router.patch("/referal_code/{referal_code}/activate")
+async def activate_referal_code(
+    referal_code: str,
+    user_service: Annotated[UserService, Depends(get_user_service)],
+    current_user: UserModel = Depends(get_current_user_dependency),
+):
+    return await user_service.activate_referal_code(
+        current_user.tg_id, 
+        referal_code, 
+        current_user.bonuses
+    )

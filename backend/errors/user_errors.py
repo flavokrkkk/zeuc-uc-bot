@@ -32,3 +32,11 @@ class UserAlreadyreadMessage(HTTPException):
             status_code=status.HTTP_409_CONFLICT,
             detail="Пользователь уже прочитал сообщение",
         )
+
+
+class UserReferalCodeNotFound(HTTPException):
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Реферальный код не найден",
+        )

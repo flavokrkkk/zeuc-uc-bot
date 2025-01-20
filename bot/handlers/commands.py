@@ -1,25 +1,12 @@
 from aiogram import Router
-from aiogram.filters import Command, CommandObject, CommandStart
-from aiogram.types import CallbackQuery, Message
-from aiogram.utils.payload import decode_payload
+from aiogram.filters import Command, CommandStart
+from aiogram.types import Message
 
 from database.db_main import Database
 from keyboards.commands import main_menu_keyboard
 
 
 router = Router()
-
-
-@router.message(CommandStart(deep_link=True))
-async def start_with_deep_link(message: Message, command: CommandObject, database: Database):
-    user = await database.users.get_item(item_id=message.from_user.id)
-    *_, referer_id  = decode_payload(command.args).split('_')
-    if not user and int(referer_id) != message.from_user.id:
-        await database.users.add_item(
-            tg_id=message.from_user.id, 
-            username=message.from_user.username,
-            referer_id=int(referer_id)
-        )
     
 
 @router.message(CommandStart())
