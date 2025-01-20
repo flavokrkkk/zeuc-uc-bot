@@ -15,7 +15,6 @@ interface IPaymentInfo {
 }
 
 const PaymentInfo: FC<IPaymentInfo> = ({
-  userInfo,
   totalPrice,
   totalPacks,
   selectedPacks,
@@ -54,13 +53,3 @@ const PaymentInfo: FC<IPaymentInfo> = ({
 };
 
 export default PaymentInfo;
-
-//<div>
-//<h2>Ваш ID: {userInfo?.id}</h2>
-//<h2>Ваш ник: {userInfo?.username}</h2>
-//</div>
-//<div>
-//<button className="h-10 px-4  w-full  cursor-pointer bg-gray-200 border text-gray-400 border-gray-300 flex items-center justify-center rounded-md">
-//Изменить ID
-//</button>
-//</div>

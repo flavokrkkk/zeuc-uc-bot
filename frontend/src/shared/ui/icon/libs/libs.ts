@@ -3,6 +3,13 @@ import PointOutlined from "../../../../../public/icons/point-outlined.svg";
 import BgOutlined from "../../../../../public/icons/bg-outlined.svg";
 import BgUcOutlined from "../../../../../public/icons/uc-bg-outlined.svg";
 import AvatarkaOutlined from "../../../../../public/icons/avatarka-mock-outlined.svg";
+import MinusOutlined from "../../../../../public/icons/minus-outlined.svg";
+import PlusOutlined from "../../../../../public/icons/plus-outlined.svg";
+import BagsOutlined from "../../../../../public/icons/bags-outlined.svg";
+import ReferalOutlined from "../../../../../public/icons/referal-outlined.svg";
+import ScoreOutlined from "../../../../../public/icons/score-outlined.svg";
+import TicketsOutlined from "../../../../../public/icons/tickets-outline.svg";
+import DollarOutlined from "../../../../../public/icons/dollar-outlined.svg";
 
 export const enum IconTypes {
   UC_OUTLINED,
@@ -10,6 +17,13 @@ export const enum IconTypes {
   BG_OUTLINED,
   BG_UC_OUTLINED,
   AVATARKA_OUTLINED,
+  MINUS_OUTLINED,
+  PLUS_OUTLINED,
+  BAGS_OUTLINED,
+  REFERAL_OUTLINED,
+  SCORE_OUTLINED,
+  TICKETS_OUTLINED,
+  DOLLAR_OUTLINED,
 }
 
 export type IconDictionaryType = {
@@ -22,6 +36,14 @@ export const IconDictionary: Record<string, string> = {
   [IconTypes.BG_OUTLINED]: BgOutlined,
   [IconTypes.BG_UC_OUTLINED]: BgUcOutlined,
   [IconTypes.AVATARKA_OUTLINED]: AvatarkaOutlined,
+  [IconTypes.MINUS_OUTLINED]: MinusOutlined,
+  [IconTypes.PLUS_OUTLINED]: PlusOutlined,
+
+  [IconTypes.BAGS_OUTLINED]: BagsOutlined,
+  [IconTypes.REFERAL_OUTLINED]: ReferalOutlined,
+  [IconTypes.TICKETS_OUTLINED]: TicketsOutlined,
+  [IconTypes.SCORE_OUTLINED]: ScoreOutlined,
+  [IconTypes.DOLLAR_OUTLINED]: DollarOutlined,
 };
 export const enum IconSizes {
   SMALL,

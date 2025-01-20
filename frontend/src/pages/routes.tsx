@@ -9,7 +9,10 @@ import { publicPage } from "@/entities/viewer/libs/hoc/publicPage";
 
 const CatalogPage = lazy(() => import("@pages/catalogPage"));
 const PaymentPage = lazy(() => import("@pages/paymentPage"));
+const PaymentHistoryPage = lazy(() => import("@pages/historyPaymentPage"));
 const ScoresPage = lazy(() => import("@pages/scoresPage"));
+const ReferalPage = lazy(() => import("@pages/referalPage"));
+const TicketsPage = lazy(() => import("@pages/ticketsPage"));
 const MainPage = lazy(() => import("@pages/mainPage"));
 
 export const routes = createBrowserRouter([
@@ -38,6 +41,18 @@ export const routes = createBrowserRouter([
             {
               path: ERouteNames.PAYMENT_PAGE,
               element: <PaymentPage />,
+            },
+            {
+              path: ERouteNames.REFERAL_PAGE,
+              element: <ReferalPage />,
+            },
+            {
+              path: ERouteNames.TICKETS_PAGE,
+              element: <TicketsPage />,
+            },
+            {
+              path: ERouteNames.PAYMENT_HISTORY_PAGE,
+              element: <PaymentHistoryPage />,
             },
             {
               path: ERouteNames.SCORES_PAGE,

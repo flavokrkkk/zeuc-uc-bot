@@ -11,6 +11,12 @@ export default {
         green: {
           100: "#2C7549",
         },
+        ["gray-dark"]: {
+          100: "#727975",
+        },
+      },
+      screens: {
+        xs: "400px",
       },
     },
   },

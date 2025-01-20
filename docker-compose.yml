@@ -1,4 +1,4 @@
-version: "3.8" # Убедитесь, что эта строка актуальна для вашей версии Docker Compose
+version: "3.8"
 
 services:
   db:
