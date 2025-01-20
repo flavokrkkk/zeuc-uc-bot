@@ -3,18 +3,11 @@ import React, { useEffect } from "react";
 interface WheelProps {
   segments: string[];
   spinning: boolean;
-  spinWheel: () => void;
   winnerIndex: number | null;
   wheelRef: React.RefObject<HTMLCanvasElement>;
 }
 
-const Wheel: React.FC<WheelProps> = ({
-  segments,
-  spinning,
-  spinWheel,
-  winnerIndex,
-  wheelRef,
-}) => {
+const Wheel: React.FC<WheelProps> = ({ segments, winnerIndex, wheelRef }) => {
   const drawWheel = () => {
     const wheel = wheelRef.current;
     if (!wheel) return;
@@ -24,38 +17,54 @@ const Wheel: React.FC<WheelProps> = ({
 
     const radius = wheel.width / 2;
     const fontSize = 14;
-    const angleStep = (2 * Math.PI) / segments.length;
 
     context.clearRect(0, 0, wheel.width, wheel.height);
     context.translate(radius, radius);
     context.rotate(-Math.PI / 2);
 
+    const gap = 0.077;
+    const totalAngle = Math.PI * 2;
+    const segmentAngle = (totalAngle - gap * segments.length) / segments.length;
+    const heightFactor = 2.3;
+
     segments.forEach((segment, index) => {
-      const startAngle = angleStep * index;
-      const endAngle = angleStep * (index + 1);
+      const startAngle = index * (segmentAngle + gap);
+      const endAngle = startAngle + segmentAngle;
+
+      const outerRadius = radius * heightFactor;
+
+      const innerRadius = radius * 0.55;
+
+      const colors = ["#41AE6D", "#FFB719"];
+      const finalColors = segments.map((_, i) => colors[i % colors.length]);
 
       context.beginPath();
-      context.arc(0, 0, radius, startAngle, endAngle);
-      context.lineTo(0, 0);
 
-      const colors = ["#FFD700", "#FF6347", "#00BFFF", "#98FB98"];
-      const finalColors = segments.map((segment, index) => {
-        return colors[index % colors.length];
-      });
+      context.arc(0, 0, outerRadius, startAngle, endAngle, false);
+
+      context.lineTo(
+        Math.cos(endAngle) * innerRadius,
+        Math.sin(endAngle) * innerRadius
+      );
+
+      context.arc(0, 0, innerRadius, endAngle, startAngle, true);
+
+      context.closePath();
 
       context.fillStyle =
         index === winnerIndex ? "#c084fc" : finalColors[index];
-
       context.fill();
 
       context.save();
-      context.rotate(startAngle + angleStep / 2);
+      context.rotate(startAngle + segmentAngle / 2);
+      context.translate((outerRadius + innerRadius) / 2, 0);
+      context.rotate(Math.PI / 2);
       context.fillStyle = "#fff";
       context.font = `${fontSize}px Arial`;
-      context.fillText(segment, radius / 2, 0);
+      context.textAlign = "center";
+      context.fillText(segment, (innerRadius + outerRadius) / 2, 0);
       context.restore();
     });
-
     context.resetTransform();
   };
 
@@ -68,30 +77,22 @@ const Wheel: React.FC<WheelProps> = ({
   }, [winnerIndex]);
 
   return (
-    <div className="flex flex-col">
-      <div
-        className="absolute top-[32.5%] left-1/2 z-10 transform -translate-x-1/2"
-        style={{
-          animation: spinning ? "shake 0.3s ease-in-out infinite" : "none",
-        }}
-      >
-        <div className="w-0 h-0 border-l-[15px] border-l-transparent border-r-transparent border-r-[15px] border-t-[25px] border-t-[#FF3CAC] bg-transparent transform rotate-0 -mt-[10px]"></div>
-      </div>
+    <div className="flex flex-col relative">
+      <img
+        className="absolute top-[110px] left-[165px]"
+        src="/images/score/Polygon 1.png"
+      />
+      <img
+        className="absolute top-32 left-32"
+        src="/images/score/Ellipse 11.png"
+      />
 
       <canvas
         ref={wheelRef}
-        width="400"
-        height="400"
-        className="mb-6 border-2 border-gray-300 rounded-full shadow-lg"
+        width="370"
+        height="370"
+        className="mb-6 rounded-full shadow-lg"
       ></canvas>
-
-      <button
-        onClick={spinWheel}
-        disabled={spinning}
-        className="px-8 py-3 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 disabled:opacity-50"
-      >
-        Spin the Wheel
-      </button>
     </div>
   );
 };

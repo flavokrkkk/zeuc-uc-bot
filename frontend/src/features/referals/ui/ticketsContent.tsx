@@ -7,7 +7,7 @@ const TicketsContent = () => {
   const toggleIsHistory = () => setIsCheckHistory((prev) => !prev);
 
   return (
-    <div className="bg-dark-200  rounded-xl p-4 px-10 space-y-5">
+    <div className="bg-dark-200 rounded-2xl p-4 pb-8 py-7  px-10 space-y-5">
       <span className="text-yellow-300 text-[32px]">356 бонусов</span>
       <hr className="border-gray-600" />
       <div className="text-white flex items-center justify-between">

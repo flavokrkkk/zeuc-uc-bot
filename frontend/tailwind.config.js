@@ -13,6 +13,7 @@ export default {
         },
         ["gray-dark"]: {
           100: "#727975",
+          200: "#2F3231",
         },
       },
       screens: {

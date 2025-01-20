@@ -61,7 +61,7 @@ export const ButtonColorClasses: Record<ButtonColors, IButtonClasses> = {
     disableClasses: "bg-gray-300 text-gray-500",
   },
   [ButtonColors.TRANSPARENT_BLACK]: {
-    activeClasses: "bg-transparent text-white",
+    activeClasses: "bg-transparent text-white border border-green-100",
     disableClasses: "bg-gray-300 text-gray-500",
   },
 };

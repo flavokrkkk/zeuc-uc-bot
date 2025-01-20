@@ -13,7 +13,7 @@ const PayCard: FC<IPayCard> = ({ pay }) => {
 
   return (
     <div className="flex xs:justify-between xs:space-x-3 space-y-2 xs:items-center xs:space-y-0 flex-col xs:flex-row  ">
-      <div className="bg-dark-200 space-y-2 flex-col p-4 h-full px-6 w-full  rounded-md flex justify-between">
+      <div className="bg-dark-200 space-y-2 flex-col p-4 h-full px-6 w-full rounded-2xl flex justify-between">
         <section className="items-center rounded-md flex justify-between space-x-5">
           <span>{pay.paymentId}</span>
           <span onClick={toggleDetail} className="cursor-pointer">

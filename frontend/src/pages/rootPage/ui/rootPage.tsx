@@ -9,25 +9,25 @@ import { Outlet } from "react-router-dom";
 const RootPage = () => {
   useTelegramUser();
   return (
-    <div className="bg-dark-100 h-screen w-screen p-3 relative">
+    <div className="bg-dark-100 h-screen w-screen p-3 relative flex flex-col justify-between">
       <Suspense fallback={<h1>Loading...</h1>}>
-        <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
           <Icon
             type={IconTypes.BG_OUTLINED}
-            className="w-full h-full max-w-[100vw] max-h-[100vh] overflow-hidden pointer-events-none"
+            className="w-full h-full max-w-[100vw] max-h-[100vh]"
           />
           <Icon
             type={IconTypes.BG_UC_OUTLINED}
-            className="fixed bottom-28 rotate-12 left-4 overflow-hidden filter blur-sm pointer-events-none"
+            className="absolute bottom-28 left-4 rotate-12 filter blur-sm"
           />
         </div>
-        <div className="relative z-10">
+        <div className="relative z-10 flex-1 overflow-auto">
           <Outlet />
         </div>
       </Suspense>
-      <div className="text-white mt-4 flex flex-col items-center bg-dark-200 relative p-4 px-9 rounded-xl">
+      <div className="text-white flex flex-col items-center bg-gray-dark-200 relative p-4 px-9 rounded-xl">
         <Menu navigates={pathNavigate} />
-        <span className="border-[3px] border-b-white absolute -bottom-0 w-[139px] rounded-2xl" />
+        <span className="border-[3px] border-b-white absolute -bottom-0 w-[239px] rounded-2xl" />
       </div>
     </div>
   );

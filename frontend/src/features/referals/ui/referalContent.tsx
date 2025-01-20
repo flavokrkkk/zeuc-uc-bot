@@ -3,7 +3,7 @@ import { Copy } from "lucide-react";
 
 const ReferalContent = () => {
   return (
-    <section className="space-y-8">
+    <section className="space-y-10">
       <h1 className="text-2xl">Приглашайте друзей и получайте кредиты!</h1>
       <p>
         Поделитесь кодом на приглашение с друзьями. И вы, и ваш приглашенный
@@ -18,14 +18,16 @@ const ReferalContent = () => {
           </span>
         </section>
       </div>
-      <h1 className="text-2xl">
-        Введите реферальный код, чтобы получить бонусы
-      </h1>
-      <SearchUser
-        isLabel={false}
-        buttonText="Активировать"
-        searchPlaceholder="Введите код"
-      />
+      <div className="space-y-4">
+        <h1 className="text-2xl">
+          Введите реферальный код, чтобы получить бонусы
+        </h1>
+        <SearchUser
+          isLabel={false}
+          buttonText="Активировать"
+          searchPlaceholder="Введите код"
+        />
+      </div>
     </section>
   );
 };

@@ -7,7 +7,7 @@ import {
 
 const TicketsPage = () => {
   return (
-    <section className="w-full h-[90vh] pt-2 space-y-6">
+    <section className="w-full pt-2 space-y-6">
       <TicketsContent />
       <div>
         <Button

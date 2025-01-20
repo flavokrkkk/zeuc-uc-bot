@@ -33,7 +33,7 @@ const PaymentPage = () => {
   }, []);
 
   return (
-    <div className="space-y-5 text-white h-[90vh]">
+    <div className="space-y-5 text-white">
       <Link to={ERouteNames.CATALOG_PAGE} onClick={handleResetTotalPacks}>
         Назад
       </Link>
