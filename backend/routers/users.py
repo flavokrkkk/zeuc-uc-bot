@@ -3,10 +3,18 @@ from fastapi import APIRouter, Depends
 
 from backend.dto.user_dto import UserModel
 from backend.services.discount_service import DiscountService
+from backend.services.payment_service import PaymentService
 from backend.services.purchase_service import PurchaseService
 from backend.services.reward_service import RewardService
 from backend.services.user_service import UserService
-from backend.utils.dependencies.dependencies import get_current_user_dependency, get_discount_service, get_purchase_service, get_reward_service, get_user_service
+from backend.utils.dependencies.dependencies import (
+    get_current_user_dependency,
+    get_discount_service,
+    get_payment_service,
+    get_purchase_service,
+    get_reward_service,
+    get_user_service
+)
 
 
 router = APIRouter(prefix="/user", tags=["users"])
@@ -17,11 +25,13 @@ async def update_user_rewards(
     reward_id: int,
     reward_service: Annotated[RewardService, Depends(get_reward_service)],
     user_service: Annotated[UserService, Depends(get_user_service)],
+    payment_service: Annotated[PaymentService, Depends(get_payment_service)],
     current_user: UserModel = Depends(get_current_user_dependency),
 ):
     reward = await reward_service.get_reward(reward_id, dump=False)
-    return await user_service.update_rewards(current_user.tg_id, reward)
-
+    if reward.reward_type == "uc_code":
+        await payment_service.activate_codes(reward, current_user.tg_id)   
+    return await user_service.update_rewards(current_user, reward)
 
 @router.get("/discounts")
 async def get_user_discounts(
@@ -37,11 +47,7 @@ async def activate_referal_code(
     user_service: Annotated[UserService, Depends(get_user_service)],
     current_user: UserModel = Depends(get_current_user_dependency),
 ):
-    return await user_service.activate_referal_code(
-        current_user.tg_id, 
-        referal_code, 
-        current_user.bonuses
-    )
+    return await user_service.activate_referal_code(current_user, referal_code)
 
 
 @router.get("/purchases")
@@ -50,3 +56,11 @@ async def get_user_purchases(
     current_user: UserModel = Depends(get_current_user_dependency),
 ):
     return await purchase_service.get_by_tg_id(current_user.tg_id)
+
+
+@router.get("/bonuses/history")
+async def get_user_bonuses_history(
+    user_service: Annotated[UserService, Depends(get_user_service)],
+    current_user: UserModel = Depends(get_current_user_dependency),
+):
+    return await user_service.get_user_bonuses_history(current_user.tg_id)

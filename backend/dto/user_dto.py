@@ -9,12 +9,15 @@ class UserModel(BaseModel):
     is_admin: bool
     bonuses: int
     referal_code: str
-
-
-class UpdateUserModel(BaseModel):
-    username: str
+    balance: float
+    referer_id: int | None = None
     
 
 class UserDiscountModel(BaseModel):
     count: int
     discount: DiscountModel
+
+
+class BonusesHistoryModel(BaseModel):
+    amount: int
+    created_at: int

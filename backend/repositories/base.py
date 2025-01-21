@@ -38,10 +38,12 @@ class BaseRepository[ModelType](ABC):
 
 
 class SqlAlchemyRepository[ModelType](BaseRepository):
+    model: ModelType
+    
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get_item(self, item_id: int | UUID4 | str) -> ModelType | None:
+    async def get_item(self, item_id: int | UUID4 | str) -> ModelType:
         item = await self.session.get(self.model, item_id)
         return item
 
@@ -85,5 +87,7 @@ class SqlAlchemyRepository[ModelType](BaseRepository):
             .returning(self.model)
         )
         item: Result = await self.session.execute(query)
+        item = item.scalar_one_or_none()
         await self.session.commit()
-        return item.scalar_one_or_none()
+        await self.session.refresh(item)
+        return item

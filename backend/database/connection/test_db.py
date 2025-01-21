@@ -3,8 +3,6 @@ from backend.database.models.models import Discount, Price, Reward, User
 from backend.database.models.models import UCCode
 
 
-
-
 async def test_db(session):
     try:
         db_exist = (await session.execute(select(UCCode))).scalars().all()
@@ -13,6 +11,7 @@ async def test_db(session):
             return
         
         test_user = User(tg_id=1,username="test")
+        test_referer = User(tg_id=2,username="test_referer")
         
         uc_codes_values = {60: [100, 1], 325: [200, 4], 660: [300, 5], 1800: [2000, 8], 3850: [5500, 10], 8100: [10000, 20]}
         
@@ -52,6 +51,7 @@ async def test_db(session):
         session.add_all(uc_codes)
         session.add_all(rewards)
         session.add(test_user)
+        session.add(test_referer)
         await session.commit()
         await session.close()
     except Exception as e:

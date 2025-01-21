@@ -5,6 +5,7 @@ from pydantic import BaseModel, field_validator
 class CreatePurchaseModel(BaseModel):
     tg_id: int
     player_id: int
+    internal_order_id: str
     uc_sum: int
     price: int | float 
     payment_id: str | None = None
@@ -16,6 +17,7 @@ class CreatePurchaseModel(BaseModel):
 class PurchaseModel(BaseModel):
     tg_id: int
     player_id: int
+    internal_order_id: str
     uc_sum: int
     price: int | float 
     payment_id: str | None = None

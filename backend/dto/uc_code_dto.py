@@ -44,6 +44,7 @@ class MetadataModel(BaseModel):
     player_id: int
     uc_packs: list[UCPackModel]
     notification_url: str
+    internal_order_id: str
     
 
 class BuyUCCodeCallbackModel(BaseModel):
@@ -63,7 +64,11 @@ class BuyUCCodeUrlModel(BaseModel):
     url: str
     order_id: str
     amount: float
+    internal_id: str
 
 
-class PaymentUCCodeDataModel(BuyUCCodeUrlModel):
+class PaymentUCCodeDataModel(BaseModel):
+    url: str
+    order_id: str
+    amount: float
     purchase: PurchaseModel

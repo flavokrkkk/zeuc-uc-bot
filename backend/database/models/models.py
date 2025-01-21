@@ -13,20 +13,30 @@ class User(Base):
     is_admin: Mapped[bool] = mapped_column(default=False)
     referer_id: Mapped[int] = mapped_column(BigInteger, nullable=True)
     bonuses: Mapped[int] = mapped_column(BigInteger, default=0)
-    referal_code: Mapped[str] = mapped_column(default=str(uuid4()))
-
+    referal_code: Mapped[str] = mapped_column(default=lambda: str(uuid4()))
+    balance: Mapped[float] = mapped_column(BigInteger, default=0)
+    
     discounts: Mapped[list['Discount']] = relationship(
         back_populates='users', 
         uselist=True, 
         secondary='user_discounts'
     )
+    bonuses_history: Mapped[list['BonusesHistory']] = relationship(
+        back_populates='user',
+        uselist=True,
+        lazy="selectin"
+    )
 
 
-# class Bonus(Base):
-#     __tablename__ = "bonuses"
-#     tg_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
-#     value: Mapped[int]
-#     created_at: Mapped[int] 
+class BonusesHistory(Base):
+    __tablename__ = "bonuses"
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    tg_id: Mapped[int] = mapped_column(ForeignKey('users.tg_id'))
+    amount: Mapped[int]
+    created_at: Mapped[int]
+    status: Mapped[str]
+
+    user: Mapped[User] = relationship(back_populates='bonuses_history')
     
 
 class Price(Base):
@@ -43,6 +53,7 @@ class Purchase(Base):
     __tablename__ = "purchases"
     
     payment_id: Mapped[str] = mapped_column(primary_key=True)
+    internal_order_id: Mapped[str]
     tg_id: Mapped[int] = mapped_column(BigInteger)
     player_id: Mapped[int] = mapped_column(BigInteger)
     uc_sum: Mapped[int] = mapped_column(BigInteger)

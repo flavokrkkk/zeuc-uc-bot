@@ -1,7 +1,7 @@
 from sqlalchemy import select, update
 
 from backend.database.models import User
-from backend.database.models.models import UserDiscounts
+from backend.database.models.models import BonusesHistory, UserDiscounts
 from backend.repositories.base import SqlAlchemyRepository
 
 
@@ -24,3 +24,12 @@ class UserRepository(SqlAlchemyRepository):
         user_discount = UserDiscounts(user_id=tg_id, discount_id=discount_id)
         self.session.add(user_discount)
         await self.session.commit()
+
+    async def add_bonuses(self, tg_id: int, bonuses: int, status: str) -> None:
+        user: User = await self.get_item(tg_id)
+        user.bonuses += bonuses
+        user.bonuses_history.append(
+            BonusesHistory(tg_id=tg_id, amount=bonuses, status=status)
+        )
+        await self.session.commit()
+        

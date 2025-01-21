@@ -3,7 +3,9 @@ import random
 import string
 from backend.dto.purchase_dto import CreatePurchaseModel, PurchaseModel
 from backend.dto.uc_code_dto import BuyUCCodeUrlModel, PaymentUCCodeDataModel
+from backend.errors.purchase_errors import PurchaseNotFound
 from backend.repositories.purchase_repository import PurchaseRepository
+from backend.utils.config.enums import PurchaseStatuses
 
 
 class PurchaseService:
@@ -32,10 +34,19 @@ class PurchaseService:
             for purchase in purchases
         ]
 
-    async def mark_is_paid(self, payment_id: str) -> PurchaseModel:
+    async def mark_is_paid(self, payment_id: str, internal_order_id: str) -> PurchaseModel:
+        purchase = await self.repository.get_by_attributes(
+            (self.repository.model.payment_id, payment_id),
+            (self.repository.model.internal_order_id, internal_order_id),
+            one_or_none=True
+        )
+        if not purchase or purchase.is_paid:
+            raise PurchaseNotFound
+        
         purchase = await self.repository.update_item(
             self.repository.model.payment_id, 
             payment_id, 
-            is_paid=True
+            is_paid=True,
+            status=PurchaseStatuses.COMPLETED.value
         )
         return PurchaseModel.model_validate(purchase, from_attributes=True)
