@@ -7,7 +7,7 @@ class DiscountService:
     def __init__(self, repository: DiscountRepository):
         self.repository = repository
 
-    async def get_user_discounts(self, tg_id: int) -> list[dict]:
+    async def get_user_discounts(self, tg_id: int) -> list[DiscountModel]:
         user_discounts = await self.repository.get_user_discounts(tg_id=tg_id)
         return [
             UserDiscountModel(

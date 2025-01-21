@@ -9,6 +9,7 @@ export async function generateKey(): Promise<CryptoKey> {
   ]);
 }
 export async function encrypt<T>(data: T, key: CryptoKey) {
+  console.log(key)
   const iv = crypto.getRandomValues(new Uint8Array(12));
   const encodedData = new TextEncoder().encode(JSON.stringify(data));
   const encrypted = await crypto.subtle.encrypt(
@@ -16,9 +17,15 @@ export async function encrypt<T>(data: T, key: CryptoKey) {
     key,
     encodedData
   );
+  const tagLength = 16;
+  const encryptedData = new Uint8Array(encrypted);
+  const ciphertext = encryptedData.slice(0, -tagLength);
+  const authTag = encryptedData.slice(-tagLength);
+  
   return {
     iv: Array.from(iv),
-    data: Array.from(new Uint8Array(encrypted)),
+    data: Array.from(ciphertext),
+    tag: Array.from(authTag)
   };
 }
 

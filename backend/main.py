@@ -3,6 +3,7 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 
 from backend.database.connection.connection import DatabaseConnection
+from backend.middleware.decode_middleware import DecodeMiddleware
 from backend.routers import api_router
 
 
@@ -23,3 +24,4 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"]
 )
+app.add_middleware(DecodeMiddleware)

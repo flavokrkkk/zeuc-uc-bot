@@ -10,7 +10,7 @@ import axios, {
 } from "axios";
 
 import { RequestOptions } from "https";
-import { decrypt, generateKey } from "../helpers/cryptoHash";
+import { decrypt, encrypt, generateKey } from "../helpers/cryptoHash";
 
 export class AxiosClient {
   private baseQueryV1Instance: AxiosInstance;
@@ -32,7 +32,7 @@ export class AxiosClient {
   }
 
   private addAuthInterceptor() {
-    let cryptoKey: CryptoKey | null = null;
+    let cryptoKey: CryptoKey | null = "yourSharedSecretKey";
     (async () => {
       cryptoKey = await generateKey();
     })();
@@ -45,9 +45,9 @@ export class AxiosClient {
         deleteAccessToken();
       }
 
-      // if (config.data && cryptoKey) {
-      //   config.data = await encrypt(config.data, cryptoKey);
-      // } - хэширую
+      if (config.data && cryptoKey) {
+        config.data = await encrypt(config.data, cryptoKey);
+      }
 
       return config;
     });
