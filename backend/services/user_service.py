@@ -1,4 +1,3 @@
-from turtle import update
 from backend.database.models.models import Reward, User
 from backend.dto.user_dto import BonusesHistoryModel, UserModel
 from backend.errors.user_errors import UserAlreadyActivateReferal, UserNotFound, UserReferalCodeNotFound

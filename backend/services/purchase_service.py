@@ -1,6 +1,4 @@
 import json
-import random
-import string
 from backend.dto.purchase_dto import CreatePurchaseModel, PurchaseModel
 from backend.dto.uc_code_dto import BuyUCCodeUrlModel, PaymentUCCodeDataModel
 from backend.errors.purchase_errors import PurchaseNotFound
