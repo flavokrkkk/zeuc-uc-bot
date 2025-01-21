@@ -10,6 +10,7 @@ import axios, {
 } from "axios";
 
 import { RequestOptions } from "https";
+import { decrypt, generateKey } from "../helpers/cryptoHash";
 
 export class AxiosClient {
   private baseQueryV1Instance: AxiosInstance;
@@ -31,15 +32,46 @@ export class AxiosClient {
   }
 
   private addAuthInterceptor() {
-    this.baseQueryV1Instance.interceptors.request.use((config) => {
+    let cryptoKey: CryptoKey | null = null;
+    (async () => {
+      cryptoKey = await generateKey();
+    })();
+
+    this.baseQueryV1Instance.interceptors.request.use(async (config) => {
       const token = getAccessToken();
       if (config && config.headers && token) {
         config.headers["Authorization"] = `Bearer ${token}`;
       } else {
         deleteAccessToken();
       }
+
+      // if (config.data && cryptoKey) {
+      //   config.data = await encrypt(config.data, cryptoKey);
+      // } - хэширую
+
       return config;
     });
+
+    this.baseQueryV1Instance.interceptors.response.use(
+      async (response) => {
+        if (
+          response.data &&
+          response.data.data &&
+          response.data.iv &&
+          cryptoKey
+        ) {
+          response.data = await decrypt(response.data, cryptoKey);
+        }
+        return response;
+      },
+      (error) => {
+        return Promise.reject(error);
+      }
+    );
+  }
+
+  public getInstance() {
+    return this.baseQueryV1Instance;
   }
 
   private handleResponse<T>(response: AxiosResponse<T>): AxiosResponse<T> {

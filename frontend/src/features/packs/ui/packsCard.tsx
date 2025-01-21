@@ -17,7 +17,7 @@ interface IPacksCard {
 const PacksCard: FC<IPacksCard> = ({ card, handleSelectPack }) => {
   return (
     <div key={card.id} className="w-full space-y-1 text-white">
-      <div className="h-[134px] space-y-1 bg-dark-100 px-4 justify-evenly flex-col w-full  аcursor-pointer border border-green-100 flex rounded-2xl">
+      <div className="h-[162px] space-y-0 bg-dark-200 px-4 justify-evenly flex-col w-full  аcursor-pointer border border-green-100 flex rounded-2xl">
         <section className="space-y-1">
           <section className="flex justify-between items-center">
             <span className="flex items-center space-x-1">
@@ -41,6 +41,9 @@ const PacksCard: FC<IPacksCard> = ({ card, handleSelectPack }) => {
         >
           Выбрать
         </Button>
+        <span className="text-[9px] text-center">
+          Вы получите бонусы при оплате через СБП
+        </span>
       </div>
     </div>
   );

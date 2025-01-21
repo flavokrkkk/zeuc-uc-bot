@@ -1,11 +1,11 @@
 import { useAsyncPacks } from "@/features/packs/hooks/useAsyncPacks";
 import { useRewards } from "@/features/scores/hooks/useRewards";
-// import { useUser } from "@/features/user/hooks/useUser";
+import { useUser } from "@/features/user/hooks/useUser";
 import { Suspense } from "react";
 import { Outlet } from "react-router-dom";
 
 const MainPage = () => {
-  // useUser();
+  useUser();
   useRewards();
   useAsyncPacks();
   return (

@@ -19,6 +19,7 @@ const createSliceWithThunks = buildCreateSlice({
 const initialState: IUserState = {
   user: null,
   currentUser: null,
+  userPaymentHistory: [],
 };
 
 export const userSlice = createSliceWithThunks({
@@ -59,6 +60,11 @@ export const userSlice = createSliceWithThunks({
     setCurrentUser: create.reducer(
       (state, { payload }: PayloadAction<ICurrentUserResponse>) => {
         state.currentUser = payload;
+      }
+    ),
+    setPaymentHistory: create.reducer(
+      (state, { payload }: PayloadAction<IUserState["userPaymentHistory"]>) => {
+        state.userPaymentHistory = payload;
       }
     ),
   }),

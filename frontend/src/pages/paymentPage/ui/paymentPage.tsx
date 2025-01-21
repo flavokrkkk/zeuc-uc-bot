@@ -24,7 +24,8 @@ const PaymentPage = () => {
   } = usePacks();
 
   const selectedPacks = useAppSelector(packSlectors.selectedPacks);
-  const userInfo = useAppSelector(userSelectors.userInfo);
+  const currentUser = useAppSelector(userSelectors.currentUser);
+
   const { handleGetPayLink } = usePaymentMutate({
     selectPacks: selectedPacks,
     totalSum: totalPrice,
@@ -49,7 +50,7 @@ const PaymentPage = () => {
         totalPacks={totalPacks}
         totalPrice={totalPrice}
         selectedPacks={selectedPacks}
-        userInfo={userInfo}
+        userInfo={currentUser}
         handleSelectPack={handleSelectPack}
         handleUnSelectPack={handleUnSelectPack}
       />

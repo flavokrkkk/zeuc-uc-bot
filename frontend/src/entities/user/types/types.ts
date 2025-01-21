@@ -3,8 +3,9 @@ export interface IUserResponse {
 }
 
 export interface ICurrentUserResponse {
-  username: "string";
+  username: string;
   tg_id: number;
   bonuses: number;
   is_admin: boolean;
+  referal_code: string;
 }

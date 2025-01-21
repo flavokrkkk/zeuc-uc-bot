@@ -15,7 +15,7 @@ const TicketsPage = () => {
           bgColor={ButtonColors.GREEN}
           rounded={ButtonRoundSizes.ROUNDED_XL}
         >
-          Оплатить
+          Использовать бонусы
         </Button>
       </div>
     </section>

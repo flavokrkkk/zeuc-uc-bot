@@ -1,6 +1,6 @@
 import { IPack } from "@/entities/packs/types/types";
+import { ICurrentUserResponse } from "@/entities/user/types/types";
 import PacksBadge from "@/features/packs/ui/packsBadge";
-import { TelegramUser } from "@/shared/types/telegram";
 import { IconTypes } from "@/shared/ui/icon/libs/libs";
 import { Icon } from "@/shared/ui/icon/ui/icon";
 import { FC } from "react";
@@ -9,7 +9,7 @@ interface IPaymentInfo {
   totalPacks: number;
   totalPrice: number;
   selectedPacks: Array<IPack>;
-  userInfo: TelegramUser | null;
+  userInfo: ICurrentUserResponse | null;
   handleSelectPack: (event: React.MouseEvent<HTMLButtonElement>) => void;
   handleUnSelectPack: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
@@ -17,6 +17,7 @@ interface IPaymentInfo {
 const PaymentInfo: FC<IPaymentInfo> = ({
   totalPrice,
   totalPacks,
+  userInfo,
   selectedPacks,
   handleSelectPack,
   handleUnSelectPack,
@@ -40,7 +41,7 @@ const PaymentInfo: FC<IPaymentInfo> = ({
           <span>
             <Icon type={IconTypes.POINT_OUTLINED} className="h-6 w-6" />
           </span>
-          <span>20</span>
+          <span>{userInfo?.bonuses}</span>
         </div>
         <div className="space-x-2">
           <span>Итого:</span>

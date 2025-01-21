@@ -1,14 +1,19 @@
+import { userSelectors } from "@/entities/user/models/store/userSlice";
+import { useAppSelector } from "@/shared/hooks/useAppSelector";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { useState } from "react";
 
 const TicketsContent = () => {
+  const currentUser = useAppSelector(userSelectors.currentUser);
   const [isCheckHistory, setIsCheckHistory] = useState(false);
 
   const toggleIsHistory = () => setIsCheckHistory((prev) => !prev);
 
   return (
     <div className="bg-dark-200 rounded-2xl p-4 pb-8 py-7  px-10 space-y-5">
-      <span className="text-yellow-300 text-[32px]">356 бонусов</span>
+      <span className="text-yellow-300 text-[32px]">
+        {currentUser?.bonuses} бонусов
+      </span>
       <hr className="border-gray-600" />
       <div className="text-white flex items-center justify-between">
         <span>Посмотреть историю начислений</span>
