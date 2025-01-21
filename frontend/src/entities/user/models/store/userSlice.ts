@@ -26,6 +26,7 @@ export const userSlice = createSliceWithThunks({
   initialState,
   selectors: {
     userInfo: (state) => state.user,
+    currentUser: (state) => state.currentUser,
   },
   reducers: (create) => ({
     setUserCredentials: create.asyncThunk<

@@ -5,5 +5,6 @@ export interface IUserResponse {
 export interface ICurrentUserResponse {
   username: "string";
   tg_id: number;
+  bonuses: number;
   is_admin: boolean;
 }

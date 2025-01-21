@@ -25,7 +25,7 @@ const PaymentPage = () => {
   const selectedPacks = useAppSelector(packSlectors.selectedPacks);
   const userInfo = useAppSelector(userSelectors.userInfo);
   const navigate = useNavigate();
-
+  console.log(selectedPacks);
   useEffect(() => {
     if (!selectedPacks.length) {
       navigate(ERouteNames.CATALOG_PAGE);
