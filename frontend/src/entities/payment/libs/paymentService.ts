@@ -1,5 +1,5 @@
 import { axiosAuth } from "@/shared/api/baseQueryInstance";
-import { IPayementRequest } from "../types/types";
+import { IPaymentResponse, IPaymentWrap } from "../types/types";
 import { EPaymentEndpoints } from "./utils/endpoints";
 
 class PaymentService {
@@ -13,10 +13,15 @@ class PaymentService {
     return PaymentService.instance;
   }
 
-  public async getPaymentUrl(requestData: Array<IPayementRequest>) {
-    const { data } = await axiosAuth.post(EPaymentEndpoints.PAYMENT_URL, {
-      requestData,
-    });
+  public async getPaymentUrl(
+    requestData: IPaymentWrap
+  ): Promise<IPaymentResponse> {
+    const { data } = await axiosAuth.post<IPaymentResponse>(
+      EPaymentEndpoints.PAYMENT_URL,
+      {
+        ...requestData,
+      }
+    );
     return data;
   }
 }

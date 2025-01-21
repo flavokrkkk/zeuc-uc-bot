@@ -1,6 +1,7 @@
 import { packSlectors } from "@/entities/packs/model/store/packSlice";
 import { userSelectors } from "@/entities/user/models/store/userSlice";
 import { usePacks } from "@/features/packs/hooks/usePacks";
+import { usePaymentMutate } from "@/features/payment/hooks/usePaymentMutate";
 import PaymentInfo from "@/features/payment/ui/paymentInfo";
 import SearchUser from "@/features/user/ui/searchUser";
 import { useAppSelector } from "@/shared/hooks/useAppSelector";
@@ -24,8 +25,14 @@ const PaymentPage = () => {
 
   const selectedPacks = useAppSelector(packSlectors.selectedPacks);
   const userInfo = useAppSelector(userSelectors.userInfo);
+  const { handleGetPayLink } = usePaymentMutate({
+    selectPacks: selectedPacks,
+    totalSum: totalPrice,
+    totalPacks,
+  });
+
   const navigate = useNavigate();
-  console.log(selectedPacks);
+
   useEffect(() => {
     if (!selectedPacks.length) {
       navigate(ERouteNames.CATALOG_PAGE);
@@ -53,6 +60,7 @@ const PaymentPage = () => {
           searchPlaceholder="Введите Pubg ID"
         />
         <Button
+          onClick={handleGetPayLink}
           className="h-14 w-full cursor-pointer bg-gray-200 border border-gray-300 flex items-center justify-center rounded-md"
           bgColor={ButtonColors.GREEN}
           rounded={ButtonRoundSizes.ROUNDED_XL}
