@@ -30,7 +30,7 @@ async def update_user_rewards(
 ):
     reward = await reward_service.get_reward(reward_id, dump=False)
     if reward.reward_type == "uc_code":
-        await payment_service.activate_codes(reward, current_user.tg_id)   
+        return await payment_service.activate_code_without_callback(reward.uc_code)  #todo 
     return await user_service.update_rewards(current_user, reward)
 
 @router.get("/discounts")

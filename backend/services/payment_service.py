@@ -4,7 +4,7 @@ from aiohttp import ClientSession
 from fastapi import HTTPException
 
 from backend.dto.purchase_dto import PurchaseModel
-from backend.dto.uc_code_dto import BuyUCCodeCallbackModel, BuyUCCodeUrlModel, UCActivationResult, UCCodeGetBuyUrlModel
+from backend.dto.uc_code_dto import BuyUCCodeCallbackModel, BuyUCCodeUrlModel, UCActivationResult, UCCodeGetBuyUrlModel, UCPackModel
 
 
 class PaymentService:
@@ -71,16 +71,9 @@ class PaymentService:
                     )
                 return BuyUCCodeUrlModel(**(await response.json()), internal_id=internal_order_id)
             
-    # async def activate_code_without_callback(self, uc_pack) -> None:
-    #     await asyncio.gather(
-    #         *[
-    #            await self._post_request(
-    #                 uc_value=f"{uc_pack.ucinitial} UC",
-    #                 uc_code=uc_pack.code,
-    #                 player_id=player_id
-    #             )
-    #             for uc_pack in metadata.uc_packs
-    #             for _ in range(uc_pack.count) 
-    #         ],
-    #         return_exceptions=True
-    #     )
+    async def activate_code_without_callback(self, uc_pack: UCPackModel, player_id: int) -> None:
+        await self._post_request(
+            uc_value=f"{uc_pack.ucinitial} UC",
+            uc_code=uc_pack.code,
+            player_id=player_id
+        )

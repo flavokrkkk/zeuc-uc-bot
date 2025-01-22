@@ -21,7 +21,7 @@ class DecodeMiddleware(BaseHTTPMiddleware):
         if request.method in ("POST", "PUT", "PATCH"):
             body = await request.body()
             try:
-                if request.method in ("POST", "PUT" ) and request.headers.get("Authorization"):
+                if body and  request.method in ("POST", "PUT" ) and not request.url.path.startswith("/api/auth"):
                     encrypted_payload = json.loads(body)
                     iv = bytes(encrypted_payload['iv'])
                     data = bytes(encrypted_payload['data'])

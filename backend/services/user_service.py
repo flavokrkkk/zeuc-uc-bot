@@ -54,11 +54,12 @@ class UserService:
         await self.repository.delete_item(tg_id)
 
     async def update_rewards(self, user: UserModel, reward: Reward) -> None:
-        if reward.reward_type == "uc_code":
-            pass # todo send uc after get in reward
-        elif reward.reward_type == "discount":
-            await self.repository.add_discount(user.tg_id, reward.discount_id)
-        await self.repository.update_item(user.tg_id, bonuses=user.balance - BONUC_CIRCLE_PRICE)
+        await self.repository.add_discount(user.tg_id, reward.discount_id)
+        await self.repository.update_item(
+            self.repository.model.tg_id,
+            user.tg_id, 
+            bonuses=user.balance - BONUC_CIRCLE_PRICE
+        )
 
     async def activate_referal_code(self, current_user: UserModel, referal_code: str) -> None:
         if current_user.referer_id:
