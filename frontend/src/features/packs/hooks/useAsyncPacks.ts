@@ -1,7 +1,6 @@
 import { getAllPacks } from "@/entities/packs/libs/packsService";
 import { useActions } from "@/shared/hooks/useActions";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
 
 export const useAsyncPacks = () => {
   const { setPacks } = useActions();
@@ -11,9 +10,7 @@ export const useAsyncPacks = () => {
     queryFn: (meta) => getAllPacks(meta),
   });
 
-  useEffect(() => {
-    if (isSuccess && data) {
-      setPacks(data);
-    }
-  }, [isSuccess, data]);
+  if (isSuccess) {
+    setPacks(data);
+  }
 };

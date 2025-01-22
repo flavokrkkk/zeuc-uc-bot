@@ -11,7 +11,11 @@ const PacksList: FC<IPacksList> = ({ packs, handleSelectPack }) => {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 p-1">
       {packs.map((card) => (
-        <PacksCard card={card} handleSelectPack={handleSelectPack} />
+        <PacksCard
+          key={card.id}
+          card={card}
+          handleSelectPack={handleSelectPack}
+        />
       ))}
     </div>
   );

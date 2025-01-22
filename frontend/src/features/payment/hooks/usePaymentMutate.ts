@@ -35,7 +35,7 @@ export const usePaymentMutate = ({
     [selectPacks, totalSum, totalPacks]
   );
 
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationKey: ["payment", "url"],
     mutationFn: () => getPaymentUrl(requestPayment),
     onSuccess: (response) => {
@@ -46,6 +46,7 @@ export const usePaymentMutate = ({
   const handleGetPayLink = () => mutate();
 
   return {
+    isPending,
     handleGetPayLink,
   };
 };

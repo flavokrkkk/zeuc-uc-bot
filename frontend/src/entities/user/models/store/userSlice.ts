@@ -19,7 +19,9 @@ const createSliceWithThunks = buildCreateSlice({
 const initialState: IUserState = {
   user: null,
   currentUser: null,
+  userDiscount: [],
   userPaymentHistory: [],
+  userBonusesHistory: [],
 };
 
 export const userSlice = createSliceWithThunks({
@@ -28,6 +30,8 @@ export const userSlice = createSliceWithThunks({
   selectors: {
     userInfo: (state) => state.user,
     currentUser: (state) => state.currentUser,
+    userPaymentHistory: (state) => state.userPaymentHistory,
+    userBonusesHistory: (state) => state.userBonusesHistory,
   },
   reducers: (create) => ({
     setUserCredentials: create.asyncThunk<
@@ -62,9 +66,25 @@ export const userSlice = createSliceWithThunks({
         state.currentUser = payload;
       }
     ),
+    setUserDiscount: create.reducer(
+      (state, { payload }: PayloadAction<IUserState["userDiscount"]>) => {
+        state.userDiscount = payload;
+      }
+    ),
     setPaymentHistory: create.reducer(
       (state, { payload }: PayloadAction<IUserState["userPaymentHistory"]>) => {
-        state.userPaymentHistory = payload;
+        state.userPaymentHistory = payload.map((payload) => ({
+          ...payload,
+          id: crypto.randomUUID(),
+        }));
+      }
+    ),
+    setBonusesHistory: create.reducer(
+      (state, { payload }: PayloadAction<IUserState["userBonusesHistory"]>) => {
+        state.userBonusesHistory = payload.map((payload) => ({
+          ...payload,
+          id: crypto.randomUUID(),
+        }));
       }
     ),
   }),

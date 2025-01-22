@@ -1,9 +1,14 @@
 import { TelegramUser } from "@/shared/types/telegram";
-import { ICurrentUserResponse, IUserResponse } from "../types/types";
+import {
+  ICurrentUserResponse,
+  IUserBonusesHistory,
+  IUserDiscount,
+  IUserPurchases,
+  IUserResponse,
+} from "../types/types";
 import { axiosAuth, axiosNoAuth } from "@/shared/api/baseQueryInstance";
 import { EUserEndpoints } from "./utils/endpoints";
 import { IQueryMetadata } from "@/shared/api/types";
-import { historyPayment } from "@/entities/payment/libs/utils/historyPayment.mock";
 
 class UserService {
   private static instance: UserService;
@@ -42,9 +47,33 @@ class UserService {
 
   public async getUserPurchases(
     meta: IQueryMetadata
-  ): Promise<typeof historyPayment> {
-    const { data } = await axiosAuth.get<typeof historyPayment>(
+  ): Promise<Array<IUserPurchases>> {
+    const { data } = await axiosAuth.get<Array<IUserPurchases>>(
       EUserEndpoints.GET_PURCHASES,
+      {
+        signal: meta.signal,
+      }
+    );
+    return data;
+  }
+
+  public async getBonusesHistory(
+    meta: IQueryMetadata
+  ): Promise<Array<IUserBonusesHistory>> {
+    const { data } = await axiosAuth.get<Array<IUserBonusesHistory>>(
+      EUserEndpoints.GET_BONUSES,
+      {
+        signal: meta.signal,
+      }
+    );
+    return data;
+  }
+
+  public async getUserDiscount(
+    meta: IQueryMetadata
+  ): Promise<Array<IUserDiscount>> {
+    const { data } = await axiosAuth.get<Array<IUserDiscount>>(
+      EUserEndpoints.GET_DICOUNTS,
       {
         signal: meta.signal,
       }
@@ -53,5 +82,10 @@ class UserService {
   }
 }
 
-export const { setUserCredentials, getCurrentUser, getUserPurchases } =
-  UserService.getInstance();
+export const {
+  setUserCredentials,
+  getCurrentUser,
+  getUserPurchases,
+  getUserDiscount,
+  getBonusesHistory,
+} = UserService.getInstance();

@@ -25,6 +25,13 @@ class ScoresService {
     );
     return data;
   }
+
+  public async setScoreGift({ reward_id }: { reward_id: number }) {
+    const { data } = await axiosAuth.post(
+      `${EScoresEndpoints.SET_GIFTS}${reward_id}`
+    );
+    return data;
+  }
 }
 
-export const { getAllReward } = ScoresService.getInstance();
+export const { getAllReward, setScoreGift } = ScoresService.getInstance();

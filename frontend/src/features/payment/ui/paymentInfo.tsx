@@ -4,6 +4,11 @@ import PacksBadge from "@/features/packs/ui/packsBadge";
 import { IconTypes } from "@/shared/ui/icon/libs/libs";
 import { Icon } from "@/shared/ui/icon/ui/icon";
 import { FC } from "react";
+import {
+  Button,
+  ButtonColors,
+  ButtonRoundSizes,
+} from "../../../shared/ui/button/button";
 
 interface IPaymentInfo {
   totalPacks: number;
@@ -28,6 +33,7 @@ const PaymentInfo: FC<IPaymentInfo> = ({
         <div className="space-y-2">
           {selectedPacks.map((pack) => (
             <PacksBadge
+              key={pack.id}
               pack={pack}
               handleSelectPack={handleSelectPack}
               handleUnSelectPack={handleUnSelectPack}
@@ -35,9 +41,9 @@ const PaymentInfo: FC<IPaymentInfo> = ({
           ))}
         </div>
       </section>
-      <section className="flex w-full space-y-2 flex-col justify-end items-end">
+      <section className="flex w-full space-y-3 flex-col justify-end items-end">
         <div className="flex space-x-3 items-center">
-          <span>Бонусов: </span>
+          <span>Бонусов, при оплате через СБП: </span>
           <span>
             <Icon type={IconTypes.POINT_OUTLINED} className="h-6 w-6" />
           </span>
@@ -46,6 +52,24 @@ const PaymentInfo: FC<IPaymentInfo> = ({
         <div className="space-x-2">
           <span>Итого:</span>
           <span className="text-2xl">{`${totalPacks} UC | ${totalPrice} ₽`}</span>
+        </div>
+        <div className="flex space-x-6">
+          <div className="flex space-x-3 items-center">
+            <span>У вас есть бонусов:</span>
+            <span>
+              <Icon type={IconTypes.POINT_OUTLINED} className="h-6 w-6" />
+            </span>
+            <span>{userInfo?.bonuses}</span>
+          </div>
+          <Button
+            value={String(userInfo?.bonuses)}
+            isDisabled={!userInfo?.bonuses}
+            className="px-4"
+            rounded={ButtonRoundSizes.ROUNDED_LG}
+            bgColor={ButtonColors.GREEN}
+          >
+            Использовать
+          </Button>
         </div>
       </section>
       <hr />

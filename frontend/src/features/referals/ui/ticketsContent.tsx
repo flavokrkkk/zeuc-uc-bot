@@ -5,6 +5,7 @@ import { useState } from "react";
 
 const TicketsContent = () => {
   const currentUser = useAppSelector(userSelectors.currentUser);
+  const userBonusesHistory = useAppSelector(userSelectors.userBonusesHistory);
   const [isCheckHistory, setIsCheckHistory] = useState(false);
 
   const toggleIsHistory = () => setIsCheckHistory((prev) => !prev);
@@ -27,18 +28,12 @@ const TicketsContent = () => {
       </div>
       {isCheckHistory && (
         <div className="text-gray-600">
-          <div className="flex justify-between">
-            <span>25 бонусов</span>
-            <span>23.12.2024</span>
-          </div>
-          <div className="flex justify-between">
-            <span>25 бонусов</span>
-            <span>23.12.2024</span>
-          </div>
-          <div className="flex justify-between">
-            <span>25 бонусов</span>
-            <span>23.12.2024</span>
-          </div>
+          {userBonusesHistory.map((bonuses) => (
+            <div key={bonuses.id} className="flex justify-between">
+              <span>{bonuses.amount} бонусов</span>
+              <span>{bonuses.amount}</span>
+            </div>
+          ))}
         </div>
       )}
     </div>

@@ -26,7 +26,7 @@ const PaymentPage = () => {
   const selectedPacks = useAppSelector(packSlectors.selectedPacks);
   const currentUser = useAppSelector(userSelectors.currentUser);
 
-  const { handleGetPayLink } = usePaymentMutate({
+  const { handleGetPayLink, isPending } = usePaymentMutate({
     selectPacks: selectedPacks,
     totalSum: totalPrice,
     totalPacks,
@@ -61,10 +61,11 @@ const PaymentPage = () => {
           searchPlaceholder="Введите Pubg ID"
         />
         <Button
-          onClick={handleGetPayLink}
+          isDisabled={isPending}
           className="h-14 w-full cursor-pointer bg-gray-200 border border-gray-300 flex items-center justify-center rounded-md"
           bgColor={ButtonColors.GREEN}
           rounded={ButtonRoundSizes.ROUNDED_XL}
+          onClick={handleGetPayLink}
         >
           Оплатить
         </Button>

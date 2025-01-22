@@ -7,11 +7,13 @@ import {
   ButtonColors,
   ButtonRoundSizes,
 } from "@/shared/ui/button/button";
+import { useScoreMutation } from "@/features/scores/hooks/useScoreMutation";
 
 const ScoresPage = () => {
+  const { handleSetScoreGift } = useScoreMutation();
   const { winner, scores, spinning, wheelRef, winnerIndex, calcSpinWheel } =
     useScopes();
-
+  console.log(winner);
   return (
     <section className="w-full text-white space-y-2 flex flex-col justify-between pt-8">
       <div className="flex justify-center items-center flex-col overflow-hidden pt-10">
@@ -26,14 +28,15 @@ const ScoresPage = () => {
         <div className="flex flex-col space-y-5">
           <section className="flex justify-between items-center">
             <h1 className="text-2xl">Ваш выигрыш</h1>
-            {winner}
+            <p>{winner.title}</p>
           </section>
           <Button
+            value={String(winner.reward_id)}
             className="h-14 w-full cursor-pointer flex items-center justify-center rounded-md"
             bgColor={ButtonColors.GREEN}
             isDisabled={spinning}
-            onClick={calcSpinWheel}
             rounded={ButtonRoundSizes.ROUNDED_XL}
+            onClick={handleSetScoreGift}
           >
             Забрать выигрыш
           </Button>

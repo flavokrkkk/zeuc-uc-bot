@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
 interface WheelProps {
-  segments: string[];
+  segments: Array<{ title: string; reward_id: number }>;
   spinning: boolean;
   winnerIndex: number | null;
   wheelRef: React.RefObject<HTMLCanvasElement>;
@@ -62,7 +62,7 @@ const Wheel: React.FC<WheelProps> = ({ segments, winnerIndex, wheelRef }) => {
       context.fillStyle = "#fff";
       context.font = `${fontSize}px Arial`;
       context.textAlign = "center";
-      context.fillText(segment, (innerRadius + outerRadius) / 2, 0);
+      context.fillText(segment.title, (innerRadius + outerRadius) / 2, 0);
       context.restore();
     });
     context.resetTransform();

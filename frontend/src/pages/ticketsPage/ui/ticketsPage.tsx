@@ -4,8 +4,10 @@ import {
   ButtonColors,
   ButtonRoundSizes,
 } from "../../../shared/ui/button/button";
+import { useTickets } from "@/features/referals/hooks/useTickets";
 
 const TicketsPage = () => {
+  useTickets();
   return (
     <section className="w-full pt-2 space-y-6">
       <TicketsContent />

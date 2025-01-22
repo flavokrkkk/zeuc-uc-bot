@@ -1,8 +1,11 @@
 export const spinWheel = (
-  segments: Array<string>,
+  segments: Array<{ title: string; reward_id: number }>,
   wheelRef: React.MutableRefObject<HTMLCanvasElement | null>,
   spinning: boolean,
-  onFinished: (winner: string, winnerIndex: number) => void,
+  onFinished: (
+    winner: { title: string; reward_id: number },
+    winnerIndex: number
+  ) => void,
   setSpinning: (action: boolean) => void,
   setWinnerIndex: (action: number | null) => void
 ) => {
