@@ -43,7 +43,6 @@ def admin_menu_keyboard() -> InlineKeyboardMarkup:
             InlineKeyboardButton(text="🇹🇷 Цены", callback_data="prices"),
             InlineKeyboardButton(text="🇹🇷 Коды", callback_data="uc_codes")
         ],
-        [InlineKeyboardButton(text="🇹🇷 Рек-вы", callback_data="re")],
         [
             InlineKeyboardButton(text="🇹🇷 Статистика (Bot)", callback_data="bot_stats"),
             InlineKeyboardButton(text="🇹🇷 Статистика (UC)", callback_data="uc_stats")

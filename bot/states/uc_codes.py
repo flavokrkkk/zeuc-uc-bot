@@ -7,3 +7,4 @@ class UCCodesStates(StatesGroup):
     check_codes_by_value = State()
     delete_code = State()
     upload_codes = State()
+    succes = State()

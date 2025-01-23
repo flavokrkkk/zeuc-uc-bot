@@ -22,6 +22,6 @@ def all_uc_codes_keyboard(uc_codes: list[tuple[int, int]]) -> InlineKeyboardBuil
 def uc_codes_options_keyboard() -> InlineKeyboardMarkup:
     buttons = [
         InlineKeyboardButton(text="Добавить", callback_data=f"add_uc_codes"),
-        InlineKeyboardButton(text="Удалить", callback_data=f"delete_uc_codes")
+        InlineKeyboardButton(text="Удалить", callback_data=f"delete_uc_codes"),
     ]
-    return InlineKeyboardMarkup(inline_keyboard=buttons)
+    return InlineKeyboardMarkup(inline_keyboard=[buttons])

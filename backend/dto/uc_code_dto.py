@@ -36,7 +36,7 @@ class UCCodeGetBuyUrlModel(BaseModel):
     player_id: int
     uc_packs: list[UCPackModel]
     uc_sum: int
-    discount: int
+    discount: int = 0
 
 
 class MetadataModel(BaseModel):
@@ -45,7 +45,7 @@ class MetadataModel(BaseModel):
     uc_packs: list[UCPackModel]
     notification_url: str
     internal_order_id: str
-    discount: int
+    discount: int = 0
     
 
 class BuyUCCodeCallbackModel(BaseModel):

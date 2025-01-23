@@ -95,4 +95,4 @@ class SqlAlchemyRepository(BaseRepository):
         item = item.scalar_one_or_none()
         await self.session.commit()
         await self.session.refresh(item)
-        return item.scalar_one_or_none()
+        return item
