@@ -10,7 +10,8 @@ import { MutationObserver } from "@tanstack/react-query";
 import { queryClient } from "@/shared/api/queryClient";
 import { setUserCredentials } from "../../libs/userService";
 import { setAccessToken } from "@/entities/token/libs/tokenService";
-import { ICurrentUserResponse } from "../../types/types";
+import { ICurrentUserResponse, IUserResponse } from "../../types/types";
+import { decrypt } from "@/shared/helpers/cryptoHash";
 
 const createSliceWithThunks = buildCreateSlice({
   creators: { asyncThunk: asyncThunkCreator },
@@ -44,9 +45,14 @@ export const userSlice = createSliceWithThunks({
           await new MutationObserver(queryClient, {
             mutationFn: setUserCredentials,
             mutationKey: ["telegram-user"],
-            onSuccess: (data) => {
+            onSuccess: async (data) => {
               if (data) {
-                setAccessToken(data.access_token);
+                const response: { iv: []; data: []; tag: [] } = data;
+                const decryptedData: IUserResponse = await decrypt(
+                  response,
+                  "9fGDzagmHOCYEvjw"
+                );
+                setAccessToken(decryptedData.access_token);
               }
             },
           }).mutate(telegramUser);

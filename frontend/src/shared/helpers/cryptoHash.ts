@@ -1,27 +1,13 @@
+const secretKey = "9fGDzagmHOCYEvjw";
+
 export async function generateKey(): Promise<CryptoKey> {
-  return await crypto.subtle.generateKey(
-    {
-      name: "AES-GCM",
-      length: 256,
-    },
-    true,
-    ["encrypt", "decrypt"]
-  );
+  const encoder = new TextEncoder();
+  const keyData = encoder.encode(secretKey).slice(0, 16);
+  return await crypto.subtle.importKey("raw", keyData, "AES-GCM", false, [
+    "encrypt",
+    "decrypt",
+  ]);
 }
-
-export async function exportKey(key: CryptoKey): Promise<ArrayBuffer> {
-  return await crypto.subtle.exportKey("raw", key);
-}
-
-(async () => {
-  try {
-    const key = await generateKey();
-    const exportedKey = await exportKey(key);
-    console.log("Экспортированный ключ:", new Uint8Array(exportedKey));
-  } catch (error) {
-    console.error("Ошибка при генерации или экспорте ключа:", error);
-  }
-})();
 
 export async function encrypt<T>(data: T, key: CryptoKey) {
   const iv = crypto.getRandomValues(new Uint8Array(12));
@@ -44,14 +30,37 @@ export async function encrypt<T>(data: T, key: CryptoKey) {
 }
 
 export async function decrypt(
-  encryptedResponse: Record<string, ArrayBuffer>,
-  key: CryptoKey
+  encryptedResponse: { iv: number[]; data: number[]; tag: number[] },
+  secretKeyString: string
 ) {
-  const { data, iv } = encryptedResponse;
-  const decrypted = await crypto.subtle.decrypt(
-    { name: "AES-GCM", iv: new Uint8Array(iv) },
-    key,
-    new Uint8Array(data)
+  const { data, iv, tag } = encryptedResponse;
+
+  const secretKeyBuffer = new TextEncoder().encode(secretKeyString);
+
+  const cryptoKey = await crypto.subtle.importKey(
+    "raw",
+    secretKeyBuffer,
+    { name: "AES-GCM" },
+    false,
+    ["decrypt"]
   );
-  return JSON.parse(new TextDecoder().decode(decrypted));
+
+  const encryptedDataWithTag = new Uint8Array([...data, ...tag]);
+  const initializationVector = new Uint8Array(iv);
+
+  try {
+    const decrypted = await crypto.subtle.decrypt(
+      {
+        name: "AES-GCM",
+        iv: initializationVector,
+      },
+      cryptoKey,
+      encryptedDataWithTag
+    );
+
+    return JSON.parse(new TextDecoder().decode(decrypted));
+  } catch (error) {
+    console.error("Ошибка при расшифровке:", error);
+    throw error;
+  }
 }

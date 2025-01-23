@@ -4,7 +4,6 @@ import {
   IUserBonusesHistory,
   IUserDiscount,
   IUserPurchases,
-  IUserResponse,
 } from "../types/types";
 import { axiosAuth, axiosNoAuth } from "@/shared/api/baseQueryInstance";
 import { EUserEndpoints } from "./utils/endpoints";
@@ -25,8 +24,8 @@ class UserService {
 
   public async setUserCredentials(
     telegramUser: TelegramUser
-  ): Promise<IUserResponse> {
-    const { data } = await axiosNoAuth.post<IUserResponse>(
+  ): Promise<{ iv: []; data: []; tag: [] }> {
+    const { data } = await axiosNoAuth.post<{ iv: []; data: []; tag: [] }>(
       EUserEndpoints.SET_CREDENTIALS,
       { tg_id: telegramUser.id, username: telegramUser.username }
     );

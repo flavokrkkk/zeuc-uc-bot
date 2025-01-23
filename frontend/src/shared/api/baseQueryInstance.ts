@@ -58,9 +58,24 @@ export class AxiosClient {
           response.data &&
           response.data.data &&
           response.data.iv &&
+          response.data.tag &&
           cryptoKey
         ) {
-          response.data = await decrypt(response.data, cryptoKey);
+          const encryptedResponse = {
+            iv: response.data.iv,
+            data: response.data.data,
+            tag: response.data.tag,
+          };
+
+          try {
+            const decryptedData = await decrypt(
+              encryptedResponse,
+              "9fGDzagmHOCYEvjw"
+            );
+            response.data = decryptedData;
+          } catch (error) {
+            console.error("Ошибка при расшифровке:", error);
+          }
         }
         return response;
       },
