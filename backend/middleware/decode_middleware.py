@@ -10,7 +10,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 class DecodeEncodeMiddleware(BaseHTTPMiddleware):
     def __init__(self, app, dispatch=None):
         super().__init__(app, dispatch)
-        self.key = b"yourSharedSecretKey"[:16]
+        self.key = b"9fGDzagmHOCYEvjw"[:16]
 
     def decrypt_data(self, iv: bytes, encrypted_data: bytes, tag: bytes) -> dict:
         decryptor = Cipher(
