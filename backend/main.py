@@ -23,4 +23,4 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"]
 )
-# app.add_middleware(DecodeMiddleware)
+app.add_middleware(DecodeMiddleware)

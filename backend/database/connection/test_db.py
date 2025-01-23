@@ -18,17 +18,16 @@ async def test_db(session):
         uc_codes = []
         rewards = []
         for key, value in uc_codes_values.items():
-            for i in range(value[1]):
-                    uc_codes.append(
-                    UCCode(
-                        code=f"uc_code_{value}_{i}", 
-                        uc_amount=key, 
-                        price_per_uc=Price(
-                            price=value[0], 
-                            point=value[1]
-                        )
-                    )
+            uc_codes.append(
+            UCCode(
+                code=f"uc_code_{value}", 
+                uc_amount=key, 
+                price_per_uc=Price(
+                    price=value[0], 
+                    point=value[1]
                 )
+            )
+        )
         for uc_code in uc_codes[:3]:
             rewards.append(
                 Reward(
