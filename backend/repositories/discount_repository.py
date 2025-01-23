@@ -13,3 +13,25 @@ class DiscountRepository(SqlAlchemyRepository):
                 .where(UserDiscounts.user_id == tg_id)
             )
         ).scalars().all()
+    
+    async def delete_discount_from_user(self, tg_id: int, discount_id: int) -> Discount:
+        query = select(UserDiscounts).where(
+            UserDiscounts.user_id == tg_id,
+            UserDiscounts.discount_id == discount_id
+        )
+        user_discount = (await self.session.execute(query)).scalar_one_or_none()
+        
+        if not user_discount:
+            return
+        
+        discount = await self.get_item(discount_id)
+        discount_value = 0
+        if user_discount.count - 1 == 0:
+            discount_value = discount.value
+            await self.session.delete(user_discount)
+        else: 
+            user_discount.count -= 1
+            discount_value = discount.value 
+        await self.session.commit()
+        return discount_value
+    

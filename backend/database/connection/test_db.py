@@ -21,7 +21,7 @@ async def test_db(session):
             uc_codes.append(
                 UCCode(
                     code=f"uc_code_{value}", 
-                    ucinitial=key, 
+                    uc_amount=key, 
                     price_per_uc=Price(
                         price=value[0], 
                         point=value[1]

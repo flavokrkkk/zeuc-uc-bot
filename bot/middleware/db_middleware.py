@@ -26,10 +26,16 @@ class DatabaseMiddleware(BaseMiddleware):
             
             if event.message and event.message.text.startswith("/start"):
                 return await handler(event, data)
+            
             user_data = data["event_from_user"]
             user_in_db: User = await database.users.get_item(item_id=user_data.id)
-            
-            if user_in_db.username != user_data.username:
+
+            if not user_in_db:
+                await database.users.add_item(
+                    tg_id=user_data.id, 
+                    username=user_data.username
+                )
+            elif user_in_db.username != user_data.username:
                 await database.users.update_item(
                     item_id=user_data.id,
                     username=user_data.username

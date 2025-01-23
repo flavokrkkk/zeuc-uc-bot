@@ -1,13 +1,18 @@
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, Type
 
 from pydantic import UUID4
 from sqlalchemy import Result, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import MappedColumn
 
+from backend.database.models.models import Discount, Purchase, Reward, UCCode, User
 
-class BaseRepository[ModelType](ABC):
+
+ModelType = Type[User | UCCode | Discount | Reward | Purchase]
+
+
+class BaseRepository(ABC):
     @abstractmethod
     async def get_item(self, item_id: int) -> ModelType | None:
         raise NotImplementedError
@@ -37,7 +42,7 @@ class BaseRepository[ModelType](ABC):
         raise NotImplementedError
 
 
-class SqlAlchemyRepository[ModelType](BaseRepository):
+class SqlAlchemyRepository(BaseRepository):
     model: ModelType
     
     def __init__(self, session: AsyncSession):
@@ -90,4 +95,4 @@ class SqlAlchemyRepository[ModelType](BaseRepository):
         item = item.scalar_one_or_none()
         await self.session.commit()
         await self.session.refresh(item)
-        return item
+        return item.scalar_one_or_none()

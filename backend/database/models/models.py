@@ -68,7 +68,7 @@ class UCCode(Base):
     __tablename__ = "uc_codes"
 
     code: Mapped[str] = mapped_column(primary_key=True)
-    ucinitial: Mapped[int]
+    uc_amount: Mapped[int]
     price_id: Mapped[str] = mapped_column(ForeignKey('prices.price_id'), nullable=True)
     
     price_per_uc: Mapped['Price'] = relationship(back_populates='uc_codes', lazy="selectin")

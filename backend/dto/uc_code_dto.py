@@ -10,7 +10,7 @@ class UCCodePrice(BaseModel):
 
 class CreateUCCodeModel(BaseModel):
     code: str
-    ucinitial: int
+    uc_amount: int
     price_per_uc: int
 
 
@@ -23,7 +23,7 @@ class UCCodeModel(BaseModel):
 
 
 class UCPackModel(BaseModel):
-    ucinitial: int
+    uc_amount: int
     code: str
     price_per_uc: int
     total_sum: int
@@ -36,7 +36,7 @@ class UCCodeGetBuyUrlModel(BaseModel):
     player_id: int
     uc_packs: list[UCPackModel]
     uc_sum: int
-    # price: float
+    discount: int
 
 
 class MetadataModel(BaseModel):
@@ -45,6 +45,7 @@ class MetadataModel(BaseModel):
     uc_packs: list[UCPackModel]
     notification_url: str
     internal_order_id: str
+    discount: int
     
 
 class BuyUCCodeCallbackModel(BaseModel):

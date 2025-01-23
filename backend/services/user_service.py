@@ -58,7 +58,7 @@ class UserService:
         await self.repository.update_item(
             self.repository.model.tg_id,
             user.tg_id, 
-            bonuses=user.balance - BONUC_CIRCLE_PRICE
+            bonuses=user.bonuses - BONUC_CIRCLE_PRICE
         )
 
     async def activate_referal_code(self, current_user: UserModel, referal_code: str) -> None:
@@ -100,3 +100,4 @@ class UserService:
             BonusesHistoryModel.model_validate(bonus, from_attributes=True)
             for bonus in user.bonuses_history
         ]
+    
