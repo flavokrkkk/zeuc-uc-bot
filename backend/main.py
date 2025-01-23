@@ -18,7 +18,7 @@ app = FastAPI(lifespan=lifespan)
 app.include_router(api_router)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["http://localhost:3000", "https://frontend-aat1h29kv-flavokrkkks-projects.vercel.app"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]
