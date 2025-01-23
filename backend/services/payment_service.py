@@ -12,6 +12,7 @@ class PaymentService:
         self.codeepay_api_url = "https://codeepay.ru/initiate_payment"
         self.ucodeium_api_url = "https://ucodeium.com/api/activate"
         self.codeepay_api_key = "e158c8cb-e6cc-4cb7-b5fb-777abe0c2957"
+        self.ucodeium_api_key = "e158c8cb-e6cc-4cb7-b5fb-777abe0c2957"
 
     async def _post_request(self, **kwargs) -> UCActivationResult:
         headers: dict[str, str] = {"X-Api-Key": self.ucodeium_api_key}
@@ -53,12 +54,12 @@ class PaymentService:
                 headers=headers,
                 json={
                     "method_slug": form.method_slug,
-                    "amount": form.amount,
+                    "amount": form.amount - form.discount,
                     "metadata": {
                         "tg_id": tg_id,
                         "player_id": form.player_id,
                         "uc_packs": [uc_pack.model_dump() for uc_pack in form.uc_packs],
-                        "notification_url": "http://localhost:8000/api/uc_code/activate",
+                        "notification_url": "http://localhost:8000/api/uc_code/buy/callback",
                         "internal_order_id": internal_order_id
                     }
                 },
@@ -73,7 +74,7 @@ class PaymentService:
             
     async def activate_code_without_callback(self, uc_pack: UCPackModel, player_id: int) -> None:
         await self._post_request(
-            uc_value=f"{uc_pack.ucinitial} UC",
+            uc_value=f"{uc_pack.uc_amount} UC",
             uc_code=uc_pack.code,
             player_id=player_id
         )

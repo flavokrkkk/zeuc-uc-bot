@@ -1,6 +1,7 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends
 
+from backend.dto.reward import UpdateUserRewardsModel
 from backend.dto.user_dto import UserModel
 from backend.services.discount_service import DiscountService
 from backend.services.payment_service import PaymentService
@@ -20,18 +21,19 @@ from backend.utils.dependencies.dependencies import (
 router = APIRouter(prefix="/user", tags=["users"])
 
 
-@router.post("/rewards/{reward_id}")
+@router.post("/rewards")
 async def update_user_rewards(
-    reward_id: int,
+    form: UpdateUserRewardsModel,
     reward_service: Annotated[RewardService, Depends(get_reward_service)],
     user_service: Annotated[UserService, Depends(get_user_service)],
     payment_service: Annotated[PaymentService, Depends(get_payment_service)],
     current_user: UserModel = Depends(get_current_user_dependency),
 ):
-    reward = await reward_service.get_reward(reward_id, dump=False)
+    reward = await reward_service.get_reward(form.reward_id, dump=False)
     if reward.reward_type == "uc_code":
-        return await payment_service.activate_code_without_callback(reward.uc_code)  #todo 
+        return await payment_service.activate_code_without_callback(reward.uc_code, form.player_id)
     return await user_service.update_rewards(current_user, reward)
+
 
 @router.get("/discounts")
 async def get_user_discounts(

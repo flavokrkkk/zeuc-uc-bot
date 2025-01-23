@@ -1,5 +1,6 @@
 from backend.dto.reward import DiscountModel
 from backend.dto.user_dto import UserDiscountModel
+from backend.errors.user_errors import UserDiscountNotFound
 from backend.repositories.discount_repository import DiscountRepository
 
 
@@ -19,3 +20,12 @@ class DiscountService:
             )
             for user_discount in user_discounts
         ]
+
+    async def delete_discount_from_user(self, tg_id: int, discount_id: int) -> int:
+        discount = await self.repository.delete_discount_from_user(
+            tg_id=tg_id, 
+            discount_id=discount_id
+        )
+        if not discount:
+            raise UserDiscountNotFound
+        return discount

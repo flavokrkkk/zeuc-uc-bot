@@ -1,6 +1,8 @@
+from uuid import uuid4
 from sqlalchemy import DECIMAL, BigInteger, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from database.models.base import Base
+from config.enums import PurchaseStatuses
 
 
 class User(Base):
@@ -11,52 +13,98 @@ class User(Base):
     is_admin: Mapped[bool] = mapped_column(default=False)
     referer_id: Mapped[int] = mapped_column(BigInteger, nullable=True)
     bonuses: Mapped[int] = mapped_column(BigInteger, default=0)
+    referal_code: Mapped[str] = mapped_column(default=lambda: str(uuid4()))
+    balance: Mapped[float] = mapped_column(BigInteger, default=0)
+    
+    discounts: Mapped[list['Discount']] = relationship(
+        back_populates='users', 
+        uselist=True, 
+        secondary='user_discounts'
+    )
+    bonuses_history: Mapped[list['BonusesHistory']] = relationship(
+        back_populates='user',
+        uselist=True,
+        lazy="selectin"
+    )
 
+
+class BonusesHistory(Base):
+    __tablename__ = "bonuses"
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    tg_id: Mapped[int] = mapped_column(ForeignKey('users.tg_id'))
+    amount: Mapped[int]
+    created_at: Mapped[int]
+    status: Mapped[str]
+
+    user: Mapped[User] = relationship(back_populates='bonuses_history')
+    
 
 class Price(Base):
     __tablename__ = "prices"
 
-    product: Mapped[str] = mapped_column(primary_key=True)
+    price_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     price: Mapped[float] = mapped_column(DECIMAL(10, 2))
+    point: Mapped[int]
+
+    uc_codes: Mapped[list['UCCode']] = relationship(back_populates='price_per_uc')
 
 
 class Purchase(Base):
     __tablename__ = "purchases"
     
-    payment_id: Mapped[int] = mapped_column(primary_key=True)
+    payment_id: Mapped[str] = mapped_column(primary_key=True)
+    internal_order_id: Mapped[str]
     tg_id: Mapped[int] = mapped_column(BigInteger)
     player_id: Mapped[int] = mapped_column(BigInteger)
     uc_sum: Mapped[int] = mapped_column(BigInteger)
     price: Mapped[float] = mapped_column(DECIMAL(10, 2))
     payment_method: Mapped[str] = mapped_column(nullable=True)
     is_paid: Mapped[bool] = mapped_column(default=False)
+    status: Mapped[str] = mapped_column(default=PurchaseStatuses.IN_PROGRESS.value)
     metadata_: Mapped[str] = mapped_column(nullable=True)
 
-    activations: Mapped[list['Activation']] = relationship(
-        back_populates='purchase', 
-        cascade='all, delete-orphan'
-    )
-
-
+    
 class UCCode(Base):
     __tablename__ = "uc_codes"
 
     code: Mapped[str] = mapped_column(primary_key=True)
-    value: Mapped[int] = mapped_column(BigInteger)
-
-
-
-class Activation(Base):
-    __tablename__ = 'activations'
-
-    activation_id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
-    tg_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
-    player_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
-    uc_pack: Mapped[str]
-    purchase_id: Mapped[str] = mapped_column(
-        ForeignKey('purchases.payment_id'), 
-        nullable=False
-    )
-
-    purchase: Mapped['Purchase'] = relationship(back_populates='activations')
+    uc_amount: Mapped[int] 
+    price_id: Mapped[str] = mapped_column(ForeignKey('prices.price_id'), nullable=True)
     
+    price_per_uc: Mapped['Price'] = relationship(back_populates='uc_codes', lazy="selectin")
+    rewards: Mapped[list['Reward']] = relationship(back_populates='uc_code', uselist=True)
+
+
+class Discount(Base):
+    __tablename__ = "discounts"
+
+    discount_id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    value: Mapped[int]
+    min_payment_value: Mapped[int]
+
+    rewards: Mapped[list['Reward']] = relationship(back_populates='discount', uselist=True)
+    users: Mapped[list['User']] = relationship(
+        back_populates='discounts', 
+        uselist=True,
+        secondary='user_discounts'
+    )
+    
+
+class Reward(Base):
+    __tablename__ = "scores"
+
+    reward_id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    reward_type: Mapped[str]
+    discount_id: Mapped[int] = mapped_column(ForeignKey('discounts.discount_id'), nullable=True)
+    uc_pack_id: Mapped[str] = mapped_column(ForeignKey('uc_codes.code'), nullable=True)
+
+    uc_code: Mapped['UCCode'] = relationship(back_populates='rewards', uselist=False, lazy="selectin")
+    discount: Mapped['Discount'] = relationship(back_populates='rewards', uselist=False, lazy="selectin")
+
+
+class UserDiscounts(Base):
+    __tablename__ = "user_discounts"
+
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.tg_id'), primary_key=True)
+    discount_id: Mapped[int] = mapped_column(ForeignKey('discounts.discount_id'), primary_key=True)
+    count: Mapped[int] = mapped_column(default=0)

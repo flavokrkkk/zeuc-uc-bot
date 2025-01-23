@@ -14,3 +14,8 @@ class RewardModel(BaseModel):
     reward_type: str
     discount: DiscountModel | None = None
     uc_code: UCCodeModel | None = None
+
+
+class UpdateUserRewardsModel(BaseModel):
+    reward_id: int
+    player_id: int

@@ -1,6 +1,6 @@
-from sqlalchemy import select, update
+from sqlalchemy import select
 
-from backend.database.models import User
+from backend.database.models.models import User
 from backend.database.models.models import BonusesHistory, UserDiscounts
 from backend.repositories.base import SqlAlchemyRepository
 
@@ -33,3 +33,6 @@ class UserRepository(SqlAlchemyRepository):
         )
         await self.session.commit()
         
+
+    async def delete_discount_from_user(self, tg_id: int, discount_id: int) -> None:
+        pass

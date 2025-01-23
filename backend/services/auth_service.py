@@ -6,7 +6,7 @@ from passlib.context import CryptContext
 from jwt import decode, encode, InvalidTokenError
 from backend.repositories.user_repository import UserRepository
 from backend.dto.user_dto import UserModel
-from backend.database.models import User
+from backend.database.models.models import User
 from backend.utils.config.config import jwt_config
 from backend.errors.auth_errors import (
     InvalidToken,
