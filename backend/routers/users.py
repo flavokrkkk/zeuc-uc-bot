@@ -30,9 +30,12 @@ async def update_user_rewards(
     current_user: UserModel = Depends(get_current_user_dependency),
 ):
     reward = await reward_service.get_reward(form.reward_id, dump=False)
-    if reward.reward_type == "uc_code":
-        return await payment_service.activate_code_without_callback(reward.uc_code, form.player_id)
-    return await user_service.update_rewards(current_user, reward)
+    if reward.reward_type == "uc_code": 
+        return await reward_service.get_reward(reward.reward_id)
+        # return await payment_service.activate_code_without_callback(reward.uc_code, form.player_id)
+    await user_service.update_rewards(current_user, reward)
+    return await reward_service.get_reward(form.reward_id)
+
 
 
 @router.get("/discounts")
