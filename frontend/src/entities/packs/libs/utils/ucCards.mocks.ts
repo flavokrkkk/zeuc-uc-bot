@@ -4,7 +4,7 @@ export const ucCardsMocks: Array<IPack> = [
   {
     id: 1,
     value: "60 UC",
-    ucInitial: 60,
+    uc_amount: 60,
     multiplicationUc: 0,
     pricePerUc: "110",
     totalSum: 0,
@@ -13,14 +13,14 @@ export const ucCardsMocks: Array<IPack> = [
     id: 2,
     value: "660 UC",
     multiplicationUc: 0,
-    ucInitial: 660,
+    uc_amount: 660,
     pricePerUc: "945",
     totalSum: 0,
   },
   {
     id: 3,
     value: "3850 UC",
-    ucInitial: 3850,
+    uc_amount: 3850,
     multiplicationUc: 0,
     pricePerUc: "4485",
     totalSum: 0,
@@ -28,7 +28,7 @@ export const ucCardsMocks: Array<IPack> = [
   {
     id: 4,
     value: "325 UC",
-    ucInitial: 325,
+    uc_amount: 325,
     multiplicationUc: 0,
     pricePerUc: "515",
     totalSum: 0,
@@ -36,7 +36,7 @@ export const ucCardsMocks: Array<IPack> = [
   {
     id: 5,
     value: "1800 UC",
-    ucInitial: 1800,
+    uc_amount: 1800,
     multiplicationUc: 0,
     pricePerUc: "2415",
     totalSum: 0,
@@ -44,7 +44,7 @@ export const ucCardsMocks: Array<IPack> = [
   {
     id: 6,
     value: "8100 UC",
-    ucInitial: 8100,
+    uc_amount: 8100,
     multiplicationUc: 0,
     pricePerUc: "8888",
     totalSum: 0,

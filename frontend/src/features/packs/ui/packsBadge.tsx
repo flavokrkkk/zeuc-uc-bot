@@ -20,7 +20,7 @@ const PacksBadge: FC<IPacksBadge> = ({
       className="bg-dark-200 h-[48px] p-1 px-5 rounded-lg flex items-center justify-between"
     >
       <div className="flex space-x-2 items-center">
-        <span>{pack.ucinitial}</span>
+        <span>{pack.uc_amount}</span>
         <span>
           <Icon type={IconTypes.UC_OUTLINED} />
         </span>

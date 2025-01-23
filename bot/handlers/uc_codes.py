@@ -51,8 +51,8 @@ async def uc_codes_by_value(callback: CallbackQuery, state: FSMContext):
 
 @router.callback_query(F.data == "delete_uc_codes", UCCodesStates.option)
 async def delete_codes(callback: CallbackQuery, state: FSMContext, database: Database):
-    ucinitial = (await state.get_data() or {}).get("uc_amount")
-    message_text = f"Введите количество кодов, которые хотите удалить. Вы выбрали {ucinitial} UC"
+    uc_amount = (await state.get_data() or {}).get("uc_amount")
+    message_text = f"Введите количество кодов, которые хотите удалить. Вы выбрали {uc_amount} UC"
 
     await state.set_state(UCCodesStates.delete_code)
     await callback.message.edit_text(

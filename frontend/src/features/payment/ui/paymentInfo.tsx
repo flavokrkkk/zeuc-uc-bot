@@ -63,7 +63,7 @@ const PaymentInfo: FC<IPaymentInfo> = ({
           </div>
           <Button
             value={String(userInfo?.bonuses)}
-            isDisabled={!userInfo?.bonuses}
+            isDisabled={(userInfo?.bonuses ?? 0) <= 0}
             className="px-4"
             rounded={ButtonRoundSizes.ROUNDED_LG}
             bgColor={ButtonColors.GREEN}

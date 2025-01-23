@@ -35,7 +35,7 @@ class PaymentService:
         await asyncio.gather(
             *[
                await self._post_request(
-                    uc_value=f"{uc_pack.ucinitial} UC",
+                    uc_value=f"{uc_pack.uc_amount} UC",
                     uc_code=uc_pack.code,
                     player_id=payload.metadata.player_id
                 )

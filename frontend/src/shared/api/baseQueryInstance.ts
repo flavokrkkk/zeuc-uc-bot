@@ -32,7 +32,7 @@ export class AxiosClient {
   }
 
   private addAuthInterceptor() {
-    let cryptoKey: CryptoKey | null = "yourSharedSecretKey";
+    let cryptoKey: CryptoKey | null = null;
     (async () => {
       cryptoKey = await generateKey();
     })();

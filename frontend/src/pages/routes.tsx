@@ -61,32 +61,26 @@ export const routes = createBrowserRouter([
           ]),
         ],
       },
-      {
-        path: ERouteNames.AUTH_PAGE,
-        element: (
-          <Suspense fallback={<div className="h-screen w-full">Loading..</div>}>
-            <Outlet />
-          </Suspense>
-        ),
-        children: [
-          ...routesWithHoc(publicPage, [
-            {
-              path: "",
-              element: <Navigate to={ERouteNames.AUTH_ERROR} replace />,
-            },
-            {
-              path: ERouteNames.AUTH_ERROR,
-              element: (
-                <div className="flex justify-center bg-purple-00 items-center w-full h-full">
-                  <h1 className="text-purple-400 font-medium text-2xl">
-                    Вход не возможен! Повторите попытку
-                  </h1>
-                </div>
-              ),
-            },
-          ]),
-        ],
-      },
+    ],
+  },
+  {
+    path: ERouteNames.AUTH_PAGE,
+    element: (
+      <Suspense fallback={<div className="h-screen w-full">Loading..</div>}>
+        <Outlet />
+      </Suspense>
+    ),
+    children: [
+      ...routesWithHoc(publicPage, [
+        {
+          path: "",
+          element: <Navigate to={ERouteNames.AUTH_ERROR} replace />,
+        },
+        {
+          path: ERouteNames.AUTH_ERROR,
+          element: <ErrorPage />,
+        },
+      ]),
     ],
   },
 ]);

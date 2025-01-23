@@ -1,12 +1,14 @@
+import { ViewerContext } from "@/entities/viewer/models/context/providers";
 import Menu from "@/features/menu/ui/menu";
 import { useTelegramUser } from "@/features/user/hooks/useTelegramUser";
 import { pathNavigate } from "@/shared/libs/utils/pathNavigate";
 import { IconTypes } from "@/shared/ui/icon/libs/libs";
 import { Icon } from "@/shared/ui/icon/ui/icon";
-import { Suspense } from "react";
+import { Suspense, useContext } from "react";
 import { Outlet } from "react-router-dom";
 
 const RootPage = () => {
+  const { isAuthenticated } = useContext(ViewerContext);
   useTelegramUser();
   return (
     <div className="bg-dark-100 h-screen w-screen p-3 relative flex flex-col justify-between">
@@ -25,10 +27,12 @@ const RootPage = () => {
           <Outlet />
         </div>
       </Suspense>
-      <div className="text-white flex flex-col items-center bg-gray-dark-200 relative p-4 px-9 rounded-xl">
-        <Menu navigates={pathNavigate} />
-        <span className="border-[3px] border-b-white absolute -bottom-0 w-[239px] rounded-2xl" />
-      </div>
+      {isAuthenticated && (
+        <div className="text-white flex flex-col items-center bg-gray-dark-200 relative p-4 px-9 rounded-xl">
+          <Menu navigates={pathNavigate} />
+          <span className="border-[3px] border-b-white absolute -bottom-0 w-[239px] rounded-2xl" />
+        </div>
+      )}
     </div>
   );
 };

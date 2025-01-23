@@ -8,12 +8,15 @@ import {
   ButtonRoundSizes,
 } from "@/shared/ui/button/button";
 import { useScoreMutation } from "@/features/scores/hooks/useScoreMutation";
+import { useAppSelector } from "@/shared/hooks/useAppSelector";
+import { userSelectors } from "@/entities/user/models/store/userSlice";
 
 const ScoresPage = () => {
   const { handleSetScoreGift } = useScoreMutation();
+  const currentUser = useAppSelector(userSelectors.currentUser);
   const { winner, scores, spinning, wheelRef, winnerIndex, calcSpinWheel } =
     useScopes();
-  console.log(winner);
+
   return (
     <section className="w-full text-white space-y-2 flex flex-col justify-between pt-8">
       <div className="flex justify-center items-center flex-col overflow-hidden pt-10">
@@ -46,7 +49,7 @@ const ScoresPage = () => {
       <Button
         className="h-14 w-full cursor-pointer flex items-center justify-center rounded-md"
         bgColor={ButtonColors.TRANSPARENT_BLACK}
-        isDisabled={spinning}
+        isDisabled={spinning || (currentUser?.bonuses ?? 0) < 60}
         onClick={calcSpinWheel}
         borderSize={ButtonBorderSizes.BORDER_LG}
         rounded={ButtonRoundSizes.ROUNDED_XL}

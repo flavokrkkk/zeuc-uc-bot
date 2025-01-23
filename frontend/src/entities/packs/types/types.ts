@@ -6,5 +6,5 @@ export interface IPack {
   point: number;
   price: number;
   total_sum: number;
-  ucinitial: number;
+  uc_amount: number;
 }

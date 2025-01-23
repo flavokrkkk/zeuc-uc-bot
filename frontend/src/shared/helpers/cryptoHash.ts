@@ -1,15 +1,29 @@
-const secretKey = "yourSharedSecretKey";
-
 export async function generateKey(): Promise<CryptoKey> {
-  const encoder = new TextEncoder();
-  const keyData = encoder.encode(secretKey).slice(0, 16);
-  return await crypto.subtle.importKey("raw", keyData, "AES-GCM", false, [
-    "encrypt",
-    "decrypt",
-  ]);
+  return await crypto.subtle.generateKey(
+    {
+      name: "AES-GCM",
+      length: 256,
+    },
+    true,
+    ["encrypt", "decrypt"]
+  );
 }
+
+export async function exportKey(key: CryptoKey): Promise<ArrayBuffer> {
+  return await crypto.subtle.exportKey("raw", key);
+}
+
+(async () => {
+  try {
+    const key = await generateKey();
+    const exportedKey = await exportKey(key);
+    console.log("Экспортированный ключ:", new Uint8Array(exportedKey));
+  } catch (error) {
+    console.error("Ошибка при генерации или экспорте ключа:", error);
+  }
+})();
+
 export async function encrypt<T>(data: T, key: CryptoKey) {
-  console.log(key)
   const iv = crypto.getRandomValues(new Uint8Array(12));
   const encodedData = new TextEncoder().encode(JSON.stringify(data));
   const encrypted = await crypto.subtle.encrypt(
@@ -21,11 +35,11 @@ export async function encrypt<T>(data: T, key: CryptoKey) {
   const encryptedData = new Uint8Array(encrypted);
   const ciphertext = encryptedData.slice(0, -tagLength);
   const authTag = encryptedData.slice(-tagLength);
-  
+
   return {
     iv: Array.from(iv),
     data: Array.from(ciphertext),
-    tag: Array.from(authTag)
+    tag: Array.from(authTag),
   };
 }
 

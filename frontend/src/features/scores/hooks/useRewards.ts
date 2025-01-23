@@ -3,11 +3,12 @@ import { useActions } from "@/shared/hooks/useActions";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 
-export const useRewards = () => {
+export const useRewards = (isAuthenticated: boolean) => {
   const { setScores } = useActions();
   const { data, isSuccess } = useQuery({
     queryKey: ["scores"],
     queryFn: (meta) => getAllReward(meta),
+    enabled: isAuthenticated,
   });
 
   useEffect(() => {

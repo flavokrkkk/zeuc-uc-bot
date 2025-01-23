@@ -24,7 +24,7 @@ export const usePaymentMutate = ({
           count: item.multiplication_uc,
           price_per_uc: item.price_per_uc.price,
           total_sum: item.total_sum,
-          ucinitial: item.ucinitial,
+          uc_amount: item.uc_amount,
         };
 
         acc.push(obj);

@@ -5,7 +5,7 @@ export interface IScore {
   reward_type: ERewardTypes;
   uc_code?: {
     code: string;
-    ucinitial: number;
+    uc_amount: number;
     price_per_uc: number;
     total_sum: number;
     multiplication_uc: number;

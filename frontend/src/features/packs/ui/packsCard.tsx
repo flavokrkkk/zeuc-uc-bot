@@ -21,7 +21,7 @@ const PacksCard: FC<IPacksCard> = ({ card, handleSelectPack }) => {
         <section className="space-y-1">
           <section className="flex justify-between items-center">
             <span className="flex items-center space-x-1">
-              <h1 className="text-2xl">{card.ucinitial}</h1>
+              <h1 className="text-2xl">{card.uc_amount}</h1>
               <Icon type={IconTypes.UC_OUTLINED} />
             </span>
             <span className="flex items-center space-x-1">

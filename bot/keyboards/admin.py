@@ -8,10 +8,10 @@ from utils.decorators import add_back_to_menu_button
 def all_uc_codes_keyboard(uc_codes: list[tuple[int, int]]) -> InlineKeyboardBuilder:
     keyboard = InlineKeyboardBuilder()
 
-    for ucinitial, count in uc_codes:
+    for uc_amount, count in uc_codes:
         keyboard.button(
-            text=f"{ucinitial} UC (x{count})", 
-            callback_data=f"uc_codes_{ucinitial}"
+            text=f"{uc_amount} UC (x{count})", 
+            callback_data=f"uc_codes_{uc_amount}"
         )
 
     keyboard.adjust(2)

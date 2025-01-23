@@ -15,7 +15,7 @@ class CreateUCCodeModel(BaseModel):
 
 
 class UCCodeModel(BaseModel):
-    ucinitial: int
+    uc_amount: int
     code: str
     price_per_uc: UCCodePrice
     total_sum: int = 0

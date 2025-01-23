@@ -51,7 +51,7 @@ export const packSlice = createSlice({
           return acc + item.total_sum;
         }, 0);
         state.totalPacks = state.packSelects.reduce((acc, item) => {
-          return acc + item.multiplication_uc * item.ucinitial;
+          return acc + item.multiplication_uc * item.uc_amount;
         }, 0);
       }
     ),
@@ -83,7 +83,7 @@ export const packSlice = createSlice({
           return acc + item.total_sum;
         }, 0);
         state.totalPacks = state.packSelects.reduce((acc, item) => {
-          return acc + item.multiplication_uc * item.ucinitial;
+          return acc + item.multiplication_uc * item.uc_amount;
         }, 0);
 
         if (!state.totalPrice) state.isSelected = false;

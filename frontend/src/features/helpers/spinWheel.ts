@@ -30,10 +30,10 @@ export const spinWheel = (
     const easedProgress = 1 - Math.pow(1 - progress, 3);
 
     const spinAngle = rotationAngle * easedProgress;
-
-    wheel.style.transform = `rotate(${spinAngle}deg) scale(${
-      1 + 0.05 * easedProgress
-    })`;
+    console.log(spinAngle);
+    wheel.style.transform = `rotate(${
+      spinAngle > 1180 && spinAngle < 185 ? spinAngle + 6 : spinAngle
+    }deg) scale(${1 + 0.05 * easedProgress})`;
 
     if (elapsedTime >= duration) {
       clearInterval(spinInterval);

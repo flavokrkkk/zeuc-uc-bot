@@ -7,7 +7,7 @@ export interface IPaymentWrap {
 }
 
 export interface IPayementRequest {
-  ucinitial: number;
+  uc_amount: number;
   code: string;
   price_per_uc: number;
   total_sum: number;
@@ -30,7 +30,7 @@ export interface IPaymentResponse {
       tg_id: number;
       uc_packs: [
         {
-          ucinitial: number;
+          uc_amount: number;
           code: string;
           price_per_uc: number;
           total_sum: number;
