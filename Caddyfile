@@ -1,10 +1,10 @@
 zeusucbot.shop {
-    tls internal # Добавьте эту строку для автоматического SSL
+    tls internal
     root * /srv
     file_server
 }
 
 zeusucbot.shop/api/* {
-    tls internal # И здесь
+    tls internal
     reverse_proxy http://app:8000
 }
