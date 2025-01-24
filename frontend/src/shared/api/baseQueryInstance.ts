@@ -20,7 +20,7 @@ export class AxiosClient {
       baseURL,
       withCredentials: true,
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
       },
     };
 
@@ -170,5 +170,5 @@ export class AxiosClient {
   }
 }
 
-export const axiosNoAuth = new AxiosClient(import.meta.env.VITE_SERVER_URL);
-export const axiosAuth = new AxiosClient(import.meta.env.VITE_SERVER_URL, true);
+export const axiosNoAuth = new AxiosClient("http://81.177.221.219/api/");
+export const axiosAuth = new AxiosClient("http://81.177.221.219/api/", true);

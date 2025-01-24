@@ -14,16 +14,28 @@ services:
       - app_network
 
   nginx:
-    image: nginx:latest
-    container_name: nginx-proxy
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf 
+    image: nginx:stable-alpine
     ports:
       - "80:80"
+      - "443:443"
+    volumes:
+      - './nginx.conf:/etc/nginx/nginx.conf'
+      - '/etc/letsencrypt:/etc/letsencrypt'
     depends_on:
       - app
+      - frontend
     networks:
       - app_network
+
+  frontend:
+    build: ./frontend
+    image: zeuc-uc-bot
+    container_name: content-zeuc-uc-bot
+    restart: always
+    stdin_open: true
+    networks:
+      - app_network
+
 
   app:
     build:
@@ -38,8 +50,6 @@ services:
       - JWT_SECRET=812659050808fd763749156b9b403c46a2338f082b4cc1316d3b0ac8794937aa
       - JWT_ACCESS_TOKEN_TIME=10000
       - JWT_ALGORITHM=HS256
-    ports:
-      - 8000:8000
     depends_on:
       - db
     restart: always
