@@ -170,5 +170,5 @@ export class AxiosClient {
   }
 }
 
-export const axiosNoAuth = new AxiosClient("http://81.177.221.219:8000/api/");
-export const axiosAuth = new AxiosClient("http://81.177.221.219:8000/api/", true);
+export const axiosNoAuth = new AxiosClient("http://81.177.221.219/api/");
+export const axiosAuth = new AxiosClient("http://81.177.221.219/api/", true);
