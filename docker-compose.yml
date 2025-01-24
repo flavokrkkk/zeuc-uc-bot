@@ -25,16 +25,16 @@ services:
     networks:
       - app_network
 
-    frontend:
-      build: ./frontend
-      image: zeuc-uc-bot
-      container_name: content-zeuc-uc-bot
-      restart: always
-      stdin_open: true
-      ports:
-        - "3000:3000"
-      networks:
-        - app_network
+  frontend:
+    build: ./frontend
+    image: zeuc-uc-bot
+    container_name: content-zeuc-uc-bot
+    restart: always
+    stdin_open: true
+    ports:
+      - "3000:3000"
+    networks:
+      - app_network
 
 
   app:
