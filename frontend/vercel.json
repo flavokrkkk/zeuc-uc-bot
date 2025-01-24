@@ -1,12 +1,6 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "index.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "proxies": [
+  "rewrites": [
     {
       "source": "/api/(.*)",
       "destination": "https://81.177.221.219/api/$1"
