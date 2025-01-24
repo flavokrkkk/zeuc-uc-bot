@@ -1,11 +1,10 @@
 zeusucbot.shop {
+    tls internal # Добавьте эту строку для автоматического SSL
     root * /srv
     file_server
+}
 
-    reverse_proxy /api/* http://app:8000
-
-    # Автоматическое получение сертификата SSL
-    tls {
-        email lanchineg@gmail.com # Укажите ваш email для уведомлений о сертификате
-    }
+zeusucbot.shop/api/* {
+    tls internal # И здесь
+    reverse_proxy http://app:8000
 }
