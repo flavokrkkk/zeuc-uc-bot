@@ -1,6 +1,7 @@
 import { getAllPacks } from "@/entities/packs/libs/packsService";
 import { useActions } from "@/shared/hooks/useActions";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 export const useAsyncPacks = (isAuthenticated: boolean) => {
   const { setPacks } = useActions();
@@ -11,7 +12,9 @@ export const useAsyncPacks = (isAuthenticated: boolean) => {
     enabled: isAuthenticated,
   });
 
-  if (isSuccess) {
-    setPacks(data);
-  }
+  useEffect(() => {
+    if (isSuccess) {
+      setPacks(data);
+    }
+  }, [isSuccess, data]);
 };

@@ -18,8 +18,8 @@ const ScoresPage = () => {
     useScopes();
 
   return (
-    <section className="w-full text-white space-y-2 flex flex-col justify-between pt-8">
-      <div className="flex justify-center items-center flex-col overflow-hidden pt-10">
+    <section className="w-full text-white h-full items-center space-y-2 flex flex-col justify-center pt-8">
+      <div className="flex justify-center w-full  items-center flex-col overflow-hidden pt-10">
         <Wheel
           segments={scores}
           spinning={spinning}
@@ -28,7 +28,7 @@ const ScoresPage = () => {
         />
       </div>
       {winner && (
-        <div className="flex flex-col space-y-5">
+        <div className="flex flex-col space-y-5 w-full">
           <section className="flex justify-between items-center">
             <h1 className="text-2xl">Ваш выигрыш</h1>
             <p>{winner.title}</p>

@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import React, { useEffect } from "react";
 
 interface WheelProps {
@@ -7,7 +8,12 @@ interface WheelProps {
   wheelRef: React.RefObject<HTMLCanvasElement>;
 }
 
-const Wheel: React.FC<WheelProps> = ({ segments, winnerIndex, wheelRef }) => {
+const Wheel: React.FC<WheelProps> = ({
+  segments,
+  winnerIndex,
+  wheelRef,
+  spinning,
+}) => {
   const drawWheel = () => {
     const wheel = wheelRef.current;
     if (!wheel) return;
@@ -79,14 +85,25 @@ const Wheel: React.FC<WheelProps> = ({ segments, winnerIndex, wheelRef }) => {
   return (
     <div className="flex flex-col relative">
       <img
-        className="absolute top-[110px] left-[165px]"
+        className={clsx(
+          "absolute top-[110px] left-[165px]",
+          spinning && "animate-pulse"
+        )}
         src="/images/score/Polygon 1.png"
       />
       <img
-        className="absolute top-32 left-32"
+        className={clsx(
+          "absolute top-32 left-32 ",
+          spinning && "animate-pulse"
+        )}
         src="/images/score/Ellipse 11.png"
       />
-
+      <span className="absolute top-[168px] left-[156px] text-gray-600">
+        Крутить
+      </span>
+      <span className="absolute top-[185px] left-[159px] text-gray-600">
+        колесо
+      </span>
       <canvas
         ref={wheelRef}
         width="370"

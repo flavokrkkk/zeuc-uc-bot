@@ -8,8 +8,6 @@ import {
   ButtonRoundSizes,
   ButtonSizes,
 } from "@/shared/ui/button/button";
-import { IconTypes } from "@/shared/ui/icon/libs/libs";
-import { Icon } from "@/shared/ui/icon/ui/icon";
 
 const CatalogPage = () => {
   const {
@@ -22,6 +20,7 @@ const CatalogPage = () => {
   } = usePacks();
 
   const currentUser = useAppSelector(userSelectors.currentUser);
+  const userInfo = useAppSelector(userSelectors.userInfo);
 
   return (
     <section className="w-full space-y-2 flex flex-col justify-between pt-2">
@@ -29,16 +28,21 @@ const CatalogPage = () => {
         <div className="text-white flex justify-between items-center">
           <h1>Привет {currentUser?.username}</h1>
           <span>
-            <Icon type={IconTypes.AVATARKA_OUTLINED} />
+            <img
+              src={userInfo?.photo_url}
+              width={36}
+              height={36}
+              className="rounded-full"
+            />
           </span>
         </div>
         <PacksList packs={packs} handleSelectPack={handleSelectPack} />
       </section>
 
       {isSelected && (
-        <div className="w-full space-x-1 flex justify-center">
+        <div className="w-full  space-x-1 flex justify-center">
           <Button
-            className="h-10 w-full cursor-pointer bg-gray-200 border border-gray-300 flex items-center justify-center rounded-md"
+            className="h-10  w-full cursor-pointer bg-gray-200 border border-gray-300 flex items-center justify-center rounded-md"
             bgColor={ButtonColors.GREEN}
             rounded={ButtonRoundSizes.ROUNDED_XL}
             size={ButtonSizes.MEDIUM}
