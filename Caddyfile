@@ -1,8 +1,8 @@
-zeususbot.shop {
+zeusucbot.shop {
     root * /srv
     file_server
 }
 
-zeususbot.shop/api/* {
+zeusucbot.shop/api/* {
     reverse_proxy http://app:8000
 }
