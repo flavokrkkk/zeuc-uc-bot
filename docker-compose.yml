@@ -13,6 +13,7 @@ services:
  app:
    build:
      context: .
+   container_name: app
    environment:
      - DB_NAME=postgres
      - DB_HOST=db
@@ -24,6 +25,8 @@ services:
      - JWT_ALGORITHM=HS256
    depends_on:
      - db
+   ports:
+     - "8060:8060"
 
  db:
    image: postgres:15
