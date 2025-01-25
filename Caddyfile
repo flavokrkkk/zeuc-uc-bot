@@ -12,7 +12,7 @@ zeusucbot.shop {
 zeusucbot.shop/api/* {
     tls {
         issuer acme {
-            contact your@email.com
+            contact magomedovmarif2@gmail.com
             preferred_chains smallest
         }
     }
