@@ -8,12 +8,16 @@ class UserModel(BaseModel):
     tg_id: int
     is_admin: bool
     bonuses: int
-
-
-class UpdateUserModel(BaseModel):
-    username: str
+    referal_code: str
+    balance: float
+    referer_id: int | None = None
     
 
 class UserDiscountModel(BaseModel):
     count: int
     discount: DiscountModel
+
+
+class BonusesHistoryModel(BaseModel):
+    amount: int
+    created_at: int

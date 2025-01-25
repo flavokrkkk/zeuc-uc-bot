@@ -1,8 +1,6 @@
 from sqlalchemy import select
-from backend.database.models.models import Discount, Reward
+from backend.database.models.models import Discount, Price, Reward, User
 from backend.database.models.models import UCCode
-
-
 
 
 async def test_db(session):
@@ -12,12 +10,24 @@ async def test_db(session):
             await session.close()
             return
         
-        uc_codes_values = [60, 325, 660, 1200, 1800, 3850, 8100, 10200]
+        test_user = User(tg_id=1,username="test")
+        test_referer = User(tg_id=2,username="test_referer")
+        
+        uc_codes_values = {60: [100, 1], 325: [200, 4], 660: [300, 5], 1800: [2000, 8], 3850: [5500, 10], 8100: [10000, 20]}
         
         uc_codes = []
         rewards = []
-        for value in uc_codes_values:
-            uc_codes.append(UCCode(code=f"uc_code_{value}", value=value))
+        for key, value in uc_codes_values.items():
+            uc_codes.append(
+            UCCode(
+                code=f"uc_code_{value}", 
+                uc_amount=key, 
+                price_per_uc=Price(
+                    price=value[0], 
+                    point=value[1]
+                )
+            )
+        )
         for uc_code in uc_codes[:3]:
             rewards.append(
                 Reward(
@@ -40,6 +50,8 @@ async def test_db(session):
 
         session.add_all(uc_codes)
         session.add_all(rewards)
+        session.add(test_user)
+        session.add(test_referer)
         await session.commit()
         await session.close()
     except Exception as e:

@@ -15,6 +15,7 @@ const createSliceWithThunks = buildCreateSlice({
 const initialState: IScoresState = {
   scores: [],
   scoresValue: [],
+  scoresWinner: null,
 };
 
 export const scoresSlice = createSliceWithThunks({
@@ -29,16 +30,24 @@ export const scoresSlice = createSliceWithThunks({
       (state, { payload }: PayloadAction<Array<IScore> | undefined>) => {
         const scoresView = payload?.map((score) => {
           if (score.reward_type === ERewardTypes.DISCOUNT) {
-            return `${score.discount?.value} скидка на покупку от ${score.discount?.min_payment_value}`;
+            return {
+              title: `${score.discount?.value} скидка на покупку от ${score.discount?.min_payment_value}`,
+              reward_id: score.reward_id,
+            };
           }
           if (score.reward_type === ERewardTypes.UC_CODE) {
-            return `${score.uc_code?.value} UC`;
+            return {
+              title: `${score.uc_code?.uc_amount} UC`,
+              reward_id: score.reward_id,
+            };
           }
 
-          return "";
+          return {} as { title: string; reward_id: number };
         });
-        console.log(scoresView);
-        state.scoresValue = scoresView ?? [];
+        if (scoresView) {
+          state.scoresValue = scoresView;
+        }
+
         state.scores = payload ?? [];
       }
     ),

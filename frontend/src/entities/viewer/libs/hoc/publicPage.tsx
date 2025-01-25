@@ -16,7 +16,6 @@ const PublicPage: FC<PropsWithChildren> = ({ children }) => {
 
   useEffect(() => {
     const token = getAccessToken();
-
     if (token) {
       loginViewer(token);
       navigate(ERouteNames.CATALOG_PAGE);

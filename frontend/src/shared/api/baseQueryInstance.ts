@@ -10,6 +10,7 @@ import axios, {
 } from "axios";
 
 import { RequestOptions } from "https";
+import { decrypt, encrypt, generateKey } from "../helpers/cryptoHash";
 
 export class AxiosClient {
   private baseQueryV1Instance: AxiosInstance;
@@ -31,15 +32,61 @@ export class AxiosClient {
   }
 
   private addAuthInterceptor() {
-    this.baseQueryV1Instance.interceptors.request.use((config) => {
+    let cryptoKey: CryptoKey | null = null;
+    (async () => {
+      cryptoKey = await generateKey();
+    })();
+
+    this.baseQueryV1Instance.interceptors.request.use(async (config) => {
       const token = getAccessToken();
       if (config && config.headers && token) {
         config.headers["Authorization"] = `Bearer ${token}`;
       } else {
         deleteAccessToken();
       }
+
+      if (config.data && cryptoKey) {
+        config.data = await encrypt(config.data, cryptoKey);
+      }
+
       return config;
     });
+
+    this.baseQueryV1Instance.interceptors.response.use(
+      async (response) => {
+        if (
+          response.data &&
+          response.data.data &&
+          response.data.iv &&
+          response.data.tag &&
+          cryptoKey
+        ) {
+          const encryptedResponse = {
+            iv: response.data.iv,
+            data: response.data.data,
+            tag: response.data.tag,
+          };
+
+          try {
+            const decryptedData = await decrypt(
+              encryptedResponse,
+              "9fGDzagmHOCYEvjw"
+            );
+            response.data = decryptedData;
+          } catch (error) {
+            console.error("Ошибка при расшифровке:", error);
+          }
+        }
+        return response;
+      },
+      (error) => {
+        return Promise.reject(error);
+      }
+    );
+  }
+
+  public getInstance() {
+    return this.baseQueryV1Instance;
   }
 
   private handleResponse<T>(response: AxiosResponse<T>): AxiosResponse<T> {
@@ -123,5 +170,5 @@ export class AxiosClient {
   }
 }
 
-export const axiosNoAuth = new AxiosClient(import.meta.env.VITE_SERVER_URL);
-export const axiosAuth = new AxiosClient(import.meta.env.VITE_SERVER_URL, true);
+export const axiosNoAuth = new AxiosClient("https://zeusucbot.shop/api/");
+export const axiosAuth = new AxiosClient("https://zeusucbot.shop/api/", true);

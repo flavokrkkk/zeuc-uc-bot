@@ -17,12 +17,6 @@ class BaseRepository[ModelType](ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def get_by_attributes(
-        self, attribute: Any, value: int
-    ) -> list[ModelType] | None:
-        raise NotImplementedError
-
-    @abstractmethod
     async def add_item(self, **kwargs: int) -> ModelType:
         raise NotImplementedError
 
@@ -49,14 +43,6 @@ class SqlAlchemyRepository[ModelType](BaseRepository):
         query = select(self.model)
         items: Result = await self.session.execute(query)
         return items.scalars().all()
-
-    async def get_by_attributes(self, attributes: dict[MappedColumn[Any], Any]) -> list[ModelType]:
-        query = select(self.model)
-        for attribute, value in attributes.items():
-            query = query.where(attribute == value)
-        items: Result = await self.session.execute(query)
-        return items.scalars().all()
-
 
     async def add_item(self, **kwargs: int | str | UUID4) -> ModelType:
         item = self.model(**kwargs)

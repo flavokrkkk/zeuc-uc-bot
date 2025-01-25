@@ -3,9 +3,9 @@ services:
   frontend:
     build: .
 
-    image: zeuc-uc-bot
+    image: zeuc-frontend
 
-    container_name: content-zeuc-uc-bot
+    container_name: zeuc-uc-frontend
 
     restart: always
 

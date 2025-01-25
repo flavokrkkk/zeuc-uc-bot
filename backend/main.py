@@ -1,8 +1,8 @@
 from fastapi import FastAPI, Request
 from starlette.middleware.cors import CORSMiddleware
-from starlette.responses import JSONResponse
 
 from backend.database.connection.connection import DatabaseConnection
+from backend.middleware.decode_middleware import DecodeEncodeMiddleware
 from backend.routers import api_router
 
 
@@ -18,8 +18,15 @@ app = FastAPI(lifespan=lifespan)
 app.include_router(api_router)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=[
+        "http://localhost:3000", 
+        "https://zeusucbot.shop/",
+        "https://zeusucbot.shop",
+        "http://213.226.127.164/",
+        "http://213.226.127.164"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]
 )
+app.add_middleware(DecodeEncodeMiddleware)

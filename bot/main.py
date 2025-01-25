@@ -6,7 +6,7 @@ from aiogram import Bot, Dispatcher
 from database.connection.pg_connection import DatabaseConnection
 from middleware.db_middleware import DatabaseMiddleware
 from handlers import router
-from config import bot_config
+from config.config import bot_config
 from keyboards.commands import set_bot_commands
 
 

@@ -16,7 +16,7 @@ class DatabaseMiddleware(BaseMiddleware):
     async def __call__(
         self,
         handler: Callable[[TelegramObject, Dict[str, Any]], Awaitable[Any]],
-        event: TelegramObject,
+        event: Message | CallbackQuery,
         data: Dict[str, Any]
     ) -> Any:
         try:
@@ -24,12 +24,18 @@ class DatabaseMiddleware(BaseMiddleware):
             database = Database(session=session)
             data['database'] = database
             
-            if event.message and event.message.text.startswith("/start"):
+            if event.message and event.message.text and event.message.text.startswith("/start"):
                 return await handler(event, data)
+            
             user_data = data["event_from_user"]
             user_in_db: User = await database.users.get_item(item_id=user_data.id)
-            
-            if user_in_db.username != user_data.username:
+
+            if not user_in_db:
+                await database.users.add_item(
+                    tg_id=user_data.id, 
+                    username=user_data.username
+                )
+            elif user_in_db.username != user_data.username:
                 await database.users.update_item(
                     item_id=user_data.id,
                     username=user_data.username

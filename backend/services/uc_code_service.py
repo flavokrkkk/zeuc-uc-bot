@@ -1,4 +1,5 @@
-from backend.dto.uc_code_dto import CreateUCCodeModel, UCCodeModel
+from backend.database.models.models import UCCode
+from backend.dto.uc_code_dto import CreateUCCodeModel, UCCodeModel, UCPackModel
 from backend.errors.uc_code_errors import UCCodeAlreadyExists, UCCodeNotFound
 from backend.repositories.uc_code_repository import UCCodeRepository
 
@@ -53,3 +54,9 @@ class UCCodeService:
             for code in codes
         ]
     
+    async def get_uc_packs_bonuses_sum(self, uc_packs: list[UCPackModel]) -> int:
+        bonuses = 0
+        for uc_pack in uc_packs:
+            uc_pack: UCCode = await self.repository.get_item(uc_pack.code)
+            bonuses += uc_pack.price_per_uc.point
+        return bonuses

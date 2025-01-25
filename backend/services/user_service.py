@@ -1,8 +1,9 @@
-from backend.database.models.models import Reward
-from backend.dto.reward import DiscountModel
-from backend.dto.user_dto import UpdateUserModel, UserDiscountModel, UserModel
-from backend.errors.user_errors import UserNotFound
+from backend.database.models.models import Reward, User
+from backend.dto.user_dto import BonusesHistoryModel, UserModel
+from backend.errors.user_errors import UserAlreadyActivateReferal, UserNotFound, UserReferalCodeNotFound
 from backend.repositories import UserRepository
+from backend.utils.config.constants import BONUC_CIRCLE_PRICE
+from backend.utils.config.enums import BonusStatuses
 
 
 class UserService:
@@ -15,8 +16,8 @@ class UserService:
         user = await self.repository.get_item(tg_id)
         return UserModel.model_validate(user, from_attributes=True)
     
-    async def update_user(self, tg_id: int, form: UpdateUserModel):
-        await self.repository.update_item(tg_id, **form.model_dump())
+    async def update_user(self, tg_id: int, **kwargs) -> UserModel:
+        await self.repository.update_item(tg_id, **kwargs)
     
     async def get_by_username(self, username: str) -> UserModel:
         user = await self.repository.get_by_attributes(
@@ -52,9 +53,51 @@ class UserService:
             raise UserNotFound
         await self.repository.delete_item(tg_id)
 
-    async def update_rewards(self, tg_id: int, reward: Reward) -> None:
-        if reward.reward_type == "uc_code":
-            pass # todo send uc after get in reward
-        elif reward.reward_type == "discount":
-            await self.repository.add_discount(tg_id, reward.discount_id)
+    async def update_rewards(self, user: UserModel, reward: Reward) -> None:
+        await self.repository.add_discount(user.tg_id, reward.discount_id)
+        await self.repository.update_item(
+            self.repository.model.tg_id,
+            user.tg_id, 
+            bonuses=user.bonuses - BONUC_CIRCLE_PRICE
+        )
 
+    async def activate_referal_code(self, current_user: UserModel, referal_code: str) -> None:
+        if current_user.referer_id:
+            raise UserAlreadyActivateReferal
+        
+        referer: User = await self.repository.get_by_attributes(
+            (self.repository.model.referal_code, referal_code),
+            one_or_none=True
+        )
+        if not referer or referer.tg_id == current_user.tg_id:
+            raise UserReferalCodeNotFound
+    
+        await self.repository.update_item(
+            self.repository.model.tg_id,
+            item_id=referer.tg_id,
+            bonuses=referer.bonuses + 20
+        )
+        await self.repository.update_item(
+            self.repository.model.tg_id,
+            item_id=current_user.tg_id,
+            referer_id=referer.tg_id,
+            bonuses=current_user.bonuses + 20
+        )
+    
+    async def send_bonuses_to_referer(self, user_id: int, bonuses: int) -> None:
+        current_user: User = await self.repository.get_item(user_id)
+        referer_user: User = await self.repository.get_item(current_user.referer_id)
+        if referer_user and current_user.referer_id:
+            await self.repository.add_bonuses(
+                current_user.referer_id, 
+                    bonuses, 
+                BonusStatuses.GET.value
+            )
+
+    async def get_user_bonuses_history(self, tg_id: int):
+        user: User = await self.repository.get_item(tg_id)
+        return [
+            BonusesHistoryModel.model_validate(bonus, from_attributes=True)
+            for bonus in user.bonuses_history
+        ]
+    

@@ -1,12 +1,11 @@
 import { rootReducer } from "@/shared/store";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IPackState } from "./types";
-import { ucCardsMocks } from "../../libs/utils";
 import { IPack } from "../../types/types";
 
 const initialState: IPackState = {
   isSelected: false,
-  packSelects: ucCardsMocks,
+  packSelects: [],
   selectedPacks: [],
   totalPrice: 0,
   totalPacks: 0,
@@ -29,22 +28,30 @@ export const packSlice = createSlice({
 
         if (~searchUc) {
           const finishPrice =
-            state.packSelects[searchUc].totalSum +
-            Number(state.packSelects[searchUc].pricePerUc);
+            state.packSelects[searchUc].total_sum +
+            Number(state.packSelects[searchUc].price_per_uc.price);
 
-          state.packSelects[searchUc].totalSum = finishPrice;
+          state.packSelects[searchUc].total_sum = finishPrice;
 
-          state.packSelects[searchUc].multiplicationUc = Math.round(
-            finishPrice / Number(state.packSelects[searchUc].pricePerUc)
+          state.packSelects[searchUc].multiplication_uc = Math.round(
+            finishPrice / Number(state.packSelects[searchUc].price_per_uc.price)
           );
           state.isSelected = true;
         }
 
+        state.selectedPacks = state.selectedPacks.map((el) => {
+          if (el.id === state.packSelects[searchUc].id) {
+            console.log("eee");
+            return state.packSelects[searchUc];
+          }
+          return el;
+        });
+
         state.totalPrice = state.packSelects.reduce((acc, item) => {
-          return acc + item.totalSum;
+          return acc + item.total_sum;
         }, 0);
         state.totalPacks = state.packSelects.reduce((acc, item) => {
-          return acc + item.multiplicationUc * item.ucInitial;
+          return acc + item.multiplication_uc * item.uc_amount;
         }, 0);
       }
     ),
@@ -54,21 +61,29 @@ export const packSlice = createSlice({
 
         if (~searchUc) {
           const finishPrice =
-            state.packSelects[searchUc].totalSum -
-            Number(state.packSelects[searchUc].pricePerUc);
+            state.packSelects[searchUc].total_sum -
+            Number(state.packSelects[searchUc].price_per_uc.price);
 
-          state.packSelects[searchUc].totalSum = finishPrice;
+          state.packSelects[searchUc].total_sum = finishPrice;
 
-          state.packSelects[searchUc].multiplicationUc = Math.round(
-            finishPrice / Number(state.packSelects[searchUc].pricePerUc)
+          state.packSelects[searchUc].multiplication_uc = Math.round(
+            finishPrice / Number(state.packSelects[searchUc].price_per_uc.price)
           );
         }
 
+        state.selectedPacks = state.selectedPacks.map((el) => {
+          if (el.id === state.packSelects[searchUc].id) {
+            console.log("eee");
+            return state.packSelects[searchUc];
+          }
+          return el;
+        });
+
         state.totalPrice = state.packSelects.reduce((acc, item) => {
-          return acc + item.totalSum;
+          return acc + item.total_sum;
         }, 0);
         state.totalPacks = state.packSelects.reduce((acc, item) => {
-          return acc + item.multiplicationUc * item.ucInitial;
+          return acc + item.multiplication_uc * item.uc_amount;
         }, 0);
 
         if (!state.totalPrice) state.isSelected = false;
@@ -76,7 +91,7 @@ export const packSlice = createSlice({
     ),
     setSelectedPacks: create.reducer((state) => {
       state.selectedPacks = state.packSelects.filter(
-        (el) => el.multiplicationUc
+        (el) => el.multiplication_uc
       );
     }),
     resetTotalPacks: create.reducer((state) => {
@@ -86,12 +101,18 @@ export const packSlice = createSlice({
       state.isSelected = false;
       state.packSelects = state.packSelects.map((item) => ({
         ...item,
-        multiplicationUc: 0,
+        multiplication_uc: 0,
+        total_sum: 0,
       }));
     }),
     setPacks: create.reducer(
       (state, { payload }: PayloadAction<Array<IPack>>) => {
-        state.packSelects = payload;
+        state.packSelects = payload.map((item) => {
+          return {
+            ...item,
+            id: crypto.randomUUID(),
+          };
+        });
       }
     ),
   }),

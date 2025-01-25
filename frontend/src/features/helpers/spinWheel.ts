@@ -1,8 +1,11 @@
 export const spinWheel = (
-  segments: Array<string>,
+  segments: Array<{ title: string; reward_id: number }>,
   wheelRef: React.MutableRefObject<HTMLCanvasElement | null>,
   spinning: boolean,
-  onFinished: (winner: string, winnerIndex: number) => void,
+  onFinished: (
+    winner: { title: string; reward_id: number },
+    winnerIndex: number
+  ) => void,
   setSpinning: (action: boolean) => void,
   setWinnerIndex: (action: number | null) => void
 ) => {
@@ -27,7 +30,6 @@ export const spinWheel = (
     const easedProgress = 1 - Math.pow(1 - progress, 3);
 
     const spinAngle = rotationAngle * easedProgress;
-
     wheel.style.transform = `rotate(${spinAngle}deg) scale(${
       1 + 0.05 * easedProgress
     })`;
@@ -37,7 +39,7 @@ export const spinWheel = (
 
       const finalAngle = ((spinAngle % 360) + 360) % 360;
 
-      const finalSegmentAngles = segments.map((segment, index) => {
+      const finalSegmentAngles = segments.map((_segment, index) => {
         const segmentAngle = (index * angleStep + finalAngle) % 360;
         const resultFixed = segmentAngle.toFixed(0);
         return resultFixed;

@@ -10,7 +10,8 @@ import { MutationObserver } from "@tanstack/react-query";
 import { queryClient } from "@/shared/api/queryClient";
 import { setUserCredentials } from "../../libs/userService";
 import { setAccessToken } from "@/entities/token/libs/tokenService";
-import { ICurrentUserResponse } from "../../types/types";
+import { ICurrentUserResponse, IUserResponse } from "../../types/types";
+import { decrypt } from "@/shared/helpers/cryptoHash";
 
 const createSliceWithThunks = buildCreateSlice({
   creators: { asyncThunk: asyncThunkCreator },
@@ -19,6 +20,9 @@ const createSliceWithThunks = buildCreateSlice({
 const initialState: IUserState = {
   user: null,
   currentUser: null,
+  userDiscount: [],
+  userPaymentHistory: [],
+  userBonusesHistory: [],
 };
 
 export const userSlice = createSliceWithThunks({
@@ -26,6 +30,9 @@ export const userSlice = createSliceWithThunks({
   initialState,
   selectors: {
     userInfo: (state) => state.user,
+    currentUser: (state) => state.currentUser,
+    userPaymentHistory: (state) => state.userPaymentHistory,
+    userBonusesHistory: (state) => state.userBonusesHistory,
   },
   reducers: (create) => ({
     setUserCredentials: create.asyncThunk<
@@ -38,9 +45,14 @@ export const userSlice = createSliceWithThunks({
           await new MutationObserver(queryClient, {
             mutationFn: setUserCredentials,
             mutationKey: ["telegram-user"],
-            onSuccess: (data) => {
+            onSuccess: async (data) => {
               if (data) {
-                setAccessToken(data.access_token);
+                const response: { iv: []; data: []; tag: [] } = data;
+                const decryptedData: IUserResponse = await decrypt(
+                  response,
+                  "9fGDzagmHOCYEvjw"
+                );
+                setAccessToken(decryptedData.access_token);
               }
             },
           }).mutate(telegramUser);
@@ -58,6 +70,27 @@ export const userSlice = createSliceWithThunks({
     setCurrentUser: create.reducer(
       (state, { payload }: PayloadAction<ICurrentUserResponse>) => {
         state.currentUser = payload;
+      }
+    ),
+    setUserDiscount: create.reducer(
+      (state, { payload }: PayloadAction<IUserState["userDiscount"]>) => {
+        state.userDiscount = payload;
+      }
+    ),
+    setPaymentHistory: create.reducer(
+      (state, { payload }: PayloadAction<IUserState["userPaymentHistory"]>) => {
+        state.userPaymentHistory = payload.map((payload) => ({
+          ...payload,
+          id: crypto.randomUUID(),
+        }));
+      }
+    ),
+    setBonusesHistory: create.reducer(
+      (state, { payload }: PayloadAction<IUserState["userBonusesHistory"]>) => {
+        state.userBonusesHistory = payload.map((payload) => ({
+          ...payload,
+          id: crypto.randomUUID(),
+        }));
       }
     ),
   }),

@@ -6,12 +6,18 @@ import { useRef, useState } from "react";
 export const useScopes = () => {
   const [spinning, setSpinning] = useState(false);
   const [winnerIndex, setWinnerIndex] = useState<number | null>(null);
-  const [winner, setWinner] = useState<string | null>(null);
+  const [winner, setWinner] = useState<{
+    title: string;
+    reward_id: number;
+  } | null>(null);
   const scoresValue = useAppSelector(scoresSelectors.scoresValue);
 
   const wheelRef = useRef<HTMLCanvasElement | null>(null);
 
-  const onFinished = (winner: string, winnerIndex: number) => {
+  const onFinished = (
+    winner: { title: string; reward_id: number },
+    winnerIndex: number
+  ) => {
     setWinnerIndex(winnerIndex);
     setWinner(winner);
   };

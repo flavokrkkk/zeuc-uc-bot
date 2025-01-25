@@ -13,7 +13,7 @@ import {
   setAccessToken,
 } from "@/entities/token/libs/tokenService";
 
-const ViewerContext = createContext<IViewerState & IViewerHandler>({
+export const ViewerContext = createContext<IViewerState & IViewerHandler>({
   isAuthenticated: false,
   loginViewer: () => {},
   logoutViewer: () => {},
