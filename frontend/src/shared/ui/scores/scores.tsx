@@ -44,9 +44,7 @@ const Wheel: React.FC<WheelProps> = ({
       });
 
       context.fillStyle =
-        index === winnerIndex
-          ? "#c084fc" // Подсвечиваем выигравшую ячейку
-          : finalColors[index]; // Применяем равномерно распределенные цвета
+        index === winnerIndex ? "#c084fc" : finalColors[index];
 
       context.fill();
 

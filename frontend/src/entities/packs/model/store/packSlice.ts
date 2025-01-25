@@ -84,7 +84,16 @@ export const packSlice = createSlice({
       state.totalPacks = 0;
       state.selectedPacks = [];
       state.isSelected = false;
+      state.packSelects = state.packSelects.map((item) => ({
+        ...item,
+        multiplicationUc: 0,
+      }));
     }),
+    setPacks: create.reducer(
+      (state, { payload }: PayloadAction<Array<IPack>>) => {
+        state.packSelects = payload;
+      }
+    ),
   }),
 }).injectInto(rootReducer);
 
