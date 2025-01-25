@@ -1,10 +1,20 @@
 zeusucbot.shop {
-    tls internal
+    tls {
+        issuer acme {
+            contact your@email.com
+            preferred_chains smallest
+        }
+    }
     root * /frontend/
     file_server
 }
 
 zeusucbot.shop/api/* {
-    tls internal
+    tls {
+        issuer acme {
+            contact your@email.com
+            preferred_chains smallest
+        }
+    }
     reverse_proxy http://app:8000
-}   
+}
