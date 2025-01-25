@@ -5,11 +5,11 @@ services:
    image: caddy:latest
    container_name: caddy
    ports:
-     - "80:80" 
-     - "443:443"
+     - "80:80"
+     - "443:443" 
    volumes:
      - ./Caddyfile:/etc/caddy/Caddyfile
-     - frontend_dist:/srv
+     - frontend_dist:/frontend
      - caddy_data:/data
      - caddy_config:/config
    networks:
@@ -21,7 +21,7 @@ services:
    build:
      context: ./frontend
    volumes:
-     - ./frontend/dist:/app/dist
+     - frontend_dist:/app/dist
    networks:
      - app_network
 

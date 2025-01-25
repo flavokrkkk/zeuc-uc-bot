@@ -7,4 +7,4 @@ zeusucbot.shop {
 zeusucbot.shop/api/* {
     tls internal
     reverse_proxy http://app:8000
-}
+}   
