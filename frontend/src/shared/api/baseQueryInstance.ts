@@ -170,5 +170,5 @@ export class AxiosClient {
   }
 }
 
-export const axiosNoAuth = new AxiosClient("https://zeusucbot.shop/api/");
-export const axiosAuth = new AxiosClient("https://zeusucbot.shop/api/", true);
+export const axiosNoAuth = new AxiosClient("http://193.233.20.72/api/");
+export const axiosAuth = new AxiosClient("http://193.233.20.72//api/", true);
