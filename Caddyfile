@@ -4,14 +4,14 @@ zeusucbot.shop/api/* {
 }
 
 zeusucbot.shop {
-	root *  /frontend/
-	file_server
-	encode gzip
-	tls internal
-	log {
-		output file /var/log/caddy/access.log
-	}
-	handle /api/* {
-		reverse_proxy http://app:8000
-	}
+    root * /srv
+    file_server
+    encode gzip
+    tls internal
+    log {
+        output file /var/log/caddy/access.log
+    }
+    handle /api/* {
+        reverse_proxy http://app:8000
+    }
 }
