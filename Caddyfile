@@ -1,17 +1,21 @@
-zeusucbot.shop/api/* {
-	tls internal
-	reverse_proxy http://app:8000
+zeusucbot.shop {
+    tls {
+        issuer acme {
+            contact your@email.com
+            preferred_chains smallest
+        }
+    }
+    root * /frontend/
+    file_server
 }
 
-zeusucbot.shop {
-    root * /srv
-    file_server
-    encode gzip
-    tls internal
-    log {
-        output file /var/log/caddy/access.log
+
+zeusucbot.shop/api/* {
+    tls {
+        issuer acme {
+            contact magomedovmarif2@gmail.com
+            preferred_chains smallest
+        }
     }
-    handle /api/* {
-        reverse_proxy http://app:8000
-    }
+    reverse_proxy http://app:8000
 }
