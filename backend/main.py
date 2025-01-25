@@ -20,8 +20,10 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000", 
-        "http://81.177.221.219/",
-        "http://81.177.221.219"
+        "https://zeusucbot.shop/",
+        "https://zeusucbot.shop",
+        "http://213.226.127.164/",
+        "http://213.226.127.164"
     ],
     allow_credentials=True,
     allow_methods=["*"],
