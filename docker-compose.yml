@@ -5,7 +5,7 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf 
     ports:
-      - "80:80"
+      - "8060:80"
     depends_on:
       - app
     networks:
@@ -36,4 +36,8 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
 volumes:
- postgres_data:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge
