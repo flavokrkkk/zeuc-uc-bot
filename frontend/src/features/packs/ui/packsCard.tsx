@@ -17,8 +17,8 @@ interface IPacksCard {
 const PacksCard: FC<IPacksCard> = ({ card, handleSelectPack }) => {
   return (
     <div key={card.id} className="w-full space-y-1 text-white">
-      <div className="h-[162px] space-y-0 bg-dark-200 px-4 justify-evenly flex-col w-full  аcursor-pointer border border-green-100 flex rounded-2xl">
-        <section className="space-y-1">
+      <div className="h-[166px] space-y-0 bg-dark-200 px-4 justify-evenly flex-col w-full  аcursor-pointer border border-green-100 flex rounded-2xl">
+        <section className="space-y-1 mb-2">
           <section className="flex justify-between items-center">
             <span className="flex items-center space-x-1">
               <h1 className="text-2xl">{card.uc_amount}</h1>

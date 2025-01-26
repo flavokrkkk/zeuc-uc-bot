@@ -1,6 +1,6 @@
-import { IPack } from "@/entities/packs/types/types";
+import { EPaymentMethods, IPack } from "@/entities/packs/types/types";
 import { getPaymentUrl } from "@/entities/payment/libs/paymentService";
-import { IPayementRequest, IPaymentWrap } from "@/entities/payment/types/types";
+import { IPayementRequest } from "@/entities/payment/types/types";
 import { useMutation } from "@tanstack/react-query";
 import { useMemo } from "react";
 
@@ -16,7 +16,7 @@ export const usePaymentMutate = ({
   const requestPayment = useMemo(
     () => ({
       amount: totalSum,
-      method_slug: "sbp" as IPaymentWrap["method_slug"],
+      method_slug: EPaymentMethods.SBP,
       player_id: 111,
       uc_packs: selectPacks.reduce((acc: Array<IPayementRequest>, item) => {
         const obj: IPayementRequest = {
@@ -37,13 +37,18 @@ export const usePaymentMutate = ({
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["payment", "url"],
-    mutationFn: () => getPaymentUrl(requestPayment),
+    mutationFn: ({ paymentMethod }: { paymentMethod: EPaymentMethods }) =>
+      getPaymentUrl({ ...requestPayment, method_slug: paymentMethod }),
     onSuccess: (response) => {
       window.location.href = response.url;
     },
   });
 
-  const handleGetPayLink = () => mutate();
+  const handleGetPayLink = (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (!event.currentTarget.value)
+      throw new Error("Value is not a valid HTMLButtonElement!");
+    mutate({ paymentMethod: event.currentTarget.value as EPaymentMethods });
+  };
 
   return {
     isPending,
