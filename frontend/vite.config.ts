@@ -2,7 +2,7 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import svgr from "vite-plugin-svgr";
 import path from "path";
-// import vitePluginBundleObfuscator from "vite-plugin-bundle-obfuscator";
+import vitePluginBundleObfuscator from "vite-plugin-bundle-obfuscator";
 
 export default defineConfig({
   server: {
@@ -23,28 +23,28 @@ export default defineConfig({
       },
       include: ["**/*.svg"],
     }),
-    // vitePluginBundleObfuscator({
-    //   enable: true,
-    //   log: false,
-    //   autoExcludeNodeModules: true,
-    //   threadPool: true,
+    vitePluginBundleObfuscator({
+      enable: true,
+      log: false,
+      autoExcludeNodeModules: true,
+      threadPool: true,
 
-    //   options: {
-    //     compact: true,
-    //     controlFlowFlattening: true,
-    //     identifierNamesGenerator: "hexadecimal",
-    //     deadCodeInjection: false,
-    //     debugProtection: false,
-    //     disableConsoleOutput: false,
-    //     selfDefending: true,
-    //     simplify: true,
-    //     stringArray: false,
-    //     stringArrayCallsTransform: false,
-    //     stringArrayEncoding: [],
-    //     stringArrayThreshold: 0.75,
-    //     unicodeEscapeSequence: false,
-    //   },
-    // }),
+      options: {
+        compact: true,
+        controlFlowFlattening: true,
+        identifierNamesGenerator: "hexadecimal",
+        deadCodeInjection: false,
+        debugProtection: false,
+        disableConsoleOutput: false,
+        selfDefending: true,
+        simplify: true,
+        stringArray: false,
+        stringArrayCallsTransform: false,
+        stringArrayEncoding: [],
+        stringArrayThreshold: 0.75,
+        unicodeEscapeSequence: false,
+      },
+    }),
   ],
   resolve: {
     alias: {
