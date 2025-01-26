@@ -1,13 +1,14 @@
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, TypeVar
 
 from pydantic import UUID4
 from sqlalchemy import Result, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import MappedColumn
 
+ModelType = TypeVar("R")
 
-class BaseRepository[ModelType](ABC):
+class BaseRepository(ABC):
     @abstractmethod
     async def get_item(self, item_id: int) -> ModelType | None:
         raise NotImplementedError
@@ -31,7 +32,7 @@ class BaseRepository[ModelType](ABC):
         raise NotImplementedError
 
 
-class SqlAlchemyRepository[ModelType](BaseRepository):
+class SqlAlchemyRepository(BaseRepository):
     def __init__(self, session: AsyncSession):
         self.session = session
 
