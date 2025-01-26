@@ -169,5 +169,6 @@ export class AxiosClient {
     }
   }
 }
+
 export const axiosNoAuth = new AxiosClient("https://zeusucbot.shop//api/");
 export const axiosAuth = new AxiosClient("https://zeusucbot.shop/api/", true);
