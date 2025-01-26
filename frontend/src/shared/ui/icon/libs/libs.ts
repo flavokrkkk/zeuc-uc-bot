@@ -2,7 +2,6 @@ import UcOutlined from "../../../../../public/icons/uc-outlined.svg";
 import PointOutlined from "../../../../../public/icons/point-outlined.svg";
 import BgOutlined from "../../../../../public/icons/bg-outlined.svg";
 import BgUcOutlined from "../../../../../public/icons/uc-bg-outlined.svg";
-import AvatarkaOutlined from "../../../../../public/icons/avatarka-mock-outlined.svg";
 import MinusOutlined from "../../../../../public/icons/minus-outlined.svg";
 import PlusOutlined from "../../../../../public/icons/plus-outlined.svg";
 import BagsOutlined from "../../../../../public/icons/bags-outlined.svg";
@@ -35,7 +34,6 @@ export const IconDictionary: Record<string, string> = {
   [IconTypes.POINT_OUTLINED]: PointOutlined,
   [IconTypes.BG_OUTLINED]: BgOutlined,
   [IconTypes.BG_UC_OUTLINED]: BgUcOutlined,
-  [IconTypes.AVATARKA_OUTLINED]: AvatarkaOutlined,
   [IconTypes.MINUS_OUTLINED]: MinusOutlined,
   [IconTypes.PLUS_OUTLINED]: PlusOutlined,
 
