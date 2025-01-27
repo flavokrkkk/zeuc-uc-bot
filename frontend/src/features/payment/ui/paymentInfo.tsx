@@ -3,12 +3,15 @@ import { ICurrentUserResponse } from "@/entities/user/types/types";
 import PacksBadge from "@/features/packs/ui/packsBadge";
 import { IconTypes } from "@/shared/ui/icon/libs/libs";
 import { Icon } from "@/shared/ui/icon/ui/icon";
-import { FC } from "react";
+import { FC, useCallback } from "react";
 import {
   Button,
   ButtonColors,
   ButtonRoundSizes,
 } from "../../../shared/ui/button/button";
+import { useActions } from "@/shared/hooks/useActions";
+import { useNavigate } from "react-router-dom";
+import { ERouteNames } from "@/shared/libs/utils/pathVariables";
 
 interface IPaymentInfo {
   totalPacks: number;
@@ -27,6 +30,22 @@ const PaymentInfo: FC<IPaymentInfo> = ({
   handleSelectPack,
   handleUnSelectPack,
 }) => {
+  const { setUnSelectPacks } = useActions();
+  const navigate = useNavigate();
+
+  const handleDeletePack = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      if (!event.currentTarget.value) throw new Error("Not a valid value!");
+      if (selectedPacks.length === 1) {
+        setUnSelectPacks({ id: event.currentTarget.value, type: "total" });
+        navigate(ERouteNames.CATALOG_PAGE, { replace: true });
+        return;
+      }
+      setUnSelectPacks({ id: event.currentTarget.value, type: "total" });
+    },
+    [selectedPacks.length]
+  );
+
   return (
     <section className="space-y-4">
       <section className="flex  flex-col">
@@ -37,6 +56,7 @@ const PaymentInfo: FC<IPaymentInfo> = ({
               pack={pack}
               handleSelectPack={handleSelectPack}
               handleUnSelectPack={handleUnSelectPack}
+              handleDeletePack={handleDeletePack}
             />
           ))}
         </div>

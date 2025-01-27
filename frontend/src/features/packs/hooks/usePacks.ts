@@ -30,7 +30,7 @@ export const usePacks = () => {
   const handleUnSelectPack = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       if (!event.currentTarget.value) throw new Error("Invalidate id uc!");
-      setUnSelectPacks(event.currentTarget.value);
+      setUnSelectPacks({ id: event.currentTarget.value, type: "count" });
     },
     []
   );

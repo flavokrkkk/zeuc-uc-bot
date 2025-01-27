@@ -41,7 +41,6 @@ export const packSlice = createSlice({
 
         state.selectedPacks = state.selectedPacks.map((el) => {
           if (el.id === state.packSelects[searchUc].id) {
-            console.log("eee");
             return state.packSelects[searchUc];
           }
           return el;
@@ -56,8 +55,15 @@ export const packSlice = createSlice({
       }
     ),
     setUnSelectPacks: create.reducer(
-      (state, { payload }: PayloadAction<IPack["id"]>) => {
-        const searchUc = state.packSelects.findIndex((uc) => uc.id === payload);
+      (
+        state,
+        {
+          payload,
+        }: PayloadAction<{ id: IPack["id"]; type?: "total" | "count" }>
+      ) => {
+        const searchUc = state.packSelects.findIndex(
+          (uc) => uc.id === payload.id
+        );
 
         if (~searchUc) {
           const finishPrice =
@@ -73,11 +79,16 @@ export const packSlice = createSlice({
 
         state.selectedPacks = state.selectedPacks.map((el) => {
           if (el.id === state.packSelects[searchUc].id) {
-            console.log("eee");
             return state.packSelects[searchUc];
           }
           return el;
         });
+
+        if (payload.type === "total") {
+          state.selectedPacks = state.selectedPacks.filter(
+            (pack) => pack.id !== payload.id
+          );
+        }
 
         state.totalPrice = state.packSelects.reduce((acc, item) => {
           return acc + item.total_sum;
