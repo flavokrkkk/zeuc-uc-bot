@@ -14,13 +14,14 @@ from backend.dto.uc_code_dto import (
     UCPackModel
 )
 from backend.repositories.uc_code_repository import UCCodeRepository
+from backend.utils.config.config import CODEEPAY_API_KEY
 
 
 class PaymentService:
     def __init__(self, repository: UCCodeRepository):
         self.codeepay_api_url = "https://codeepay.ru/initiate_payment"
         self.ucodeium_api_url = "https://ucodeium.com/api/activate"
-        self.codeepay_api_key = "e158c8cb-e6cc-4cb7-b5fb-777abe0c2957"
+        self.codeepay_api_key = CODEEPAY_API_KEY
         self.ucodeium_api_key = "e158c8cb-e6cc-4cb7-b5fb-777abe0c2957"
         self.repository = repository
 

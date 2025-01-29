@@ -22,9 +22,12 @@ env = Env()
 env.read_env()
 
 
-db_config = DatabaseConfig(
+DB_CONFIG = DatabaseConfig(
     **{field: env.str(field.upper()) for field in DatabaseConfig.model_fields}
 )
-jwt_config = JwtConfig(
+JWT_CONFIG = JwtConfig(
     **{field: env.str(field.upper()) for field in JwtConfig.model_fields}
 )
+CODEEPAY_API_KEY = env.str("CODEEPAY_API_KEY")
+UCODEIUM_API_KEY = env.str("UCODEIUM_API_KEY")
+BONUC_CIRCLE_PRICE = 100

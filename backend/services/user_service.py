@@ -1,9 +1,15 @@
 from backend.database.models.models import Reward, User
 from backend.dto.user_dto import BonusesHistoryModel, UserModel
-from backend.errors.user_errors import UserAlreadyActivateReferal, UserNotFound, UserNotHaveEnoughBonuses, UserReferalCodeNotFound
+from backend.errors.purchase_errors import InvalidPlayerId
+from backend.errors.user_errors import (
+    UserAlreadyActivateReferal, 
+    UserNotFound, 
+    UserNotHaveEnoughBonuses, 
+    UserReferalCodeNotFound
+)
 from backend.repositories import UserRepository
-from backend.utils.config.constants import BONUC_CIRCLE_PRICE
 from backend.utils.config.enums import BonusStatuses
+from backend.utils.config.config import BONUC_CIRCLE_PRICE
 
 
 class UserService:
@@ -105,3 +111,8 @@ class UserService:
         is_deleted = await self.repository.update_bonuses(tg_id, bonuses, BonusStatuses.USE.value)
         if not is_deleted:
             raise UserNotHaveEnoughBonuses
+
+    async def check_player_id(self, player_id: str):
+        if len(player_id) >= 9 and player_id.startswith(5):
+            return
+        raise InvalidPlayerId

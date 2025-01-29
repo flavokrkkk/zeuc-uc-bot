@@ -61,6 +61,7 @@ async def get_byu_uc_code_url(
             current_user.tg_id,
             form.discount
         )
+    await user_service.check_player_id(form.player_id)
     response = await payment_service.get_payment_url(form, current_user.tg_id)
     await user_service.update_bonuses(current_user.tg_id, form.points)
     return await purchase_service.create_purchase(
