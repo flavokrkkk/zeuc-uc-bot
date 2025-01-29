@@ -10,9 +10,16 @@ class PurchaseService:
     def __init__(self, repository: PurchaseRepository):
         self.repository = repository
 
-    async def create_purchase(self, form: CreatePurchaseModel, codeepay_response: BuyUCCodeUrlModel) -> PurchaseModel:
+    async def create_purchase(
+        self, 
+        form: CreatePurchaseModel, 
+        codeepay_response: BuyUCCodeUrlModel
+    ) -> PurchaseModel:
         if form.metadata_:
-            form.metadata_["uc_packs"] = [uc_pack.model_dump() for uc_pack in form.metadata_["uc_packs"]]
+            form.metadata_["uc_packs"] = [
+                uc_pack.model_dump() 
+                for uc_pack in form.metadata_["uc_packs"]
+            ]
             form.metadata_ = json.dumps(form.metadata_)
         purchase = await self.repository.get_item(form.payment_id)
         if not purchase:

@@ -7,4 +7,11 @@ class UCCodesStates(StatesGroup):
     check_codes_by_value = State()
     delete_code = State()
     upload_codes = State()
-    succes = State()
+    success = State()
+    
+
+class AddNewPackStates(StatesGroup):
+    add_uc_pack_amount = State()
+    add_uc_pack_price = State()
+    add_uc_pack_file = State()
+    add_uc_pack_point = State()

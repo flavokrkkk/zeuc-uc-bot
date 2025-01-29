@@ -1,5 +1,5 @@
 from sqlalchemy import select
-from backend.database.models.models import Discount, Price, Reward, User
+from backend.database.models.models import Discount, Price, Reward, Setting, User
 from backend.database.models.models import UCCode
 
 
@@ -10,8 +10,11 @@ async def test_db(session):
             await session.close()
             return
         
-        test_user = User(tg_id=1,username="test")
-        test_referer = User(tg_id=2,username="test_referer")
+        mago = User(tg_id=5163648472, username="magoxdd", is_admin=True)
+        setting = Setting(store_is_on=True)
+
+        for i in range(100):
+            session.add(User(tg_id=i, username=f"test_{i}", in_black_list=True))
         
         uc_codes_values = {60: [100, 1], 325: [200, 4], 660: [300, 5], 1800: [2000, 8], 3850: [5500, 10], 8100: [10000, 20]}
         
@@ -50,8 +53,8 @@ async def test_db(session):
 
         session.add_all(uc_codes)
         session.add_all(rewards)
-        session.add(test_user)
-        session.add(test_referer)
+        session.add(mago)
+        session.add(setting)
         await session.commit()
         await session.close()
     except Exception as e:

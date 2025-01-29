@@ -1,6 +1,6 @@
 from backend.database.models.models import Reward, User
 from backend.dto.user_dto import BonusesHistoryModel, UserModel
-from backend.errors.user_errors import UserAlreadyActivateReferal, UserNotFound, UserReferalCodeNotFound
+from backend.errors.user_errors import UserAlreadyActivateReferal, UserNotFound, UserNotHaveEnoughBonuses, UserReferalCodeNotFound
 from backend.repositories import UserRepository
 from backend.utils.config.constants import BONUC_CIRCLE_PRICE
 from backend.utils.config.enums import BonusStatuses
@@ -88,7 +88,7 @@ class UserService:
         current_user: User = await self.repository.get_item(user_id)
         referer_user: User = await self.repository.get_item(current_user.referer_id)
         if referer_user and current_user.referer_id:
-            await self.repository.add_bonuses(
+            await self.repository.update_bonuses(
                 current_user.referer_id, 
                     bonuses, 
                 BonusStatuses.GET.value
@@ -101,3 +101,7 @@ class UserService:
             for bonus in user.bonuses_history
         ]
     
+    async def delete_bonuses(self, tg_id: int, bonuses: int):
+        is_deleted = await self.repository.update_bonuses(tg_id, bonuses, BonusStatuses.USE.value)
+        if not is_deleted:
+            raise UserNotHaveEnoughBonuses

@@ -15,7 +15,15 @@ def all_uc_codes_keyboard(uc_codes: list[tuple[int, int]]) -> InlineKeyboardBuil
         )
 
     keyboard.adjust(2)
-    return keyboard.as_markup()
+    keyboard = keyboard.as_markup()
+    p = []
+    keyboard.inline_keyboard.append([
+        InlineKeyboardButton(
+            text="Добавить пак", 
+            callback_data=f"add_uc_pack"
+        )
+    ])
+    return keyboard
 
 
 @add_back_to_menu_button(is_admin=True)

@@ -27,12 +27,11 @@ def main_menu_keyboard() -> InlineKeyboardMarkup:
                 web_app=WebAppInfo(url=webapp_url)
             )
         ],
-        [InlineKeyboardButton(text="Цены 💵", callback_data="prices")],
         [
             InlineKeyboardButton(text="Поддержка 📞", callback_data="support"),
             InlineKeyboardButton(text="Отзывы📕", callback_data="reviews")
         ],
-        [InlineKeyboardButton(text="пригласить друга", callback_data="invite")]
+        [InlineKeyboardButton(text="Пригласить друга 📨", callback_data="invite")]
     ]
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
@@ -40,14 +39,13 @@ def main_menu_keyboard() -> InlineKeyboardMarkup:
 def admin_menu_keyboard() -> InlineKeyboardMarkup:
     buttons = [
         [
-            InlineKeyboardButton(text="🇹🇷 Цены", callback_data="prices"),
             InlineKeyboardButton(text="🇹🇷 Коды", callback_data="uc_codes")
         ],
         [
             InlineKeyboardButton(text="🇹🇷 Статистика (Bot)", callback_data="bot_stats"),
             InlineKeyboardButton(text="🇹🇷 Статистика (UC)", callback_data="uc_stats")
         ],
-        [InlineKeyboardButton(text="🇹🇷 Вкл | выкл", callback_data="handle_app")],
+        [InlineKeyboardButton(text="🇹🇷 Вкл | выкл", callback_data="off_or_on_store")],
         [InlineKeyboardButton(text="🇹🇷 Черный список", callback_data="black_list")]
     ]
     return InlineKeyboardMarkup(inline_keyboard=buttons)
