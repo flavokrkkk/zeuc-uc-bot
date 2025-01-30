@@ -14,7 +14,7 @@ async def test_db(session):
         setting = Setting(store_is_on=True)
 
         for i in range(100):
-            session.add(User(tg_id=i, username=f"test_{i}", in_black_list=True))
+            session.add(User(tg_id=i, username=f"test_{i}", in_black_list=True, bonuses=30))
         
         uc_codes_values = {60: [100, 1], 325: [200, 4], 660: [300, 5], 1800: [2000, 8], 3850: [5500, 10], 8100: [10000, 20]}
         
