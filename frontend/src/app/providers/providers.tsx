@@ -7,8 +7,6 @@ import { queryClient } from "@/shared/api/queryClient";
 import { ViewerProvider } from "@/entities/viewer/models/context/providers";
 
 const Providers = () => {
-  console.log(import.meta.env.VITE_SERVER_URL);
-
   return (
     <QueryClientProvider client={queryClient}>
       <ViewerProvider>

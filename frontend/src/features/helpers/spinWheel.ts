@@ -48,7 +48,6 @@ export const spinWheel = (
       const winningSegmentIndex = finalSegmentAngles.findIndex((angle) => {
         return Number(angle) >= 315;
       });
-
       setWinnerIndex(winningSegmentIndex);
       onFinished(segments[winningSegmentIndex], winningSegmentIndex);
       setSpinning(false);

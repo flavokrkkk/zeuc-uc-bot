@@ -12,25 +12,36 @@ import {
 import { useActions } from "@/shared/hooks/useActions";
 import { useNavigate } from "react-router-dom";
 import { ERouteNames } from "@/shared/libs/utils/pathVariables";
+import { useAppSelector } from "@/shared/hooks/useAppSelector";
+import { userSelectors } from "@/entities/user/models/store/userSlice";
 
 interface IPaymentInfo {
+  discountId: number | null;
+  points: number;
   totalPacks: number;
   totalPrice: number;
   selectedPacks: Array<IPack>;
   userInfo: ICurrentUserResponse | null;
+  handleUseDiscountId: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  handleUsePoints: (event: React.MouseEvent<HTMLButtonElement>) => void;
   handleSelectPack: (event: React.MouseEvent<HTMLButtonElement>) => void;
   handleUnSelectPack: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 const PaymentInfo: FC<IPaymentInfo> = ({
+  points,
   totalPrice,
   totalPacks,
   userInfo,
+  discountId,
   selectedPacks,
+  handleUseDiscountId,
+  handleUsePoints,
   handleSelectPack,
   handleUnSelectPack,
 }) => {
   const { setUnSelectPacks } = useActions();
+  const userDiscount = useAppSelector(userSelectors.userDiscount);
   const navigate = useNavigate();
 
   const handleDeletePack = useCallback(
@@ -83,14 +94,38 @@ const PaymentInfo: FC<IPaymentInfo> = ({
           </div>
           <Button
             value={String(userInfo?.bonuses)}
-            isDisabled={(userInfo?.bonuses ?? 0) <= 0}
+            isDisabled={(userInfo?.bonuses ?? 0) <= 0 || (points ?? 0) > 0}
             className="px-4"
             rounded={ButtonRoundSizes.ROUNDED_LG}
             bgColor={ButtonColors.GREEN}
+            onClick={handleUsePoints}
           >
             Использовать
           </Button>
         </div>
+        {userDiscount.map((discount) => (
+          <div key={discount.discount.discount_id} className="flex space-x-6">
+            <div className="flex space-x-3 items-center">
+              <span>
+                {discount.discount.value} скидка на покупку от{" "}
+                {discount.discount?.min_payment_value} рублей
+              </span>
+            </div>
+            <Button
+              value={String(discount.discount.discount_id)}
+              isDisabled={
+                discount.discount?.min_payment_value > totalPrice ||
+                Boolean(discountId)
+              }
+              className="px-4"
+              rounded={ButtonRoundSizes.ROUNDED_LG}
+              bgColor={ButtonColors.GREEN}
+              onClick={handleUseDiscountId}
+            >
+              Использовать
+            </Button>
+          </div>
+        ))}
       </section>
       <hr />
     </section>

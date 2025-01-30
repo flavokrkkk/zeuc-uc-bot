@@ -37,7 +37,7 @@ export const scoresSlice = createSliceWithThunks({
           }
           if (score.reward_type === ERewardTypes.UC_CODE) {
             return {
-              title: `${score.uc_code?.uc_amount} UC`,
+              title: `${score.uc_amount} UC`,
               reward_id: score.reward_id,
             };
           }

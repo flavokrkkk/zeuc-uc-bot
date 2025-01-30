@@ -12,11 +12,10 @@ import { useAppSelector } from "@/shared/hooks/useAppSelector";
 import { userSelectors } from "@/entities/user/models/store/userSlice";
 
 const ScoresPage = () => {
-  const { handleSetScoreGift } = useScoreMutation();
+  const { handleSetScoreGift, isGetPrize, setIsGetPrize } = useScoreMutation();
   const currentUser = useAppSelector(userSelectors.currentUser);
   const { winner, scores, spinning, wheelRef, winnerIndex, calcSpinWheel } =
-    useScopes();
-
+    useScopes(setIsGetPrize);
   return (
     <section className="w-full text-white h-full items-center space-y-2 flex flex-col justify-center pt-8">
       <div className="flex justify-center w-full  items-center flex-col overflow-hidden pt-10">
@@ -37,7 +36,7 @@ const ScoresPage = () => {
             value={String(winner.reward_id)}
             className="h-14 w-full cursor-pointer flex items-center justify-center rounded-md"
             bgColor={ButtonColors.GREEN}
-            isDisabled={spinning}
+            isDisabled={spinning || isGetPrize}
             rounded={ButtonRoundSizes.ROUNDED_XL}
             onClick={handleSetScoreGift}
           >
@@ -49,12 +48,12 @@ const ScoresPage = () => {
       <Button
         className="h-14 w-full cursor-pointer flex items-center justify-center rounded-md"
         bgColor={ButtonColors.TRANSPARENT_BLACK}
-        isDisabled={spinning || (currentUser?.bonuses ?? 0) < 60}
+        isDisabled={spinning || (currentUser?.bonuses ?? 0) < 100}
         onClick={calcSpinWheel}
         borderSize={ButtonBorderSizes.BORDER_LG}
         rounded={ButtonRoundSizes.ROUNDED_XL}
       >
-        {winner ? " Крутить снова / 60 UC" : " Крутить / 60 UC"}
+        {winner ? " Крутить снова / 100 бонусов" : " Крутить / 100 бонусов"}
       </Button>
     </section>
   );

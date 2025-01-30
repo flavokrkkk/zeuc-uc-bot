@@ -43,7 +43,13 @@ export interface IUserBonusesHistory {
   created_at: number;
 }
 
+export interface IDiscountModel {
+  discount_id: number;
+  value: number;
+  min_payment_value: number;
+}
+
 export interface IUserDiscount {
   count: number;
-  discount: number;
+  discount: IDiscountModel;
 }

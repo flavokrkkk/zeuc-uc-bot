@@ -3,7 +3,9 @@ import { spinWheel } from "@/features/helpers/spinWheel";
 import { useAppSelector } from "@/shared/hooks/useAppSelector";
 import { useRef, useState } from "react";
 
-export const useScopes = () => {
+export const useScopes = (
+  setIsGetPrize: React.Dispatch<React.SetStateAction<boolean>>
+) => {
   const [spinning, setSpinning] = useState(false);
   const [winnerIndex, setWinnerIndex] = useState<number | null>(null);
   const [winner, setWinner] = useState<{
@@ -22,8 +24,9 @@ export const useScopes = () => {
     setWinner(winner);
   };
 
-  const calcSpinWheel = () =>
-    spinWheel(
+  const calcSpinWheel = () => {
+    setIsGetPrize((prev) => prev && !prev);
+    return spinWheel(
       scoresValue,
       wheelRef,
       spinning,
@@ -31,6 +34,7 @@ export const useScopes = () => {
       setSpinning,
       setWinnerIndex
     );
+  };
 
   return {
     winner,

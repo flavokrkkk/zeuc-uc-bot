@@ -30,6 +30,7 @@ export const userSlice = createSliceWithThunks({
   initialState,
   selectors: {
     userInfo: (state) => state.user,
+    userDiscount: (state) => state.userDiscount,
     currentUser: (state) => state.currentUser,
     userPaymentHistory: (state) => state.userPaymentHistory,
     userBonusesHistory: (state) => state.userBonusesHistory,

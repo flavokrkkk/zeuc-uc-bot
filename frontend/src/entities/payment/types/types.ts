@@ -3,17 +3,18 @@ import { EPaymentMethods } from "@/entities/packs/types/types";
 export interface IPaymentWrap {
   amount: number;
   method_slug: EPaymentMethods;
-  player_id: number;
+  player_id: string;
   uc_packs: Array<IPayementRequest>;
   uc_sum: number;
+  discount: number | null;
+  points: number;
 }
 
 export interface IPayementRequest {
   uc_amount: number;
-  code: string;
   price_per_uc: number;
   total_sum: number;
-  count: number;
+  quantity: number;
 }
 
 export interface IPaymentResponse {

@@ -25,14 +25,14 @@ const PacksCard: FC<IPacksCard> = ({ card, handleSelectPack }) => {
               <Icon type={IconTypes.UC_OUTLINED} />
             </span>
             <span className="flex items-center space-x-1">
-              <h1 className="text-xs">20</h1>
+              <h1 className="text-xs">{card.point}</h1>
               <Icon type={IconTypes.POINT_OUTLINED} />
             </span>
           </section>
-          <p className="text-xs">{card.price_per_uc.price} рублей</p>
+          <p className="text-xs">{card.price_per_uc} рублей</p>
         </section>
         <Button
-          isDisabled={!!card.multiplication_uc}
+          isDisabled={!!card.multiplication_uc || Boolean(!card.quantity)}
           value={card.id}
           bgColor={ButtonColors.GREEN}
           rounded={ButtonRoundSizes.ROUNDED_XL}

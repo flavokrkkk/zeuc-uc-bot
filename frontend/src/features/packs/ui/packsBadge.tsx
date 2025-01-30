@@ -49,11 +49,11 @@ const PacksBadge: FC<IPacksBadge> = ({
           <Icon type={IconTypes.UC_OUTLINED} />
         </span>
       </div>
-      <div className="bg-gray-dark-100 w-[94px] h-[32px] flex items-center justify-between px-2 rounded-lg">
+      <div className="bg-gray-dark-100 w-[94px] h-[32px] flex items-center justify-between rounded-lg">
         <button
           disabled={pack.multiplication_uc === 1}
           value={pack.id}
-          className="rounded-lg flex items-center justify-center cursor-pointer h-full w-full"
+          className="rounded-lg flex items-center disabled:bg-gray-200 px-1 justify-center cursor-pointer h-full w-full"
           onClick={handleUnSelectPack}
         >
           <Icon type={IconTypes.MINUS_OUTLINED} />
@@ -63,15 +63,19 @@ const PacksBadge: FC<IPacksBadge> = ({
           {pack.multiplication_uc}
         </button>
         <button
+          disabled={pack.multiplication_uc === pack.quantity}
           value={pack.id}
-          className="rounded-lg cursor-pointer h-full w-full flex items-center justify-center"
+          className="rounded-lg cursor-pointer px-1 disabled:bg-gray-200 h-full w-full flex items-center justify-center"
           onClick={handleSelectPack}
         >
           <Icon type={IconTypes.PLUS_OUTLINED} />
         </button>
       </div>
       <div className="space-x-1 text-white">
-        <span>{pack.price_per_uc.price} рублей</span>
+        <div className="flex items-center space-x-2">
+          <span className="mt-[2px]">{pack.price_per_uc}</span>{" "}
+          <span>рублей</span>
+        </div>
       </div>
       {angleSwipe === "left" && (
         <button

@@ -7,11 +7,10 @@ export const enum EPaymentMethods {
 
 export interface IPack {
   id: string;
-  code: string;
   multiplication_uc: number;
-  price_per_uc: PaymentMethod;
-  point: number;
-  price: number;
+  price_per_uc: number;
+  quantity: number;
   total_sum: number;
+  point: number;
   uc_amount: number;
 }
