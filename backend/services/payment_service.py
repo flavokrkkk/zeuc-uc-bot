@@ -31,7 +31,7 @@ class PaymentService:
         uc_amount: int,
         price: float
     ) -> UCActivationResult:
-        with ClientSession() as session:
+        async with ClientSession() as session:
             async with session.post(
                 self.ucodeium_api_url,
                 headers={"X-Api-Key": self.ucodeium_api_key},
@@ -73,7 +73,7 @@ class PaymentService:
         
     async def get_payment_url(self, form: UCCodeGetBuyUrlModel, tg_id: int) -> BuyUCCodeUrlModel:
         internal_order_id = str(uuid4())
-        with ClientSession() as session:
+        async with ClientSession() as session:
             async with session.post(
                 self.codeepay_api_url,
                 headers={"X-Api-Key": self.codeepay_api_key},
