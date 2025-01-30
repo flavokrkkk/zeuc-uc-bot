@@ -10,3 +10,4 @@ environs
 bcrypt
 aiohttp
 cryptography
+psycopg2-binary

@@ -23,8 +23,8 @@ class PurchaseRepository(SqlAlchemyRepository):
         for metadata in metadata_list:
             metadata = json.loads(metadata)
             uc_pack = metadata["uc_packs"]
+            
             for pack in uc_pack:
-                print(uc_pack)
                 uc_amount = pack["uc_amount"]
                 count = pack["count"]
                 stats[uc_amount] += count

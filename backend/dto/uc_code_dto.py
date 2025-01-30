@@ -16,18 +16,17 @@ class CreateUCCodeModel(BaseModel):
 
 class UCCodeModel(BaseModel):
     uc_amount: int
-    code: str
-    price_per_uc: UCCodePrice
+    price_per_uc: float
+    quantity: int
     total_sum: int = 0
     multiplication_uc: int = 0
 
 
 class UCPackModel(BaseModel):
     uc_amount: int
-    code: str
     price_per_uc: int
     total_sum: int
-    count: int
+    quantity: int
 
 
 class UCCodeGetBuyUrlModel(BaseModel):
@@ -37,6 +36,7 @@ class UCCodeGetBuyUrlModel(BaseModel):
     uc_packs: list[UCPackModel]
     uc_sum: int
     discount: int = 0
+    points: int
 
 
 class MetadataModel(BaseModel):
@@ -59,6 +59,12 @@ class BuyUCCodeCallbackModel(BaseModel):
 class UCActivationResult(BaseModel):
     success: int
     response: dict
+
+
+class UCActivateRequestModel(BaseModel):
+    uc_code: str
+    player_id: int
+    uc_value: str
 
 
 class BuyUCCodeUrlModel(BaseModel):

@@ -7,7 +7,7 @@ from jwt import decode, encode, InvalidTokenError
 from backend.repositories.user_repository import UserRepository
 from backend.dto.user_dto import UserModel
 from backend.database.models.models import User
-from backend.utils.config.config import jwt_config
+from backend.utils.config.config import JWT_CONFIG
 from backend.errors.auth_errors import (
     InvalidToken,
     UserAlreadyNotRegister,
@@ -33,11 +33,11 @@ class AuthService:
 
     async def create_access_token(self, username: str, tg_id: int) -> str:
         expire = datetime.now() + timedelta(
-            minutes=jwt_config.JWT_ACCESS_TOKEN_TIME
+            minutes=JWT_CONFIG.JWT_ACCESS_TOKEN_TIME
         )
         data = {"sub": str(tg_id), "username": username, "exp": expire}
         token = encode(
-            data, jwt_config.JWT_SECRET, algorithm=jwt_config.JWT_ALGORITHM
+            data, JWT_CONFIG.JWT_SECRET, algorithm=JWT_CONFIG.JWT_ALGORITHM
         )
         return token
 
@@ -45,8 +45,8 @@ class AuthService:
         try:
             payload = decode(
                 token.credentials,
-                jwt_config.JWT_SECRET,
-                algorithms=[jwt_config.JWT_ALGORITHM],
+                JWT_CONFIG.JWT_SECRET,
+                algorithms=[JWT_CONFIG.JWT_ALGORITHM],
             )
             tg_id = payload.get("sub")
             username = payload.get("username")

@@ -5,6 +5,13 @@ from backend.database.models.base import Base
 from backend.utils.config.enums import PurchaseStatuses
 
 
+class Setting(Base):
+    __tablename__ = "settings"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    store_is_on: Mapped[bool] = mapped_column(default=True)
+
+
 class User(Base):
     __tablename__ = "users"
 
@@ -15,6 +22,7 @@ class User(Base):
     bonuses: Mapped[int] = mapped_column(BigInteger, default=0)
     referal_code: Mapped[str] = mapped_column(default=lambda: str(uuid4()))
     balance: Mapped[float] = mapped_column(BigInteger, default=0)
+    in_black_list: Mapped[bool] = mapped_column(default=False)
     
     discounts: Mapped[list['Discount']] = relationship(
         back_populates='users', 

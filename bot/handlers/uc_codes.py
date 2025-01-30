@@ -5,22 +5,15 @@ from aiogram import F, Bot, Router
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import BufferedInputFile, CallbackQuery, FSInputFile, Message
+from sqlalchemy.exc import IntegrityError
 
 from keyboards.commands import admin_menu_keyboard, back_to_menu
-from states.uc_codes import UCCodesStates
-from keyboards.admin import all_uc_codes_keyboard, uc_codes_options_keyboard
+from states.uc_codes import AddNewPackStates, UCCodesStates
+from keyboards.uc_codes import all_uc_codes_keyboard, uc_codes_options_keyboard
 from database.db_main import Database
 
 
 router = Router()
-
-
-@router.callback_query(F.data == "back_to_admin_menu")
-async def back_to_admin_menu(callback: CallbackQuery):
-    await callback.message.edit_text(
-        text="Вы находитесь в админ меню",
-        reply_markup=admin_menu_keyboard()
-    )
 
 
 @router.callback_query(F.data == "uc_codes")
@@ -78,10 +71,6 @@ async def delete_codes_quantity(message: Message, state: FSMContext, database: D
             uc_amount=uc_amount, 
             quantity=quantity
         )
-        deleted_codes = await database.uc_codes.delete_codes_by_value(
-            uc_amount=uc_amount, 
-            quantity=quantity
-        )
 
         if not deleted_codes:
             await message.answer("Нет кодов для удаления.")
@@ -96,8 +85,7 @@ async def delete_codes_quantity(message: Message, state: FSMContext, database: D
         await state.set_state(UCCodesStates.main)
         await message.answer_document(
             document=deleted_uc_codes_file,
-            caption="Список удалённых кодов",
-            reply_markup=back_to_menu(is_admin=True),
+            caption="Список удалённых кодов"
         )
             
 
@@ -119,17 +107,118 @@ async def upload_new_codes(
     database: Database, 
     bot: Bot
 ):
-    await state.set_state(UCCodesStates.succes)
+    try:
+        await state.set_state(UCCodesStates.success)
+        
+        file_data = BytesIO()
+        file = await bot.download(message.document.file_id, file_data)
+        
+        new_uc_codes = [uc_code.decode("utf-8") for uc_code in file.readlines()]
+        uc_amount = int((await state.get_data() or {}).get("uc_amount"))
+        await database.uc_codes.add_new_codes(new_uc_codes, uc_amount)
+        
+        message_text = f"Коды успешно добавлены. Вы добавили {len(new_uc_codes)} кодов"
+        await message.answer(
+            text=message_text,
+            reply_markup=back_to_menu(is_admin=True)
+        )
+    except IntegrityError:
+        await message.answer(
+            text="Код(-ы) уже добавлен(-ы)",
+            reply_markup=back_to_menu(is_admin=True)
+        )
+    except:
+        await message.answer(
+            text="Неверный формат файла",
+            reply_markup=back_to_menu(is_admin=True)
+        )
+
+
+@router.callback_query(F.data == "add_uc_pack", UCCodesStates.main)
+async def add_uc_pack_amount(callback: CallbackQuery, state: FSMContext):
+    await state.set_state(AddNewPackStates.add_uc_pack_amount)
+    await callback.message.edit_text(text="Введите количесто UC кодов в паке")
+
+
+@router.message(F.text, AddNewPackStates.add_uc_pack_amount)
+async def add_uc_pack_price(message: Message, state: FSMContext):
+    try:
+        uc_amount = int(message.text)
+        if uc_amount <= 0:
+            raise
+        else:
+            await state.update_data(uc_amount=uc_amount)
+            await state.set_state(AddNewPackStates.add_uc_pack_price)
+            await message.answer(text="Введите стоимость пака")
+    except:
+        await message.answer(
+            text="Неверное количество UC кодов",
+            reply_markup=back_to_menu(is_admin=True)
+        )
     
-    file_data = BytesIO()
-    file = await bot.download(message.document.file_id, file_data)
-    
-    new_uc_codes = [uc_code.decode("utf-8") for uc_code in file.readlines()]
-    uc_amount = int((await state.get_data() or {}).get("uc_amount"))
-    await database.uc_codes.add_new_codes(new_uc_codes, uc_amount)
-    
-    message_text = f"Коды успешно добавлены. Вы добавили {len(new_uc_codes)} кодов"
-    await message.answer(
-        text=message_text,
-        reply_markup=back_to_menu(is_admin=True)
-    )
+
+@router.message(F.text, AddNewPackStates.add_uc_pack_price)
+async def add_uc_pack_price(message: Message, state: FSMContext):
+    try:
+        price = int(message.text)
+        if price <= 0:
+            raise
+        else:
+            await state.update_data(price_per_uc=price)
+            await state.set_state(AddNewPackStates.add_uc_pack_point)
+            await message.answer(text="Введите количество бонусов за покупку")
+    except:
+        await message.answer(
+            text="Неверная стоимость пака",
+            reply_markup=back_to_menu(is_admin=True)
+        )
+
+
+@router.message(F.text, AddNewPackStates.add_uc_pack_point)
+async def add_uc_pack_point(message: Message, state: FSMContext):
+    try:
+        point = int(message.text)
+        if point <= 0:
+            raise
+        else:
+            await state.update_data(point=point)
+            await state.set_state(AddNewPackStates.add_uc_pack_file)
+            await message.answer(text="Отправьте файл с uc кодами")
+    except:
+        await message.answer(
+            text="Неверное количество бонусов",
+            reply_markup=back_to_menu(is_admin=True)
+        )
+
+
+@router.message(F.document, AddNewPackStates.add_uc_pack_file)
+async def upload_new_codes(
+    message: Message, 
+    state: FSMContext, 
+    database: Database, 
+    bot: Bot
+):
+    try:
+        await state.set_state(UCCodesStates.success)
+        
+        file_data = BytesIO()
+        file = await bot.download(message.document.file_id, file_data)
+        
+        new_uc_codes = [uc_code.decode("utf-8") for uc_code in file.readlines()]
+        await database.uc_codes.add_new_codes(new_uc_codes, **(await state.get_data()))
+        
+        message_text = f"Коды успешно добавлены. Вы добавили {len(new_uc_codes)} кодов"
+        await message.answer(
+            text=message_text,
+            reply_markup=back_to_menu(is_admin=True)
+        )
+    except IntegrityError:
+        await message.answer(
+            text="Код(-ы) уже добавлен(-ы)",
+            reply_markup=back_to_menu(is_admin=True)
+        )
+    except:
+        await message.answer(
+            text="Неверный формат файла",
+            reply_markup=back_to_menu(is_admin=True)
+        )

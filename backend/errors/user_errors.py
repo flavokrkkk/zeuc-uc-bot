@@ -56,3 +56,11 @@ class UserDiscountNotFound(HTTPException):
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Скидка не найдена",
         )
+
+
+class UserNotHaveEnoughBonuses(HTTPException):
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="У пользователя недостаточно бонусов",
+        )

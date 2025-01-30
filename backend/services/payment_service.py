@@ -1,57 +1,82 @@
 import asyncio
+from typing import Coroutine
 from uuid import uuid4
 from aiohttp import ClientSession
 from fastapi import HTTPException
 
 from backend.dto.purchase_dto import PurchaseModel
-from backend.dto.uc_code_dto import BuyUCCodeCallbackModel, BuyUCCodeUrlModel, UCActivationResult, UCCodeGetBuyUrlModel, UCPackModel
+from backend.dto.uc_code_dto import (
+    BuyUCCodeCallbackModel, 
+    BuyUCCodeUrlModel,
+    UCActivateRequestModel, 
+    UCActivationResult, 
+    UCCodeGetBuyUrlModel, 
+    UCPackModel
+)
+from backend.repositories.uc_code_repository import UCCodeRepository
+from backend.utils.config.config import CODEEPAY_API_KEY
 
 
 class PaymentService:
-    def __init__(self):
+    def __init__(self, repository: UCCodeRepository):
         self.codeepay_api_url = "https://codeepay.ru/initiate_payment"
         self.ucodeium_api_url = "https://ucodeium.com/api/activate"
-        self.codeepay_api_key = "e158c8cb-e6cc-4cb7-b5fb-777abe0c2957"
+        self.codeepay_api_key = CODEEPAY_API_KEY
         self.ucodeium_api_key = "e158c8cb-e6cc-4cb7-b5fb-777abe0c2957"
+        self.repository = repository
 
-    async def _post_request(self, **kwargs) -> UCActivationResult:
-        headers: dict[str, str] = {"X-Api-Key": self.ucodeium_api_key}
-        async with ClientSession() as session:
+    async def _post_request(
+        self, 
+        form: UCActivateRequestModel, 
+        uc_amount: int,
+        price: float
+    ) -> UCActivationResult:
+        with ClientSession() as session:
             async with session.post(
                 self.ucodeium_api_url,
-                headers=headers,
-                json=kwargs,
+                headers={"X-Api-Key": self.ucodeium_api_key},
+                json=form.model_dump(),
                 ssl=False,
             ) as response:
                 if response.status == 200:
                     api_response = await response.json()
                     return UCActivationResult(success=1, response=api_response)
+                await self.repository.return_back_uc_code(form.uc_code, uc_amount, price)
                 raise HTTPException(
                     status_code=response.status,
                     detail=await response.json(),
                 )
 
-    async def activate_codes(self, payload: BuyUCCodeCallbackModel) -> PurchaseModel:
-        await asyncio.gather(
-            *[
-               await self._post_request(
-                    uc_value=f"{uc_pack.uc_amount} UC",
-                    uc_code=uc_pack.code,
-                    player_id=payload.metadata.player_id
+    async def activate_codes(self, payload: BuyUCCodeCallbackModel) -> list[str]:
+        tasks: list[Coroutine] = []
+        all_codes = []
+        for uc_pack in payload.metadata.uc_packs:
+            uc_codes = await self.repository.get_activating_codes(
+                uc_pack.uc_amount, 
+                uc_pack.quantity
+            )
+            all_codes.extend(uc_codes)
+            for uc_code in uc_codes:
+                tasks.append(
+                    self._post_request(
+                        UCActivateRequestModel(
+                            uc_value=f"{uc_pack.uc_amount} UC",
+                            uc_code=uc_code,
+                            player_id=payload.metadata.player_id
+                        ),
+                        uc_amount=uc_pack.uc_amount,
+                        price=uc_pack.price_per_uc.per_uc
+                    )
                 )
-                for uc_pack in payload.metadata.uc_packs
-                for _ in range(uc_pack.count) 
-            ],
-            return_exceptions=True
-        )       
-
+        await asyncio.gather(*tasks, return_exceptions=True)
+        return all_codes
+        
     async def get_payment_url(self, form: UCCodeGetBuyUrlModel, tg_id: int) -> BuyUCCodeUrlModel:
-        headers: dict[str, str] = {"X-Api-Key": self.codeepay_api_key}
         internal_order_id = str(uuid4())
-        async with ClientSession() as session:
+        with ClientSession() as session:
             async with session.post(
                 self.codeepay_api_url,
-                headers=headers,
+                headers={"X-Api-Key": self.codeepay_api_key},
                 json={
                     "method_slug": form.method_slug,
                     "amount": form.amount - form.discount,
@@ -73,8 +98,9 @@ class PaymentService:
                 return BuyUCCodeUrlModel(**(await response.json()), internal_id=internal_order_id)
             
     async def activate_code_without_callback(self, uc_pack: UCPackModel, player_id: int) -> None:
+        code = await self.repository.get_activating_codes(uc_pack.uc_amount, 1)
         await self._post_request(
             uc_value=f"{uc_pack.uc_amount} UC",
-            uc_code=uc_pack.code,
+            uc_code=code,
             player_id=player_id
         )

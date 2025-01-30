@@ -56,5 +56,5 @@ async def get_discount_service(session=Depends(get_session)):
 async def get_purchase_service(session=Depends(get_session)):
     return services.PurchaseService(repositories.PurchaseRepository(session=session))
 
-async def get_payment_service():
-    return services.PaymentService()
+async def get_payment_service(session=Depends(get_session)):
+    return services.PaymentService(repositories.UCCodeRepository(session=session))

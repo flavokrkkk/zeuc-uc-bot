@@ -1,5 +1,5 @@
 from sqlalchemy import func, select
-from database.models.models import UCCode
+from database.models.models import Price, UCCode
 from database.repositories.base import SqlAlchemyRepository
 
 
@@ -41,7 +41,19 @@ class UCCodeRepository(SqlAlchemyRepository):
         await self.session.commit()
         return returning_codes
     
-    async def add_new_codes(self, new_uc_codes: list[str], uc_amount: int):
-        for uc_code in new_uc_codes:
-            await self.add_item(code=uc_code, uc_amount=uc_amount)
+    async def add_new_codes(
+        self, 
+        new_uc_codes: list[str], 
+        uc_amount: int, 
+        price_per_uc: int, 
+        point: int
+    ) -> None:
+        price = Price(price=price_per_uc, point=point)
+        uc_codes = [
+            UCCode(code=uc_code, uc_amount=uc_amount) 
+            for uc_code in new_uc_codes
+        ]
+        price.uc_codes.extend(uc_codes)
+        self.session.add(price)
+        await self.session.commit()
         

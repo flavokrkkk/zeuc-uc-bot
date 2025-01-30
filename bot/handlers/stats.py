@@ -23,8 +23,8 @@ async def get_bot_stats(callback: CallbackQuery, state: FSMContext, database: Da
     )
     await state.set_state(UCStatsState.check_default)
     await callback.message.edit_text(
-        text=message_text,
-        reply_markup=get_stats_by_date_keyboard()
+        text=message_text if message_text else "Нет данных",
+        reply_markup=get_stats_by_date_keyboard() if message_text else back_to_menu(is_admin=True)
     )
 
 
@@ -83,3 +83,4 @@ async def get_bot_stats(callback: CallbackQuery, state: FSMContext, database: Da
         text=message_text,
         reply_markup=back_to_menu(is_admin=True)
     )
+    

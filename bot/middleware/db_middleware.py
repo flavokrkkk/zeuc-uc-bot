@@ -16,16 +16,21 @@ class DatabaseMiddleware(BaseMiddleware):
     async def __call__(
         self,
         handler: Callable[[TelegramObject, Dict[str, Any]], Awaitable[Any]],
-        event: Message | CallbackQuery,
+        event: Update,
         data: Dict[str, Any]
     ) -> Any:
         try:
             session = await self.db_connection.get_session()
             database = Database(session=session)
+
             data['database'] = database
-            
-            if event.message and event.message.text and event.message.text.startswith("/start"):
-                return await handler(event, data)
+                        
+            store_is_on = await database.settings.get_store_is_on()
+            print(store_is_on)
+            if not store_is_on and event.message and event.message.text != "/admin":
+                if event.callback_query:
+                    return await event.callback_query.message.edit_text("Магазин выключен")
+                return await event.message.answer("Магазин выключен")
             
             user_data = data["event_from_user"]
             user_in_db: User = await database.users.get_item(item_id=user_data.id)

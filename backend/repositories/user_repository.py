@@ -3,6 +3,7 @@ from sqlalchemy import select
 from backend.database.models.models import User
 from backend.database.models.models import BonusesHistory, UserDiscounts
 from backend.repositories.base import SqlAlchemyRepository
+from backend.utils.config.enums import BonusStatuses
 
 
 class UserRepository(SqlAlchemyRepository):
@@ -25,14 +26,19 @@ class UserRepository(SqlAlchemyRepository):
         self.session.add(user_discount)
         await self.session.commit()
 
-    async def add_bonuses(self, tg_id: int, bonuses: int, status: str) -> None:
+    async def update_bonuses(self, tg_id: int, bonuses: int, status: str) -> None:
         user: User = await self.get_item(tg_id)
-        user.bonuses += bonuses
+        if status == BonusStatuses.GET.value:
+            user.bonuses += bonuses
+        elif user.bonuses - bonuses >= 0 and status == BonusStatuses.USE.value:
+            user.bonuses -= bonuses
+        else:
+            return 
         user.bonuses_history.append(
             BonusesHistory(tg_id=tg_id, amount=bonuses, status=status)
         )
         await self.session.commit()
-        
+        return True
 
     async def delete_discount_from_user(self, tg_id: int, discount_id: int) -> None:
         pass

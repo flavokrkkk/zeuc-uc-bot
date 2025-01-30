@@ -1,6 +1,6 @@
-from aiogram import Router
+from aiogram import F, Router
 from aiogram.filters import Command, CommandStart
-from aiogram.types import Message
+from aiogram.types import CallbackQuery, Message
 
 from utils.filters import IsAdminFilter
 from database.db_main import Database
@@ -11,7 +11,8 @@ router = Router()
     
 
 @router.message(CommandStart())
-async def start_bot(message: Message):
+async def start_bot(message: Message, database: Database):
+
     message_text = """
     Это автоматический бот пополнения,
     который мгновенно доставит UC на ваш аккаунт 24/7
@@ -35,3 +36,12 @@ async def admin_panel(message: Message, database: Database):
 async def admin_panel_error(message: Message):
     message_text = "Вы не являетесь админом"
     await message.answer(message_text)
+
+
+
+@router.callback_query(F.data == "back_to_admin_menu")
+async def back_to_admin_menu(callback: CallbackQuery):
+    await callback.message.edit_text(
+        text="Вы находитесь в админ меню",
+        reply_markup=admin_menu_keyboard()
+    )

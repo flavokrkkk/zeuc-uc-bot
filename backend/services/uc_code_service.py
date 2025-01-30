@@ -47,16 +47,20 @@ class UCCodeService:
             for code in codes
         ]
     
-    async def get_all(self) -> list[UCCodeModel]:
-        codes = await self.repository.get_all_items()
+    async def group_by_amount(self) -> list[UCCodeModel]:
+        codes = await self.repository.group_by_amount()
         return [
-            UCCodeModel.model_validate(code, from_attributes=True) 
-            for code in codes
+            UCCodeModel(
+                uc_amount=uc_amount, 
+                price_per_uc=float(price), 
+                quantity=quantity
+            ) 
+            for uc_amount, price, quantity in codes
         ]
     
     async def get_uc_packs_bonuses_sum(self, uc_packs: list[UCPackModel]) -> int:
         bonuses = 0
         for uc_pack in uc_packs:
-            uc_pack: UCCode = await self.repository.get_item(uc_pack.code)
+            uc_pack = await self.repository.get_item(uc_pack)
             bonuses += uc_pack.price_per_uc.point
         return bonuses
