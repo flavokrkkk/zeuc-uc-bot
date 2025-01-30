@@ -19,7 +19,7 @@ class UCCodeRepository(SqlAlchemyRepository):
                 Price.point
             )
             .join(Price, UCCode.price_id == Price.price_id)
-            .group_by(Price.price, self.model.uc_amount)
+            .group_by(Price.price, self.model.uc_amount, Price.point)
             .order_by(self.model.uc_amount)
         )
         uc_codes = await self.session.execute(query)
