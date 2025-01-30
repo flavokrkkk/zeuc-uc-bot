@@ -113,6 +113,6 @@ class UserService:
             raise UserNotHaveEnoughBonuses
 
     async def check_player_id(self, player_id: str):
-        if len(player_id) >= 9 and player_id.startswith(5):
+        if len(str(player_id)) >= 9 and str(player_id).startswith(5):
             return
         raise InvalidPlayerId
