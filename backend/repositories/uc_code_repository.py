@@ -15,7 +15,8 @@ class UCCodeRepository(SqlAlchemyRepository):
             select(
                 self.model.uc_amount, 
                 Price.price, 
-                func.count(self.model.uc_amount).label("quantity")
+                func.count(self.model.uc_amount).label("quantity"),
+                Price.point
             )
             .join(Price, UCCode.price_id == Price.price_id)
             .group_by(Price.price, self.model.uc_amount)

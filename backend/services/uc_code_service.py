@@ -53,9 +53,10 @@ class UCCodeService:
             UCCodeModel(
                 uc_amount=uc_amount, 
                 price_per_uc=float(price), 
-                quantity=quantity
+                quantity=quantity,
+                point=point
             ) 
-            for uc_amount, price, quantity in codes
+            for uc_amount, price, quantity, point in codes
         ]
     
     async def get_uc_packs_bonuses_sum(self, uc_packs: list[UCPackModel]) -> int:

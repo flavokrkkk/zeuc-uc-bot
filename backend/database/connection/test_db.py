@@ -1,5 +1,6 @@
+from random import choice
 from sqlalchemy import select
-from backend.database.models.models import Discount, Price, Reward, Setting, User
+from backend.database.models.models import Discount, Price, Reward, Setting, User, UserDiscounts
 from backend.database.models.models import UCCode
 
 
@@ -12,9 +13,6 @@ async def test_db(session):
         
         mago = User(tg_id=5163648472, username="magoxdd", is_admin=True)
         setting = Setting(store_is_on=True)
-
-        for i in range(100):
-            session.add(User(tg_id=i, username=f"test_{i}", in_black_list=True, bonuses=30))
         
         uc_codes_values = {60: [100, 1], 325: [200, 4], 660: [300, 5], 1800: [2000, 8], 3850: [5500, 10], 8100: [10000, 20]}
         
@@ -31,11 +29,11 @@ async def test_db(session):
                 )
             )
         )
-        for uc_code in uc_codes[:3]:
+        for uc_code in list(uc_codes_values.keys())[:3]:
             rewards.append(
                 Reward(
                     reward_type="uc_code",
-                    uc_amount=60
+                    uc_amount=uc_code
                 )
             )
         
@@ -50,9 +48,22 @@ async def test_db(session):
                     )
                 )
             )
+        
+        for i in range(100):
+            session.add(
+                User(
+                    tg_id=i,
+                    username=f"test_{i}",
+                    in_black_list=True,
+                    bonuses=30
+                )
+            )
+        session.add_all(rewards)
+        await session.commit()
+        for i in range(100):
+            session.add(UserDiscounts(user_id=i, discount_id=choice(range(1, 4))))
 
         session.add_all(uc_codes)
-        session.add_all(rewards)
         session.add(mago)
         session.add(setting)
         await session.commit()

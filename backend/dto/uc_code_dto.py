@@ -20,6 +20,7 @@ class UCCodeModel(BaseModel):
     quantity: int
     total_sum: int = 0
     multiplication_uc: int = 0
+    point: int | None = None
 
 
 class UCPackModel(BaseModel):
