@@ -35,7 +35,7 @@ async def test_db(session):
             rewards.append(
                 Reward(
                     reward_type="uc_code",
-                    uc_code=uc_code
+                    uc_amount=60
                 )
             )
         

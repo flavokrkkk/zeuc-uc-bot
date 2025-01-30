@@ -1,7 +1,5 @@
 from pydantic import BaseModel
 
-from backend.dto.uc_code_dto import UCCodeModel
-
 
 class DiscountModel(BaseModel):
     discount_id: int
@@ -13,7 +11,7 @@ class RewardModel(BaseModel):
     reward_id: int
     reward_type: str
     discount: DiscountModel | None = None
-    uc_code: UCCodeModel | None = None
+    uc_amount: int | None = None
 
 
 class UpdateUserRewardsModel(BaseModel):
