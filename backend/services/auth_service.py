@@ -4,6 +4,7 @@ from fastapi.security import HTTPBearer
 from passlib.context import CryptContext
 
 from jwt import decode, encode, InvalidTokenError
+from backend.errors.user_errors import UserInBlackList
 from backend.repositories.user_repository import UserRepository
 from backend.dto.user_dto import UserModel
 from backend.database.models.models import User
@@ -29,6 +30,8 @@ class AuthService:
         )
         if not user:
             raise UserAlreadyNotRegister
+        if user.in_black_list:
+            raise UserInBlackList
         return user
 
     async def create_access_token(self, username: str, tg_id: int) -> str:

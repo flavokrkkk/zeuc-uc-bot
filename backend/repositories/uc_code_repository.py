@@ -25,7 +25,7 @@ class UCCodeRepository(SqlAlchemyRepository):
         uc_codes = await self.session.execute(query)
         return uc_codes.all()
     
-    async def get_activating_codes(self, uc_amount: int, quantity: int) -> list[str]:
+    async def get_activating_codes(self, uc_amount: int, quantity: int) -> list[UCCode]:
         query = (
             select(self.model)
             .where(self.model.uc_amount == uc_amount)

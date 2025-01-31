@@ -54,7 +54,7 @@ async def test_db(session):
                 User(
                     tg_id=i,
                     username=f"test_{i}",
-                    in_black_list=True,
+                    in_black_list=False,
                     bonuses=30
                 )
             )

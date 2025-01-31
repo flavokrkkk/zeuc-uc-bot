@@ -64,3 +64,10 @@ class UserNotHaveEnoughBonuses(HTTPException):
             status_code=status.HTTP_409_CONFLICT,
             detail="У пользователя недостаточно бонусов",
         )
+
+class UserInBlackList(HTTPException):
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Пользователь в черном списке",
+        )

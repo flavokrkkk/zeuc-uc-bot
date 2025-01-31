@@ -98,9 +98,13 @@ class PaymentService:
                 return BuyUCCodeUrlModel(**(await response.json()), internal_id=internal_order_id)
             
     async def activate_code_without_callback(self, uc_amount: int, player_id: int) -> None:
-        code = await self.repository.get_activating_codes(uc_amount, 1)
+        uc_code = (await self.repository.get_activating_codes(uc_amount, 1))[0]
         await self._post_request(
-            uc_value=f"{uc_amount} UC",
-            uc_code=code,
-            player_id=player_id
+            UCActivateRequestModel(
+                uc_value=f"{uc_amount} UC",
+                uc_code=uc_code.code,
+                player_id=player_id
+            ),
+            uc_amount=uc_amount,
+            price=uc_code.price_per_uc.price
         )
