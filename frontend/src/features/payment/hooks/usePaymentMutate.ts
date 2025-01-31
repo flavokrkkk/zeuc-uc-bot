@@ -49,7 +49,6 @@ export const usePaymentMutate = ({
       window.location.href = response.url;
     },
   });
-
   const handleUsePoints = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (!event.currentTarget.value)
       throw new Error("Value is not a valid HTMLButtonElement!");
