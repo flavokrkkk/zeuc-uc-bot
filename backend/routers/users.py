@@ -29,6 +29,7 @@ async def update_user_rewards(
     payment_service: Annotated[PaymentService, Depends(get_payment_service)],
     current_user: UserModel = Depends(get_current_user_dependency),
 ):
+    await user_service.check_user_balance(current_user)
     reward = await reward_service.get_reward(form.reward_id, dump=False)
     if reward.reward_type == "uc_code": 
         return await reward_service.get_reward(reward.reward_id)

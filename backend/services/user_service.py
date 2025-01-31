@@ -116,3 +116,7 @@ class UserService:
         if len(str(player_id)) >= 9 and str(player_id).startswith("5"):
             return
         raise InvalidPlayerId
+    
+    async def check_user_balance(self, user: UserModel):
+        if user.bonuses < BONUC_CIRCLE_PRICE:
+            raise UserNotHaveEnoughBonuses
