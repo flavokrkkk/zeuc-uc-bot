@@ -43,7 +43,6 @@ export const usePaymentMutate = ({
   const { mutate, isPending } = useMutation({
     mutationKey: ["payment", "url"],
     mutationFn: ({ paymentMethod }: { paymentMethod: EPaymentMethods }) => {
-      console.log({ ...requestPayment, method_slug: paymentMethod });
       return getPaymentUrl({ ...requestPayment, method_slug: paymentMethod });
     },
     onSuccess: (response) => {

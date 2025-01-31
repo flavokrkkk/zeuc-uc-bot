@@ -1,5 +1,4 @@
 import { packSlectors } from "@/entities/packs/model/store/packSlice";
-import { userSelectors } from "@/entities/user/models/store/userSlice";
 import { usePacks } from "@/features/packs/hooks/usePacks";
 import { usePaymentMutate } from "@/features/payment/hooks/usePaymentMutate";
 import PaymentInfo from "@/features/payment/ui/paymentInfo";
@@ -27,7 +26,6 @@ const PaymentPage = () => {
   } = usePacks();
 
   const selectedPacks = useAppSelector(packSlectors.selectedPacks);
-  const currentUser = useAppSelector(userSelectors.currentUser);
 
   const {
     handleGetPayLink,
@@ -71,7 +69,6 @@ const PaymentPage = () => {
         totalPacks={totalPacks}
         totalPrice={totalPrice}
         selectedPacks={selectedPacks}
-        userInfo={currentUser}
         handleUseDiscountId={handleUseDiscountId}
         handleUsePoints={handleUsePoints}
         handleSelectPack={handleSelectPack}

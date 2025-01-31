@@ -36,6 +36,13 @@ export const userSlice = createSliceWithThunks({
     userBonusesHistory: (state) => state.userBonusesHistory,
   },
   reducers: (create) => ({
+    setPointsUser: create.reducer(
+      (state, { payload }: PayloadAction<number>) => {
+        if (state.currentUser) {
+          state.currentUser.bonuses = state.currentUser.bonuses + payload;
+        }
+      }
+    ),
     setUserCredentials: create.asyncThunk<
       TelegramUser,
       Partial<TelegramUser> & { id: number; username: string },

@@ -10,7 +10,7 @@ export const useTelegramUser = () => {
   useEffect(() => {
     if (window.Telegram) {
       const user = window.Telegram.WebApp.initDataUnsafe?.user;
-      // const mockUser = { id: 2, username: "test_2" };
+      // const mockUser = { id: 9, username: "test_9" };
       if (user) {
         Promise.all([setUserCredentials(user)]).then(([payload]) => {
           const { meta }: { meta: { requestStatus: string } } =

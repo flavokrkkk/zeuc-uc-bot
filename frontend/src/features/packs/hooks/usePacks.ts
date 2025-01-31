@@ -37,7 +37,7 @@ export const usePacks = () => {
 
   const handleSelectPacks = () => {
     setSelectedPacks();
-    navigate(ERouteNames.PAYMENT_PAGE, { replace: true });
+    navigate(ERouteNames.PAYMENT_PAGE);
   };
 
   const handleResetTotalPacks = () => resetTotalPacks();

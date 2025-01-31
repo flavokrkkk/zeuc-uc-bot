@@ -1,5 +1,4 @@
 import { IPack } from "@/entities/packs/types/types";
-import { ICurrentUserResponse } from "@/entities/user/types/types";
 import PacksBadge from "@/features/packs/ui/packsBadge";
 import { IconTypes } from "@/shared/ui/icon/libs/libs";
 import { Icon } from "@/shared/ui/icon/ui/icon";
@@ -21,7 +20,6 @@ interface IPaymentInfo {
   totalPacks: number;
   totalPrice: number;
   selectedPacks: Array<IPack>;
-  userInfo: ICurrentUserResponse | null;
   handleUseDiscountId: (event: React.MouseEvent<HTMLButtonElement>) => void;
   handleUsePoints: (event: React.MouseEvent<HTMLButtonElement>) => void;
   handleSelectPack: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -32,7 +30,6 @@ const PaymentInfo: FC<IPaymentInfo> = ({
   points,
   totalPrice,
   totalPacks,
-  userInfo,
   discountId,
   selectedPacks,
   handleUseDiscountId,
@@ -41,6 +38,7 @@ const PaymentInfo: FC<IPaymentInfo> = ({
   handleUnSelectPack,
 }) => {
   const { setUnSelectPacks } = useActions();
+  const userInfo = useAppSelector(userSelectors.currentUser);
   const userDiscount = useAppSelector(userSelectors.userDiscount);
   const navigate = useNavigate();
 

@@ -4,6 +4,7 @@ import {
 } from "@/entities/user/libs/userService";
 import { useActions } from "@/shared/hooks/useActions";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 export const useUser = (isAuthenticated: boolean) => {
   const { setCurrentUser, setUserDiscount } = useActions();
@@ -19,8 +20,10 @@ export const useUser = (isAuthenticated: boolean) => {
     enabled: isAuthenticated,
   });
 
-  if (isSuccess && isDiscountSuccess) {
-    setCurrentUser(userData);
-    setUserDiscount(discountData);
-  }
+  useEffect(() => {
+    if (isSuccess && isDiscountSuccess) {
+      setCurrentUser(userData);
+      setUserDiscount(discountData);
+    }
+  }, [userData, discountData, isSuccess, isDiscountSuccess]);
 };

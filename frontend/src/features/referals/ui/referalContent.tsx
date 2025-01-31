@@ -10,7 +10,7 @@ import { useCallback, useState } from "react";
 const ReferalContent = () => {
   const [referalCode, setReferalCode] = useState("");
   const currentUser = useAppSelector(userSelectors.currentUser);
-  const { handleReferalActivate } = useReferal();
+  const { handleReferalActivate, referalError } = useReferal();
 
   const { isCopied, handleCopyClick } = useCopied(
     currentUser?.referal_code ?? ""
@@ -58,6 +58,7 @@ const ReferalContent = () => {
         <SearchUser
           value={referalCode}
           isLabel={false}
+          error={referalError}
           buttonText="Активировать"
           searchPlaceholder="Введите код"
           onChange={handleChangeCode}
