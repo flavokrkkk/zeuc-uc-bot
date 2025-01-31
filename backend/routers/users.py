@@ -31,9 +31,9 @@ async def update_user_rewards(
 ):
     await user_service.check_user_balance(current_user)
     reward = await reward_service.get_reward(form.reward_id, dump=False)
+    print(form.model_dump())
     if reward.reward_type == "uc_code": 
-        return await reward_service.get_reward(reward.reward_id)
-        # return await payment_service.activate_code_without_callback(reward.uc_code, form.player_id)
+        return await payment_service.activate_code_without_callback(reward.uc_code, form.player_id)
     await user_service.update_rewards(current_user, reward)
     return await reward_service.get_reward(form.reward_id)
 
