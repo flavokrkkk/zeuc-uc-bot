@@ -130,6 +130,7 @@ class PaymentService:
                 "amount": form.amount,
                 "metadata": {
                     "tg_id": tg_id,
+                    "point": form.point,
                     "notification_url": "https://zeusucbot.shop/api/users/buy/point/callback",
                     "internal_order_id": internal_order_id
                 }
