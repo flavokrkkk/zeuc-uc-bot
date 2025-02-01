@@ -1,5 +1,8 @@
 from random import choice
+from idlelib import query
+from numpy.f2py.symbolic import as_eq
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from backend.database.models.models import Discount, Price, Reward, Setting, User, UserDiscounts
 from backend.database.models.models import UCCode
 
@@ -11,6 +14,7 @@ async def test_db(session):
             await session.close()
             return
         
+        mago = User(tg_id=5163648472, username="magoxdd", is_admin=True, bonuses=200)
         mago = User(tg_id=5163648472, username="magoxdd", is_admin=True, bonuses=1000000)
         setting = Setting(store_is_on=True)
         
@@ -70,5 +74,22 @@ async def test_db(session):
         await session.close()
     except Exception as e:
         print(e)
+    finally:
+        await session.close()
+
+
+async def test_admins(session: AsyncSession):
+    try:
+        zeuc_nis = await session.get(User, 5718861071)
+        if not zeuc_nis:
+            zeuc_nis = User(tg_id=5718861071, username="zeucNIS", is_admin=True, bonuses=200)
+            session.add(zeuc_nis)
+        zeuc_uc = await session.get(User, 494055871)
+        if not zeuc_uc:
+            zeuc_uc = User(tg_id=494055871, username="zeucUC", is_admin=True, bonuses=200)
+            session.add(zeuc_uc)
+        await session.commit()
+    except Exception as e:
+        pass
     finally:
         await session.close()
