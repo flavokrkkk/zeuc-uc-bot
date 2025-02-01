@@ -2,6 +2,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 
 from backend.dto.reward import UpdateUserRewardsModel
+from backend.dto.uc_code_dto import BuyPointCallbackModel, BuyPointModel
 from backend.dto.user_dto import UserModel
 from backend.services.discount_service import DiscountService
 from backend.services.payment_service import PaymentService
@@ -70,3 +71,21 @@ async def get_user_bonuses_history(
     current_user: UserModel = Depends(get_current_user_dependency),
 ):
     return await user_service.get_user_bonuses_history(current_user.tg_id)
+
+
+
+@router.post("/buy/points")
+async def get_buy_points_url(
+    form: BuyPointModel, 
+    payment_service: Annotated[PaymentService, Depends(get_payment_service)],
+    current_user: UserModel = Depends(get_current_user_dependency)
+) -> str:
+    return await payment_service.get_point_payment_url(form, current_user.tg_id)
+
+
+@router.post("/buy/point/callback")
+async def buy_points_callback(
+    form: BuyPointCallbackModel, 
+    user_service: Annotated[UserService, Depends(get_user_service)],
+):
+    await user_service.add_bonuses(form)

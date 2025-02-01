@@ -45,3 +45,13 @@ class UCCodeRepository(SqlAlchemyRepository):
         )
         self.session.add(uc_code)
         await self.session.commit()
+
+    async def get_point_by_uc_amount(self, uc_amount: int) -> float:
+        query = (
+            select(Price.point)
+            .join(UCCode, Price.price_id == UCCode.price_id)
+            .where(UCCode.uc_amount == uc_amount)
+            .limit(1)
+        )
+        price = (await self.session.execute(query)).scalar_one_or_none()
+        return price

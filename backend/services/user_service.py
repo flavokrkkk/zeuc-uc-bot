@@ -1,4 +1,5 @@
 from backend.database.models.models import Reward, User
+from backend.dto.uc_code_dto import BuyPointCallbackModel
 from backend.dto.user_dto import BonusesHistoryModel, UserModel
 from backend.errors.purchase_errors import InvalidPlayerId
 from backend.errors.user_errors import (
@@ -96,7 +97,7 @@ class UserService:
         if referer_user and current_user.referer_id:
             await self.repository.update_bonuses(
                 current_user.referer_id, 
-                    bonuses, 
+                bonuses, 
                 BonusStatuses.GET.value
             )
 
@@ -111,6 +112,13 @@ class UserService:
         is_deleted = await self.repository.update_bonuses(tg_id, bonuses, BonusStatuses.USE.value)
         if not is_deleted:
             raise UserNotHaveEnoughBonuses
+        
+    async def add_bonuses(self, form: BuyPointCallbackModel):
+        await self.repository.update_bonuses(
+            form.metadata.tg_id, 
+            form.metadata.point, 
+            BonusStatuses.GET.value
+        )
 
     async def check_player_id(self, player_id: str):
         if len(str(player_id)) >= 9 and str(player_id).startswith("5"):

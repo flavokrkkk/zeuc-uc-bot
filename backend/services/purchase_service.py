@@ -13,7 +13,6 @@ class PurchaseService:
     async def create_purchase(
         self, 
         form: CreatePurchaseModel, 
-        codeepay_response: BuyUCCodeUrlModel
     ) -> PurchaseModel:
         if form.metadata_:
             form.metadata_["uc_packs"] = [
@@ -24,13 +23,6 @@ class PurchaseService:
         purchase = await self.repository.get_item(form.payment_id)
         if not purchase:
             purchase = await self.repository.add_item(**form.model_dump())
-        purchase = PurchaseModel.model_validate(purchase, from_attributes=True)
-        return PaymentUCCodeDataModel(
-            url=codeepay_response.url,
-            order_id=codeepay_response.order_id,
-            amount=codeepay_response.amount,
-            purchase=purchase
-        )
 
     async def get_by_tg_id(self, tg_id: int) -> list[PurchaseModel]:
         purchases = await self.repository.get_by_attributes((self.repository.model.tg_id, tg_id))

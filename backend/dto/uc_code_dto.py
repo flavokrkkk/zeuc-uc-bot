@@ -28,6 +28,7 @@ class UCPackModel(BaseModel):
     price_per_uc: int
     total_sum: int
     quantity: int
+    activated_codes: int = 0
 
 
 class UCCodeGetBuyUrlModel(BaseModel):
@@ -37,16 +38,21 @@ class UCCodeGetBuyUrlModel(BaseModel):
     uc_packs: list[UCPackModel]
     uc_sum: int
     discount: int = 0
-    points: int
 
 
-class MetadataModel(BaseModel):
+class BuyUCMetadataModel(BaseModel):
     tg_id: int
     player_id: int
     uc_packs: list[UCPackModel]
     notification_url: str
     internal_order_id: str
     discount: int = 0
+
+
+class BuyPointMetadataModel(BaseModel):
+    internal_order_id: str
+    tg_id: int
+    point: int
     
 
 class BuyUCCodeCallbackModel(BaseModel):
@@ -54,7 +60,11 @@ class BuyUCCodeCallbackModel(BaseModel):
     amount: float
     final_amount: float
     method: str
-    metadata: MetadataModel
+    metadata: BuyUCMetadataModel
+
+
+class BuyPointCallbackModel(BaseModel):
+    metadata: BuyPointMetadataModel
 
 
 class UCActivationResult(BaseModel):
@@ -80,3 +90,8 @@ class PaymentUCCodeDataModel(BaseModel):
     order_id: str
     amount: float
     purchase: PurchaseModel
+
+
+class BuyPointModel(BaseModel):
+    point: int
+    total_sum: int

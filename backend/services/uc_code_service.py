@@ -62,6 +62,6 @@ class UCCodeService:
     async def get_uc_packs_bonuses_sum(self, uc_packs: list[UCPackModel]) -> int:
         bonuses = 0
         for uc_pack in uc_packs:
-            uc_pack = await self.repository.get_item(uc_pack)
-            bonuses += uc_pack.price_per_uc.point
+            point = await self.repository.get_point_by_uc_amount(uc_pack.uc_amount)
+            bonuses += point
         return bonuses
