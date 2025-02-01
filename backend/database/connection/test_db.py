@@ -1,5 +1,4 @@
 from random import choice
-from idlelib import query
 from numpy.f2py.symbolic import as_eq
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
