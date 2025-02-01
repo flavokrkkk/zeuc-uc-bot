@@ -84,7 +84,7 @@ class PaymentService:
                         "tg_id": tg_id,
                         "player_id": form.player_id,
                         "uc_packs": [uc_pack.model_dump() for uc_pack in form.uc_packs],
-                        "notification_url": "http://localhost:8000/api/uc_code/buy/callback",
+                        "notification_url": "https://zeusucbot.shop/api/uc_code/buy/callback",
                         "internal_order_id": internal_order_id
                     }
                 },
