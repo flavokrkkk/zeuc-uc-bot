@@ -8,9 +8,17 @@ import { IUserState } from "./types";
 import { TelegramUser } from "@/shared/types/telegram";
 import { MutationObserver } from "@tanstack/react-query";
 import { queryClient } from "@/shared/api/queryClient";
-import { setUserCredentials } from "../../libs/userService";
+import {
+  getCurrentUser,
+  getUserDiscount,
+  setUserCredentials,
+} from "../../libs/userService";
 import { setAccessToken } from "@/entities/token/libs/tokenService";
-import { ICurrentUserResponse, IUserResponse } from "../../types/types";
+import {
+  ICurrentUserResponse,
+  IUserDiscount,
+  IUserResponse,
+} from "../../types/types";
 import { decrypt } from "@/shared/helpers/cryptoHash";
 
 const createSliceWithThunks = buildCreateSlice({
@@ -75,14 +83,42 @@ export const userSlice = createSliceWithThunks({
         },
       }
     ),
-    setCurrentUser: create.reducer(
-      (state, { payload }: PayloadAction<ICurrentUserResponse>) => {
-        state.currentUser = payload;
+    getAsyncCurrentUser: create.asyncThunk<
+      ICurrentUserResponse,
+      void,
+      { rejectValue: string }
+    >(
+      async (_, { rejectWithValue }) => {
+        try {
+          const response = await getCurrentUser();
+          return response;
+        } catch (e) {
+          return rejectWithValue(String(e));
+        }
+      },
+      {
+        fulfilled: (state, { payload }) => {
+          state.currentUser = payload;
+        },
       }
     ),
-    setUserDiscount: create.reducer(
-      (state, { payload }: PayloadAction<IUserState["userDiscount"]>) => {
-        state.userDiscount = payload;
+    getAsyncDiscount: create.asyncThunk<
+      Array<IUserDiscount>,
+      void,
+      { rejectValue: string }
+    >(
+      async (_, { rejectWithValue }) => {
+        try {
+          const response = await getUserDiscount();
+          return response;
+        } catch (e) {
+          return rejectWithValue(String(e));
+        }
+      },
+      {
+        fulfilled: (state, { payload }) => {
+          state.userDiscount = payload;
+        },
       }
     ),
     setPaymentHistory: create.reducer(

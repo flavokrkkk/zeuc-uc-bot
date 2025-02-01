@@ -4,7 +4,9 @@ import { useAppSelector } from "@/shared/hooks/useAppSelector";
 import { useRef, useState } from "react";
 
 export const useScopes = (
-  setIsGetPrize: React.Dispatch<React.SetStateAction<boolean>>
+  setIsGetPrize: React.Dispatch<React.SetStateAction<boolean>>,
+  setIsOpen: (action: boolean) => void,
+  setPlayerId: (playerId: string) => void
 ) => {
   const [spinning, setSpinning] = useState(false);
   const [winnerIndex, setWinnerIndex] = useState<number | null>(null);
@@ -17,11 +19,15 @@ export const useScopes = (
   const wheelRef = useRef<HTMLCanvasElement | null>(null);
 
   const onFinished = (
-    winner: { title: string; reward_id: number },
+    winner: { title: string; reward_id: number; type: string },
     winnerIndex: number
   ) => {
     setWinnerIndex(winnerIndex);
     setWinner(winner);
+    setPlayerId("");
+    if (winner.type === "uc") {
+      setIsOpen(true);
+    }
   };
 
   const calcSpinWheel = () => {

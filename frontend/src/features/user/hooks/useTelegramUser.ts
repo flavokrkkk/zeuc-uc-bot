@@ -9,10 +9,10 @@ export const useTelegramUser = () => {
 
   useEffect(() => {
     if (window.Telegram) {
-      const user = window.Telegram.WebApp.initDataUnsafe?.user;
-      // const mockUser = { id: 9, username: "test_9" };
-      if (user) {
-        Promise.all([setUserCredentials(user)]).then(([payload]) => {
+      // const user = window.Telegram.WebApp.initDataUnsafe?.user;
+      const mockUser = { id: 1, username: "test_1" };
+      if (mockUser) {
+        Promise.all([setUserCredentials(mockUser)]).then(([payload]) => {
           const { meta }: { meta: { requestStatus: string } } =
             payload as unknown as {
               meta: { requestStatus: "rejected" | "fulfilled" };

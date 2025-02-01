@@ -33,12 +33,12 @@ class UserService {
   }
 
   public async getCurrentUser(
-    meta: IQueryMetadata
+    meta?: IQueryMetadata
   ): Promise<ICurrentUserResponse> {
     const { data } = await axiosAuth.get<ICurrentUserResponse>(
       EUserEndpoints.CURRENT_USER,
       {
-        signal: meta.signal,
+        signal: meta && meta.signal,
       }
     );
     return data;
@@ -69,12 +69,12 @@ class UserService {
   }
 
   public async getUserDiscount(
-    meta: IQueryMetadata
+    meta?: IQueryMetadata
   ): Promise<Array<IUserDiscount>> {
     const { data } = await axiosAuth.get<Array<IUserDiscount>>(
       EUserEndpoints.GET_DICOUNTS,
       {
-        signal: meta.signal,
+        signal: meta && meta.signal,
       }
     );
     return data;
