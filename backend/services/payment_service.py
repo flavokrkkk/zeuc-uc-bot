@@ -122,14 +122,14 @@ class PaymentService:
             price=uc_code.price_per_uc.price
         )
 
-    async def get_point_payment_url(self, form: BuyPointModel) -> str:
+    async def get_point_payment_url(self, form: BuyPointModel, tg_id: int) -> str:
         internal_order_id = str(uuid4())
         response = await self.get_payment_url(
             payload={
                 "method_slug": form.method_slug,
                 "amount": form.amount,
                 "metadata": {
-                    "player_id": form.player_id,
+                    "tg_id": tg_id,
                     "notification_url": "https://zeusucbot.shop/api/users/buy/point/callback",
                     "internal_order_id": internal_order_id
                 }

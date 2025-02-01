@@ -93,5 +93,6 @@ class PaymentUCCodeDataModel(BaseModel):
 
 
 class BuyPointModel(BaseModel):
+    method_slug: str
     point: int
-    total_sum: int
+    amount: int
