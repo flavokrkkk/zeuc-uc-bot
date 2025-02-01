@@ -12,9 +12,14 @@ import { FC } from "react";
 interface IPacksCard {
   card: IPack;
   handleSelectPack: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  handleUnSelectPack: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
-const PacksCard: FC<IPacksCard> = ({ card, handleSelectPack }) => {
+const PacksCard: FC<IPacksCard> = ({
+  card,
+  handleSelectPack,
+  handleUnSelectPack,
+}) => {
   return (
     <div key={card.id} className="w-full space-y-1 text-white">
       <div className="h-[166px] space-y-0 bg-dark-200 px-4 justify-evenly flex-col w-full  аcursor-pointer border border-green-100 flex rounded-2xl">
@@ -32,12 +37,17 @@ const PacksCard: FC<IPacksCard> = ({ card, handleSelectPack }) => {
           <p className="text-xs">{card.price_per_uc} рублей</p>
         </section>
         <Button
-          isDisabled={!!card.multiplication_uc || Boolean(!card.quantity)}
           value={card.id}
-          bgColor={ButtonColors.GREEN}
+          bgColor={
+            card.multiplication_uc
+              ? ButtonColors.LIGHT_GREEN
+              : ButtonColors.GREEN
+          }
           rounded={ButtonRoundSizes.ROUNDED_XL}
           size={ButtonSizes.SMALL}
-          onClick={handleSelectPack}
+          onClick={
+            !card.multiplication_uc ? handleSelectPack : handleUnSelectPack
+          }
         >
           Выбрать
         </Button>

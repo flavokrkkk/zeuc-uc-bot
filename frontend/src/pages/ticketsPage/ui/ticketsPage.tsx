@@ -13,7 +13,7 @@ const TicketsPage = () => {
 
   const navigate = useNavigate();
 
-  const handleNavigate = () => navigate(ERouteNames.CATALOG_PAGE);
+  const handleNavigate = () => navigate(ERouteNames.SCORES_PAGE);
   return (
     <section className="w-full pt-2 space-y-6">
       <TicketsContent />

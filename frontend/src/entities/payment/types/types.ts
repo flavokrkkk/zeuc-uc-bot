@@ -7,7 +7,6 @@ export interface IPaymentWrap {
   uc_packs: Array<IPayementRequest>;
   uc_sum: number;
   discount: number | null;
-  points: number;
 }
 
 export interface IPayementRequest {

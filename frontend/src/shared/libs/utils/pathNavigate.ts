@@ -8,6 +8,11 @@ export const pathNavigate = [
     path: ERouteNames.CATALOG_PAGE,
   },
   {
+    id: 6,
+    icon: IconTypes.SHOP_OUTLINED,
+    path: ERouteNames.BONUS_PAYMENT_PAGE,
+  },
+  {
     id: 5,
     icon: IconTypes.DOLLAR_OUTLINED,
     path: ERouteNames.PAYMENT_HISTORY_PAGE,

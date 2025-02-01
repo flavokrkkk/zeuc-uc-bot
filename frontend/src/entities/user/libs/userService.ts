@@ -3,6 +3,7 @@ import {
   ICurrentUserResponse,
   IUserBonusesHistory,
   IUserDiscount,
+  IUserPackRequest,
   IUserPurchases,
 } from "../types/types";
 import { axiosAuth, axiosNoAuth } from "@/shared/api/baseQueryInstance";
@@ -79,6 +80,16 @@ class UserService {
     );
     return data;
   }
+
+  public async getPackForUser(request: IUserPackRequest): Promise<string> {
+    const { data } = await axiosAuth.post<string>(
+      EUserEndpoints.GET_USER_POINTS,
+      {
+        ...request,
+      }
+    );
+    return data;
+  }
 }
 
 export const {
@@ -86,5 +97,6 @@ export const {
   getCurrentUser,
   getUserPurchases,
   getUserDiscount,
+  getPackForUser,
   getBonusesHistory,
 } = UserService.getInstance();

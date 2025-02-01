@@ -13,7 +13,6 @@ export const usePaymentMutate = ({
   totalSum: number;
   totalPacks: number;
 }) => {
-  const [points, setPoints] = useState(0);
   const [discountId, setDiscountId] = useState<number>(0);
   const [playerId, setPlayerId] = useState("");
   const [playerError, setPlayerError] = useState<"success" | "error" | "">("");
@@ -35,9 +34,8 @@ export const usePaymentMutate = ({
       }, [] as Array<IPayementRequest>),
       uc_sum: totalPacks,
       discount: discountId,
-      points,
     }),
-    [selectPacks, totalSum, totalPacks, playerId, discountId, points]
+    [selectPacks, totalSum, totalPacks, playerId, discountId]
   );
 
   const { mutate, isPending } = useMutation({
@@ -46,15 +44,13 @@ export const usePaymentMutate = ({
       return getPaymentUrl({ ...requestPayment, method_slug: paymentMethod });
     },
     onSuccess: (response) => {
-      window.location.href = response.url;
+      if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.openLink(response.url);
+      } else {
+        window.location.href = response.url;
+      }
     },
   });
-  const handleUsePoints = (event: React.MouseEvent<HTMLButtonElement>) => {
-    if (!event.currentTarget.value)
-      throw new Error("Value is not a valid HTMLButtonElement!");
-
-    setPoints(Number(event.currentTarget.value));
-  };
 
   const handleUseDiscountId = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (!event.currentTarget.value)
@@ -91,10 +87,8 @@ export const usePaymentMutate = ({
   return {
     isPending,
     playerId,
-    points,
     discountId,
     playerError,
-    handleUsePoints,
     handleCheckId,
     handleChangeId,
     handleGetPayLink,

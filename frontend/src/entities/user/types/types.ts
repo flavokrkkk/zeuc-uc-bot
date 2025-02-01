@@ -1,3 +1,5 @@
+import { EPaymentMethods } from "@/entities/packs/types/types";
+
 export interface IUserResponse {
   access_token: string;
 }
@@ -52,4 +54,10 @@ export interface IDiscountModel {
 export interface IUserDiscount {
   count: number;
   discount: IDiscountModel;
+}
+
+export interface IUserPackRequest {
+  method_slug: EPaymentMethods;
+  point: number;
+  amount: number;
 }

@@ -29,9 +29,7 @@ const PaymentPage = () => {
 
   const {
     handleGetPayLink,
-    handleUsePoints,
     isPending,
-    points,
     playerId,
     discountId,
     playerError,
@@ -65,12 +63,10 @@ const PaymentPage = () => {
       <h1 className="text-2xl mb-4">Ваш заказ</h1>
       <PaymentInfo
         discountId={discountId}
-        points={points}
         totalPacks={totalPacks}
         totalPrice={totalPrice}
         selectedPacks={selectedPacks}
         handleUseDiscountId={handleUseDiscountId}
-        handleUsePoints={handleUsePoints}
         handleSelectPack={handleSelectPack}
         handleUnSelectPack={handleUnSelectPack}
       />

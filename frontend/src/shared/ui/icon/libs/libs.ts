@@ -10,6 +10,7 @@ import ScoreOutlined from "../../../../../public/icons/score-outlined.svg";
 import TicketsOutlined from "../../../../../public/icons/tickets-outline.svg";
 import DollarOutlined from "../../../../../public/icons/dollar-outlined.svg";
 import SbpOutlined from "../../../../../public/icons/sbp-outlined.svg";
+import ShopOutlined from "../../../../../public/icons/shop-outlined.svg";
 
 export const enum IconTypes {
   UC_OUTLINED,
@@ -25,6 +26,7 @@ export const enum IconTypes {
   TICKETS_OUTLINED,
   DOLLAR_OUTLINED,
   SBP_OUTLINED,
+  SHOP_OUTLINED,
 }
 
 export type IconDictionaryType = {
@@ -45,6 +47,7 @@ export const IconDictionary: Record<string, string> = {
   [IconTypes.SCORE_OUTLINED]: ScoreOutlined,
   [IconTypes.DOLLAR_OUTLINED]: DollarOutlined,
   [IconTypes.SBP_OUTLINED]: SbpOutlined,
+  [IconTypes.SHOP_OUTLINED]: ShopOutlined,
 };
 export const enum IconSizes {
   SMALL,

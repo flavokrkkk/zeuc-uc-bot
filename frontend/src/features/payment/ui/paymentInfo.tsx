@@ -16,24 +16,20 @@ import { userSelectors } from "@/entities/user/models/store/userSlice";
 
 interface IPaymentInfo {
   discountId: number | null;
-  points: number;
   totalPacks: number;
   totalPrice: number;
   selectedPacks: Array<IPack>;
   handleUseDiscountId: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  handleUsePoints: (event: React.MouseEvent<HTMLButtonElement>) => void;
   handleSelectPack: (event: React.MouseEvent<HTMLButtonElement>) => void;
   handleUnSelectPack: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 const PaymentInfo: FC<IPaymentInfo> = ({
-  points,
   totalPrice,
   totalPacks,
   discountId,
   selectedPacks,
   handleUseDiscountId,
-  handleUsePoints,
   handleSelectPack,
   handleUnSelectPack,
 }) => {
@@ -81,25 +77,6 @@ const PaymentInfo: FC<IPaymentInfo> = ({
         <div className="space-x-2">
           <span>Итого:</span>
           <span className="text-2xl">{`${totalPacks} UC | ${totalPrice} ₽`}</span>
-        </div>
-        <div className="flex space-x-6">
-          <div className="flex space-x-3 items-center">
-            <span>У вас есть бонусов:</span>
-            <span>
-              <Icon type={IconTypes.POINT_OUTLINED} className="h-6 w-6" />
-            </span>
-            <span>{userInfo?.bonuses}</span>
-          </div>
-          <Button
-            value={String(userInfo?.bonuses)}
-            isDisabled={(userInfo?.bonuses ?? 0) <= 0 || (points ?? 0) > 0}
-            className="px-4"
-            rounded={ButtonRoundSizes.ROUNDED_LG}
-            bgColor={ButtonColors.GREEN}
-            onClick={handleUsePoints}
-          >
-            Использовать
-          </Button>
         </div>
         {userDiscount.map((discount) => (
           <div key={discount.discount.discount_id} className="flex space-x-6">

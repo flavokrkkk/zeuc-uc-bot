@@ -7,6 +7,7 @@ export enum ButtonColors {
   TRANSPARENT_BLACK,
   DODGER_BLUE,
   GREEN,
+  LIGHT_GREEN,
 }
 
 export enum ButtonSizes {
@@ -62,6 +63,10 @@ export const ButtonColorClasses: Record<ButtonColors, IButtonClasses> = {
   },
   [ButtonColors.TRANSPARENT_BLACK]: {
     activeClasses: "bg-transparent text-white border border-green-100",
+    disableClasses: "bg-gray-300 text-gray-500",
+  },
+  [ButtonColors.LIGHT_GREEN]: {
+    activeClasses: "bg-[#41AE6D] text-white hover:bg-green-200",
     disableClasses: "bg-gray-300 text-gray-500",
   },
 };

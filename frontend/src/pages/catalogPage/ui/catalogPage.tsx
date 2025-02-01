@@ -16,6 +16,7 @@ const CatalogPage = () => {
     totalPrice,
     totalPacks,
     handleSelectPack,
+    handleUnSelectPack,
     handleSelectPacks,
   } = usePacks();
 
@@ -36,7 +37,11 @@ const CatalogPage = () => {
             />
           </span>
         </div>
-        <PacksList packs={packs} handleSelectPack={handleSelectPack} />
+        <PacksList
+          packs={packs}
+          handleSelectPack={handleSelectPack}
+          handleUnSelectPack={handleUnSelectPack}
+        />
       </section>
 
       {isSelected && (

@@ -63,7 +63,6 @@ const PacksBadge: FC<IPacksBadge> = ({
           {pack.multiplication_uc}
         </button>
         <button
-          disabled={pack.multiplication_uc === pack.quantity}
           value={pack.id}
           className="rounded-lg cursor-pointer px-1 disabled:bg-gray-200 h-full w-full flex items-center justify-center"
           onClick={handleSelectPack}
