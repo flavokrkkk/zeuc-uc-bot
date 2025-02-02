@@ -1,3 +1,4 @@
+from copy import deepcopy
 import json
 import os
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
@@ -39,6 +40,7 @@ class DecodeEncodeMiddleware(BaseHTTPMiddleware):
                     status_code=400,
                     content={"message": "Invalid encrypted data", "detail": str(e)}
                 )
+            
         response = await call_next(request)
 
         if response.status_code == 200 and response.headers.get("Content-Type") == "application/json":
@@ -54,7 +56,6 @@ class DecodeEncodeMiddleware(BaseHTTPMiddleware):
                 backend=default_backend()
             ).encryptor()
             encoded_data = json.dumps(response_data).encode("utf-8")
-            print(encoded_data)
             encrypted_data = encryptor.update(encoded_data) + encryptor.finalize()
             encrypted_body = {
                 "iv": list(iv),
@@ -66,5 +67,12 @@ class DecodeEncodeMiddleware(BaseHTTPMiddleware):
             del response.headers["Content-Length"]
 
             response.body_iterator = encrypted_body_iterator()
-            return response
+        b = b""
+        async for chunk in response.body_iterator:
+            b += chunk
+        print(b.decode("utf-8"))
+
+        async def decrypted_body_iterator():
+            yield b
+        response.body_iterator = decrypted_body_iterator()
         return response
