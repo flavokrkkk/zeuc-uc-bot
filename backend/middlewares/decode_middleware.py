@@ -40,6 +40,7 @@ class DecodeEncodeMiddleware(BaseHTTPMiddleware):
                 )
 
         response: _StreamingResponse = await call_next(request)
+        response_body = b""
         async for chunk in response.body_iterator:
             response_body += chunk
         
