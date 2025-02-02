@@ -11,7 +11,7 @@ const RootPage = () => {
   const { isAuthenticated } = useContext(ViewerContext);
   useTelegramUser();
   return (
-    <div className="bg-dark-100 h-screen w-screen p-3 relative flex flex-col justify-between">
+    <div className="bg-dark-100 h-[98vh] w-screen p-3 relative flex flex-col justify-between">
       <div className="absolute inset-0 bg-black opacity-30 z-0" />{" "}
       <Suspense fallback={<h1>Loading...</h1>}>
         <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
@@ -24,14 +24,14 @@ const RootPage = () => {
             className="absolute bottom-28 left-4 rotate-12 filter blur-sm bg-black opacity-10"
           />
         </div>
-        <div className="relative z-10 flex-1 overflow-auto">
+        <div className="relative z-10 flex-1 overflow-auto border">
           <Outlet />
         </div>
       </Suspense>
       {isAuthenticated && (
         <div className="text-white flex flex-col items-center bg-gray-dark-200 relative p-4 px-9 rounded-xl">
           <Menu navigates={pathNavigate} />
-          <span className="border-[3px] border-b-white absolute -bottom-0 w-[239px] rounded-2xl" />
+          <span className="absolute -bottom-0 w-[239px] rounded-2xl" />
         </div>
       )}
     </div>

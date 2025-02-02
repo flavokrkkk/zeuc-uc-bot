@@ -40,7 +40,7 @@ const BonusPaymentPage = () => {
             value="sbp"
             className="h-14 w-full cursor-pointer bg-gray-200 border border-gray-300 flex items-center justify-center rounded-md"
             bgColor={ButtonColors.GREEN}
-            isDisabled={isPending}
+            isDisabled={isPending || !points}
             rounded={ButtonRoundSizes.ROUNDED_XL}
             onClick={handleGetPayLink}
           >
@@ -51,7 +51,7 @@ const BonusPaymentPage = () => {
           </Button>
           <Button
             value="card"
-            isDisabled={isPending}
+            isDisabled={isPending || !points}
             className="h-14 w-full cursor-pointer bg-gray-200 border border-gray-300 flex items-center justify-center rounded-md"
             bgColor={ButtonColors.GREEN}
             rounded={ButtonRoundSizes.ROUNDED_XL}
