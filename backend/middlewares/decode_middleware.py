@@ -22,10 +22,11 @@ class DecodeEncodeMiddleware(BaseHTTPMiddleware):
         return json.loads(decrypted_data)
 
     async def dispatch(self, request, call_next):
+        print(await request.json())
         if request.method in ("POST", "PUT", "PATCH"):
-            body = await request.body()
+            body = await request.body() 
             try:
-                if body and not request.url.path.startswith("/api/auth"):
+                if body and not request.url.path.startswith("/api/auth") and not request.url.path.endswith("/callback"):
                     encrypted_payload = json.loads(body)
                     iv = bytes(encrypted_payload["iv"])
                     data = bytes(encrypted_payload["data"])
