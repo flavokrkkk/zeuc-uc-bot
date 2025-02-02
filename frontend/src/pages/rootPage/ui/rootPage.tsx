@@ -24,7 +24,7 @@ const RootPage = () => {
             className="absolute bottom-28 left-4 rotate-12 filter blur-sm bg-black opacity-10"
           />
         </div>
-        <div className="relative z-10 flex-1 overflow-auto border">
+        <div className="relative z-10 flex-1 overflow-auto ">
           <Outlet />
         </div>
       </Suspense>
