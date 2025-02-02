@@ -11,7 +11,7 @@ const RootPage = () => {
   const { isAuthenticated } = useContext(ViewerContext);
   useTelegramUser();
   return (
-    <div className="bg-dark-100 h-[98vh] w-screen p-3 relative flex flex-col justify-between">
+    <div className="bg-dark-100 h-[96vh] w-screen p-3 relative flex flex-col justify-between">
       <div className="absolute inset-0 bg-black opacity-30 z-0" />{" "}
       <Suspense fallback={<h1>Loading...</h1>}>
         <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
