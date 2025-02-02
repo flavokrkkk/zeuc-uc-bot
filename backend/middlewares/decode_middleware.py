@@ -40,16 +40,16 @@ class DecodeEncodeMiddleware(BaseHTTPMiddleware):
                 )
 
         response: _StreamingResponse = await call_next(request)
-        response_body = b""
+        response_body_1 = b""
         async for chunk in response.body_iterator:
-            response_body += chunk
+            response_body_1 += chunk
         
         async def new_body_iterator():
-            yield response_body
+            yield response_body_1
 
         response.body_iterator = new_body_iterator()
 
-        print(request.url, response_body.decode("utf-8"))
+        print(request.url, response_body_1.decode("utf-8"))
 
         if response.status_code == 200 and response.headers.get("Content-Type") == "application/json":
             response_body = b""
