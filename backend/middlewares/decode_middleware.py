@@ -4,7 +4,7 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
-from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.middleware.base import _StreamingResponse, BaseHTTPMiddleware
 
 
 class DecodeEncodeMiddleware(BaseHTTPMiddleware):
@@ -39,8 +39,18 @@ class DecodeEncodeMiddleware(BaseHTTPMiddleware):
                     content={"message": "Invalid encrypted data", "detail": str(e)}
                 )
 
-        response = await call_next(request)
-        print(response)
+        response: _StreamingResponse = await call_next(request)
+        async for chunk in response.body_iterator:
+            response_body += chunk
+        
+        async def new_body_iterator():
+            yield response_body
+
+        response.body_iterator = new_body_iterator()
+
+        print(request.url, response_body.decode("utf-8"))
+
+# Перезаписываем `body_iterator`, чтобы избежать потери данных
 
         if response.status_code == 200 and response.headers.get("Content-Type") == "application/json":
             response_body = b""
