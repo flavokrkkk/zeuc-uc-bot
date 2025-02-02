@@ -15,6 +15,7 @@ import { useState } from "react";
 import SearchUser from "@/features/user/ui/searchUser";
 
 const ScoresPage = () => {
+  //
   const [isOpen, setIsOpen] = useState(false);
   const {
     handleSetScoreGift,
