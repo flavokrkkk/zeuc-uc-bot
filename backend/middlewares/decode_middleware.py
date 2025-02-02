@@ -50,8 +50,6 @@ class DecodeEncodeMiddleware(BaseHTTPMiddleware):
 
         print(request.url, response_body.decode("utf-8"))
 
-# Перезаписываем `body_iterator`, чтобы избежать потери данных
-
         if response.status_code == 200 and response.headers.get("Content-Type") == "application/json":
             response_body = b""
             async for chunk in response.body_iterator:
