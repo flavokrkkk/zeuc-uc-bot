@@ -25,9 +25,8 @@ app.add_middleware(
         "http://213.226.127.164/",
         "http://213.226.127.164",
         "https://83.222.9.37",
-        "83.222.9.37"
-        "http://83.222.9.37",
-        
+        "83.222.9.37",
+        "http://83.222.9.37",   
     ],
     allow_credentials=True,
     allow_methods=["*"],

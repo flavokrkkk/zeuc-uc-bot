@@ -22,6 +22,7 @@ class DecodeEncodeMiddleware(BaseHTTPMiddleware):
         return json.loads(decrypted_data)
 
     async def dispatch(self, request, call_next):
+        print(await request.json())
         if request.method in ("POST", "PUT", "PATCH"):
             body = await request.body()
             try:
@@ -38,18 +39,7 @@ class DecodeEncodeMiddleware(BaseHTTPMiddleware):
                     status_code=400,
                     content={"message": "Invalid encrypted data", "detail": str(e)}
                 )
-
-        response: _StreamingResponse = await call_next(request)
-        response_body_1 = b""
-        async for chunk in response.body_iterator:
-            response_body_1 += chunk
-        
-        async def new_body_iterator():
-            yield response_body_1
-
-        response.body_iterator = new_body_iterator()
-
-        print(request.url, response_body_1.decode("utf-8"))
+        response = await call_next(request)
 
         if response.status_code == 200 and response.headers.get("Content-Type") == "application/json":
             response_body = b""

@@ -39,7 +39,8 @@ def main_menu_keyboard() -> InlineKeyboardMarkup:
 def admin_menu_keyboard() -> InlineKeyboardMarkup:
     buttons = [
         [
-            InlineKeyboardButton(text="🇹🇷 Коды", callback_data="uc_codes")
+            InlineKeyboardButton(text="🇹🇷 Коды", callback_data="uc_codes"),
+            InlineKeyboardButton(text="🇹🇷 Покупки", callback_data="payments")
         ],
         [
             InlineKeyboardButton(text="🇹🇷 Статистика (Bot)", callback_data="bot_stats"),
