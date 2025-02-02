@@ -22,7 +22,6 @@ class DecodeEncodeMiddleware(BaseHTTPMiddleware):
         return json.loads(decrypted_data)
 
     async def dispatch(self, request, call_next):
-        print(await request.json())
         if request.method in ("POST", "PUT", "PATCH"):
             body = await request.body() 
             try:
