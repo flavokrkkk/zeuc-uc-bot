@@ -54,6 +54,7 @@ class DecodeEncodeMiddleware(BaseHTTPMiddleware):
                 backend=default_backend()
             ).encryptor()
             encoded_data = json.dumps(response_data).encode("utf-8")
+            print(encoded_data)
             encrypted_data = encryptor.update(encoded_data) + encryptor.finalize()
             encrypted_body = {
                 "iv": list(iv),
