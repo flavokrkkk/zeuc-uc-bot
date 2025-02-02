@@ -22,7 +22,6 @@ class DecodeEncodeMiddleware(BaseHTTPMiddleware):
         return json.loads(decrypted_data)
 
     async def dispatch(self, request, call_next):
-
         if request.method in ("POST", "PUT", "PATCH"):
             body = await request.body()
             try:
@@ -41,6 +40,7 @@ class DecodeEncodeMiddleware(BaseHTTPMiddleware):
                 )
 
         response = await call_next(request)
+        print(response)
 
         if response.status_code == 200 and response.headers.get("Content-Type") == "application/json":
             response_body = b""

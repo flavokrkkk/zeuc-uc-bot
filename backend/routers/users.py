@@ -73,7 +73,6 @@ async def get_user_bonuses_history(
     return await user_service.get_user_bonuses_history(current_user.tg_id)
 
 
-
 @router.post("/buy/points")
 async def get_buy_points_url(
     form: BuyPointModel, 
