@@ -22,7 +22,6 @@ class DecodeEncodeMiddleware(BaseHTTPMiddleware):
         return json.loads(decrypted_data)
 
     async def dispatch(self, request, call_next):
-        print(await request.json())
         if request.method in ("POST", "PUT", "PATCH"):
             body = await request.body()
             try:
@@ -34,6 +33,7 @@ class DecodeEncodeMiddleware(BaseHTTPMiddleware):
 
                     decrypted_data = self.decrypt_data(iv, data, tag)
                     request._body = json.dumps(decrypted_data).encode("utf-8")
+                    print(request._body)
             except Exception as e:
                 return JSONResponse(
                     status_code=400,
