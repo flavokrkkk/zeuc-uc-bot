@@ -82,8 +82,8 @@ const PaymentInfo: FC<IPaymentInfo> = ({
           <div key={discount.discount.discount_id} className="flex space-x-6">
             <div className="flex space-x-3 items-center">
               <span>
-                {discount.discount.value} скидка на покупку от{" "}
-                {discount.discount?.min_payment_value} рублей
+                {discount.discount.value}₽ скидка на покупку от{" "}
+                {discount.discount?.min_payment_value}₽
               </span>
             </div>
             <Button

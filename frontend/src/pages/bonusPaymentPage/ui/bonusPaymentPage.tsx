@@ -14,7 +14,7 @@ const BonusPaymentPage = () => {
     usePoints();
   return (
     <div className=" text-white flex items-center justify-center p-4">
-      <div className="max-w-md w-full rounded-xl shadow-2xl p-8">
+      <div className="max-w-md w-full rounded-xl shadow-2xl">
         <h1 className="text-3xl font-medium text-center mb-8">
           Покупка бонусов
         </h1>

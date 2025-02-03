@@ -1,8 +1,11 @@
 import { EPaymentMethods, IPack } from "@/entities/packs/types/types";
 import { getPaymentUrl } from "@/entities/payment/libs/paymentService";
 import { IPayementRequest } from "@/entities/payment/types/types";
+import { userSelectors } from "@/entities/user/models/store/userSlice";
+import { useAppSelector } from "@/shared/hooks/useAppSelector";
 import { useMutation } from "@tanstack/react-query";
 import { ChangeEvent, useMemo, useState } from "react";
+import { toast } from "sonner";
 
 export const usePaymentMutate = ({
   selectPacks,
@@ -13,6 +16,7 @@ export const usePaymentMutate = ({
   totalSum: number;
   totalPacks: number;
 }) => {
+  const userDiscount = useAppSelector(userSelectors.userDiscount);
   const [discountId, setDiscountId] = useState<number>(0);
   const [playerId, setPlayerId] = useState("");
   const [playerError, setPlayerError] = useState<"success" | "error" | "">("");
@@ -53,10 +57,20 @@ export const usePaymentMutate = ({
   });
 
   const handleUseDiscountId = (event: React.MouseEvent<HTMLButtonElement>) => {
-    if (!event.currentTarget.value)
-      throw new Error("Value is not a valid HTMLButtonElement!");
+    const discountId = Number(event?.currentTarget?.value);
 
-    setDiscountId(Number(event?.currentTarget?.value));
+    if (!discountId) throw new Error("Value is not a valid HTMLButtonElement!");
+
+    const searchDiscount = userDiscount.find(
+      (discount) => discount.discount.discount_id === discountId
+    );
+    if (searchDiscount) {
+      toast.info("Вы активировали скидку", {
+        position: "top-center",
+        description: `${searchDiscount.discount.value}₽ скидка на покупку от ${searchDiscount.discount?.min_payment_value}₽`,
+      });
+      setDiscountId(searchDiscount.discount.discount_id);
+    }
   };
 
   const handleGetPayLink = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -78,9 +92,15 @@ export const usePaymentMutate = ({
     if (playerId.length >= 9 && playerId.startsWith("5")) {
       setPlayerId(playerId);
       setPlayerError("success");
+      toast.success("ID игрока подтверждено", {
+        position: "top-center",
+      });
       return;
     }
 
+    toast.error("ID игрока не подтвреждено", {
+      position: "top-center",
+    });
     setPlayerError("error");
   };
 

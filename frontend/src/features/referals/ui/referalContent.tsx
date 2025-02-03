@@ -3,7 +3,7 @@ import SearchUser from "@/features/user/ui/searchUser";
 import { useAppSelector } from "@/shared/hooks/useAppSelector";
 import { useCopied } from "@/shared/hooks/useCopy";
 import clsx from "clsx";
-import { CheckCircle, Copy } from "lucide-react";
+import { Copy } from "lucide-react";
 import { useReferal } from "../hooks/useReferal";
 import { useCallback, useState } from "react";
 
@@ -31,7 +31,7 @@ const ReferalContent = () => {
         получите <span className="text-yellow-400">20 бонусов</span>, когда они
         зарегистрируются.
       </p>
-      <div className="bg-dark-200 space-y-2 flex-col p-4 px-6  rounded-md flex justify-between">
+      <div className="bg-dark-200 space-y-2 flex-col p-4 px-6  rounded-xl flex justify-between">
         <section className="items-center rounded-md flex justify-between space-x-5">
           <button>{currentUser?.referal_code}</button>
           <button
@@ -43,12 +43,6 @@ const ReferalContent = () => {
           >
             <Copy />
           </button>
-          {isCopied && (
-            <div className="absolute top-[62px] left-[42%] transform -translate-x-1/2 px-4 py-2 bg-gray-900 text-white text-sm rounded-lg shadow-lg flex items-center space-x-2">
-              <CheckCircle className="w-5 h-5 text-green-500" />
-              <span>Скопировано!</span>
-            </div>
-          )}
         </section>
       </div>
       <div className="space-y-4">

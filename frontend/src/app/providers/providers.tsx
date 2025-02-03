@@ -5,6 +5,7 @@ import { routes } from "@/pages/routes";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/shared/api/queryClient";
 import { ViewerProvider } from "@/entities/viewer/models/context/providers";
+import { Toaster } from "sonner";
 
 const Providers = () => {
   return (
@@ -12,6 +13,7 @@ const Providers = () => {
       <ViewerProvider>
         <Provider store={store}>
           <RouterProvider router={routes} />
+          <Toaster />
         </Provider>
       </ViewerProvider>
     </QueryClientProvider>
