@@ -5,7 +5,7 @@ from starlette.responses import JSONResponse
 from backend.dto.purchase_dto import PurchaseModel
 from backend.dto.reward import DiscountModel, UpdateUserRewardsModel
 from backend.dto.uc_code_dto import BuyPointCallbackModel, BuyPointModel
-from backend.dto.user_dto import BonusesHistoryModel, UserModel
+from backend.dto.user_dto import BonusesHistoryModel, UserDiscountModel, UserModel
 from backend.services.discount_service import DiscountService
 from backend.services.payment_service import PaymentService
 from backend.services.purchase_service import PurchaseService
@@ -48,7 +48,7 @@ async def update_user_rewards(
 async def get_user_discounts(
     discount_service: Annotated[DiscountService, Depends(get_discount_service)],
     current_user: UserModel = Depends(get_current_user_dependency),
-) -> list[DiscountModel]:
+) -> list[UserDiscountModel]:
     return await discount_service.get_user_discounts(current_user.tg_id)
 
 
