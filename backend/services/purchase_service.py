@@ -71,9 +71,9 @@ class PurchaseService:
         )
         return PurchaseModel.model_validate(purchase, from_attributes=True)
     
-    async def check_is_paid(self, payment_id: str) -> bool:
+    async def check_is_paid(self, internal_order_id: str) -> bool:
         purchase: Purchase = await self.repository.get_by_attributes(
-            (self.repository.model.payment_id, payment_id),
+            (self.repository.model.internal_order_id, internal_order_id),
             one_or_none=True
         )
         if not purchase and not purchase.is_paid:
