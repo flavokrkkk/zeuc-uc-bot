@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from backend.dto.purchase_dto import PurchaseModel
 
@@ -87,8 +87,8 @@ class UCActivateRequestModel(BaseModel):
 class BuyUCCodeUrlModel(BaseModel):
     url: str
     order_id: str
-    amount: float
-    internal_id: str
+    amount: float = Field(exclude=True)
+    internal_id: str = Field(exclude=True)
 
 
 class PaymentUCCodeDataModel(BaseModel):

@@ -2,7 +2,7 @@ import asyncio
 from typing import Annotated
 from fastapi import APIRouter, Depends, WebSocket
 
-from backend.dto.uc_code_dto import BuyUCCodeCallbackModel, UCCodeGetBuyUrlModel
+from backend.dto.uc_code_dto import BuyUCCodeCallbackModel, BuyUCCodeUrlModel, UCCodeGetBuyUrlModel
 from backend.dto.user_dto import UserModel
 from backend.services.discount_service import DiscountService
 from backend.services.payment_service import PaymentService
@@ -57,7 +57,7 @@ async def get_buy_uc_code_url(
     discount_service: Annotated[DiscountService, Depends(get_discount_service)],
     user_service: Annotated[UserService, Depends(get_user_service)],
     current_user: UserModel = Depends(get_current_user_dependency),
-) -> str: 
+) -> BuyUCCodeUrlModel: 
     if form.discount:
         form.discount = await discount_service.delete_discount_from_user(
             current_user.tg_id,
@@ -66,7 +66,7 @@ async def get_buy_uc_code_url(
     await user_service.check_player_id(form.player_id)
     response = await payment_service.get_uc_payment_url(form, current_user.tg_id)
     await purchase_service.create_purchase(form, current_user, response)
-    return response.url
+    return response
 
 
 @router.websocket("/buy/status/{order_id}")
