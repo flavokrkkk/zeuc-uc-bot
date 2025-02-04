@@ -16,7 +16,7 @@ async def test_db(session):
         mago = User(tg_id=5163648472, username="magoxdd", is_admin=True, bonuses=1000000)
         setting = Setting(store_is_on=True)
         
-        uc_codes_values = {60: [100, 1], 325: [200, 4], 660: [300, 5], 1800: [2000, 8], 3850: [5500, 10], 8100: [10000, 20]}
+        uc_codes_values = {60: [10, 1], 325: [200, 4], 660: [300, 5], 1800: [2000, 8], 3850: [5500, 10], 8100: [10000, 20]}
         
         uc_codes = []
         rewards = []
