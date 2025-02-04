@@ -28,7 +28,7 @@ class UserRepository(SqlAlchemyRepository):
         query = select(self.model).where(self.model.username == username)
         return (await self.session.execute(query)).scalar_one_or_none()
     
-    async def handle_black_list(self, tg_id: int, status: bool):
+    async def handle_black_list(self, tg_id: int, status: bool) -> str:
         query = (
             update(self.model)
             .where(self.model.tg_id == tg_id)

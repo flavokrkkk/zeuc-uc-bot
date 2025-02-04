@@ -1,5 +1,6 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, Request, Response
+from starlette.responses import JSONResponse
 
 from backend.dto.auth_dto import LoginUserModel
 from backend.dto.user_dto import UserModel
@@ -23,7 +24,6 @@ async def get_current_user(
 async def login(
     form: LoginUserModel,
     auth_service: Annotated[AuthService, Depends(get_auth_service)]
-) -> dict[str, str]:
+) -> JSONResponse:
     await auth_service.authenticate_user(**form.model_dump())
-    token = await auth_service.create_access_token(**form.model_dump())
-    return {"access_token": token}
+    return await auth_service.create_access_token(**form.model_dump())

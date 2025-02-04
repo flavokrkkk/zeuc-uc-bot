@@ -31,8 +31,12 @@ class PurchaseRepository(SqlAlchemyRepository):
 
         return stats
     
-    async def get_users_who_buyed(self):
+    async def get_users_who_buyed(self) -> int:
         query = select(func.count(func.distinct(Purchase.tg_id)))
         result = await self.session.execute(query)
         unique_buyers_count = result.scalar() 
         return unique_buyers_count
+    
+    async def get_by_order_id(self, order_id: str) -> Purchase:
+        query = select(self.model).where(self.model.payment_id == order_id)
+        return (await self.session.execute(query)).scalar_one_or_none()

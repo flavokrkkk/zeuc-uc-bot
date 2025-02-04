@@ -7,7 +7,7 @@ from database.repositories.user import UserRepository
 
 
 class Database:
-    def __init__(self, session: AsyncSession) -> None:
+    def __init__(self, session: AsyncSession):
         self.users = UserRepository(session=session)
         self.uc_codes= UCCodeRepository(session=session)
         self.purchases = PurchaseRepository(session=session)

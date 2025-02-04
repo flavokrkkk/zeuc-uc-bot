@@ -10,7 +10,7 @@ class DatabaseConfig(BaseModel):
     DB_PORT: str
     DROP_DB: bool
 
-    def get_url(self, is_async: bool = True):
+    def get_url(self, is_async: bool = True) -> str:
         if is_async:
             return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
         return f"postgresql://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"

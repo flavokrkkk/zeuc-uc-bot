@@ -1,3 +1,4 @@
+from starlette.responses import JSONResponse
 from backend.database.models.models import Reward, User
 from backend.dto.uc_code_dto import BuyPointCallbackModel
 from backend.dto.user_dto import BonusesHistoryModel, UserModel
@@ -68,7 +69,7 @@ class UserService:
             bonuses=user.bonuses - BONUC_CIRCLE_PRICE
         )
 
-    async def activate_referal_code(self, current_user: UserModel, referal_code: str) -> None:
+    async def activate_referal_code(self, current_user: UserModel, referal_code: str) -> JSONResponse:
         if current_user.referer_id:
             raise UserAlreadyActivateReferal
         
@@ -89,6 +90,10 @@ class UserService:
             item_id=current_user.tg_id,
             referer_id=referer.tg_id,
             bonuses=current_user.bonuses + 20
+        )
+        return JSONResponse(
+            status_code=200,
+            content={"message": "Реферальный код активирован"}
         )
     
     async def send_bonuses_to_referer(self, user_id: int, bonuses: int) -> None:
@@ -118,6 +123,10 @@ class UserService:
             form.metadata.tg_id, 
             form.metadata.point, 
             BonusStatuses.GET.value
+        )
+        return JSONResponse(
+            status_code=200,
+            content={"message": f"Оплата прошла успешно! Начислили {form.metadata.point} бонусов"}
         )
 
     async def check_player_id(self, player_id: str):

@@ -137,7 +137,7 @@ async def upload_new_codes(
 @router.callback_query(F.data == "add_uc_pack", UCCodesStates.main)
 async def add_uc_pack_amount(callback: CallbackQuery, state: FSMContext):
     await state.set_state(AddNewPackStates.add_uc_pack_amount)
-    await callback.message.edit_text(text="Введите количесто UC кодов в паке")
+    await callback.message.edit_text(text="Введите количесто UC в паке")
 
 
 @router.message(F.text, AddNewPackStates.add_uc_pack_amount)

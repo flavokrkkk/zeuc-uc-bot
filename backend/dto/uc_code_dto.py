@@ -29,6 +29,7 @@ class UCPackModel(BaseModel):
     total_sum: int
     quantity: int
     activated_codes: int = 0
+    errors: list[dict] = []
 
 
 class UCCodeGetBuyUrlModel(BaseModel):
@@ -47,6 +48,7 @@ class BuyUCMetadataModel(BaseModel):
     notification_url: str
     internal_order_id: str
     discount: int = 0
+    response: dict
 
 
 class BuyPointMetadataModel(BaseModel):
@@ -67,9 +69,13 @@ class BuyPointCallbackModel(BaseModel):
     metadata: BuyPointMetadataModel
 
 
-class UCActivationResult(BaseModel):
-    success: int
-    response: dict
+class UCActivationError(BaseModel):
+    status_code: int
+    uc_code: str
+    uc_amount: int
+    price: int
+    message: str
+    player_id: int
 
 
 class UCActivateRequestModel(BaseModel):

@@ -6,7 +6,7 @@ from database.repositories.base import SqlAlchemyRepository
 class UCCodeRepository(SqlAlchemyRepository):
     model = UCCode
 
-    async def group_by_amount(self):
+    async def group_by_amount(self) -> list[tuple[int, int]]:
         query = (
             select(
                 self.model.uc_amount,
@@ -18,7 +18,7 @@ class UCCodeRepository(SqlAlchemyRepository):
         uc_codes = await self.session.execute(query)
         return uc_codes.all()
     
-    async def get_count_by_amount(self, uc_amount: int):
+    async def get_count_by_amount(self, uc_amount: int) -> int:
         query = (
             select(func.count(self.model.uc_amount))
             .where(self.model.uc_amount == uc_amount)
@@ -26,7 +26,7 @@ class UCCodeRepository(SqlAlchemyRepository):
         uc_codes = (await self.session.execute(query)).scalar()
         return uc_codes
 
-    async def delete_codes_by_value(self, uc_amount: int, quantity: int):
+    async def delete_codes_by_value(self, uc_amount: int, quantity: int) -> list[str]:
         query = (
             select(self.model)
             .where(self.model.uc_amount == uc_amount)

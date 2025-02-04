@@ -11,5 +11,5 @@ router = APIRouter(prefix="/reward", tags=["reward"])
 @router.get("/all")
 async def get_all_rewards(
     reward_service: Annotated[RewardService, Depends(get_reward_service)],
-):
+) -> list[dict]:
     return await reward_service.get_rewards()

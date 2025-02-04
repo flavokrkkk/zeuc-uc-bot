@@ -41,7 +41,11 @@ class UCCodeRepository(SqlAlchemyRepository):
         uc_code = UCCode(
             code=code, 
             uc_amount=uc_amount, 
-            price=select(Price).where(Price.price == price)
+            price_id=(
+                select(Price.price_id)
+                .where(Price.price == price)
+                .scalar_subquery()
+            )
         )
         self.session.add(uc_code)
         await self.session.commit()

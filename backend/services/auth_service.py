@@ -4,6 +4,7 @@ from fastapi.security import HTTPBearer
 from passlib.context import CryptContext
 
 from jwt import decode, encode, InvalidTokenError
+from starlette.responses import JSONResponse
 from backend.errors.user_errors import UserInBlackList
 from backend.repositories.user_repository import UserRepository
 from backend.dto.user_dto import UserModel
@@ -15,7 +16,7 @@ from backend.errors.auth_errors import (
 )
 
 class AuthService:
-    def __init__(self, repository: UserRepository) -> None:
+    def __init__(self, repository: UserRepository):
         self.repository = repository
         self.context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -34,7 +35,7 @@ class AuthService:
             raise UserInBlackList
         return user
 
-    async def create_access_token(self, username: str, tg_id: int) -> str:
+    async def create_access_token(self, username: str, tg_id: int) -> JSONResponse:
         expire = datetime.now() + timedelta(
             minutes=JWT_CONFIG.JWT_ACCESS_TOKEN_TIME
         )
@@ -42,9 +43,9 @@ class AuthService:
         token = encode(
             data, JWT_CONFIG.JWT_SECRET, algorithm=JWT_CONFIG.JWT_ALGORITHM
         )
-        return token
+        return JSONResponse(status_code=200, content={"access_token": token})
 
-    async def verify_token(self, token: HTTPBearer) -> dict[str, str]:
+    async def verify_token(self, token: HTTPBearer) -> UserModel:
         try:
             payload = decode(
                 token.credentials,

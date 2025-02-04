@@ -5,7 +5,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 def add_back_to_menu_button(is_admin: bool = False):
     def decorator(func):
-        def wrapper(*args, **kwargs):
+        def wrapper(*args, **kwargs) -> InlineKeyboardBuilder | InlineKeyboardMarkup:
             button_data = {
                 "text": "← Вернуться в меню", 
                 "callback_data": "back_to_menu" if not is_admin else "back_to_admin_menu"

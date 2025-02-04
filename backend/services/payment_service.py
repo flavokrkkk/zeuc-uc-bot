@@ -3,20 +3,19 @@ from typing import Coroutine
 from uuid import uuid4
 from aiohttp import ClientSession, payload
 from fastapi import HTTPException
+from starlette.responses import JSONResponse
 
 from backend.dto.purchase_dto import PurchaseModel
 from backend.dto.uc_code_dto import (
-    BuyPointCallbackModel,
     BuyPointModel,
     BuyUCCodeCallbackModel, 
     BuyUCCodeUrlModel,
-    UCActivateRequestModel, 
-    UCActivationResult, 
-    UCCodeGetBuyUrlModel, 
-    UCPackModel
+    UCActivateRequestModel,
+    UCActivationError, 
+    UCCodeGetBuyUrlModel,
 )
 from backend.repositories.uc_code_repository import UCCodeRepository
-from backend.utils.config.config import CODEEPAY_API_KEY
+from backend.utils.config.config import CODEEPAY_API_KEY, UCODEIUM_API_KEY
 
 
 class PaymentService:
@@ -24,7 +23,7 @@ class PaymentService:
         self.codeepay_api_url = "https://codeepay.ru/initiate_payment"
         self.ucodeium_api_url = "https://ucodeium.com/api/activate"
         self.codeepay_api_key = CODEEPAY_API_KEY
-        self.ucodeium_api_key = "e158c8cb-e6cc-4cb7-b5fb-777abe0c2957"
+        self.ucodeium_api_key = UCODEIUM_API_KEY
         self.repository = repository
 
     async def _post_request(
@@ -32,7 +31,7 @@ class PaymentService:
         form: UCActivateRequestModel, 
         uc_amount: int,
         price: float
-    ) -> UCActivationResult:
+    ) -> dict[str, str]:
         async with ClientSession() as session:
             async with session.post(
                 self.ucodeium_api_url,
@@ -40,20 +39,24 @@ class PaymentService:
                 json=form.model_dump(),
                 ssl=False,
             ) as response:
-                print(response.status)
-                if response.status == 200:
-                    api_response = await response.json()
-                    return UCActivationResult(success=1, response=api_response)
-                await self.repository.return_back_uc_code(form.uc_code, uc_amount, price)
-                raise HTTPException(
-                    status_code=response.status,
-                    detail=await response.json(),
+                json_res = await response.json()
+                if json_res.get("result_code") == 0:
+                    return json_res
+                return UCActivationError(
+                    status_code=json_res.get("result_code"),
+                    uc_code=form.uc_code,
+                    uc_amount=uc_amount,
+                    price=price,
+                    message=(await response.json())["message"],
+                    player_id=form.player_id
                 )
 
-    async def activate_codes(self, payload: BuyUCCodeCallbackModel) -> list[str]:
+    async def activate_codes(self, payload: BuyUCCodeCallbackModel) -> None:
+        any_error_is_raised = False
         for uc_pack in payload.metadata.uc_packs:
             tasks: list[Coroutine] = []
             activated = 0
+
             uc_codes = await self.repository.get_activating_codes(
                 uc_pack.uc_amount, 
                 uc_pack.quantity
@@ -64,19 +67,51 @@ class PaymentService:
                         UCActivateRequestModel(
                             uc_value=f"{uc_pack.uc_amount} UC",
                             uc_code=uc_code,
-                            player_id=payload.metadata.player_id
+                            player_id=payload.metadata.player_id,
                         ),
                         uc_amount=uc_pack.uc_amount,
                         price=uc_pack.price_per_uc
                     )
                 )
             responses = await asyncio.gather(*tasks, return_exceptions=True)
+
+            errors = []
+            error_messages = {
+                101: "Код уже активирован этим игроком",
+                102: "Код уже активирован другим игроком",
+                201: "Неверный формат кода",
+                202: "Неверный формат Player ID",
+                301: "Техническая проблема на сервере"
+            }
+
             for response in responses:
-                if isinstance(response, UCActivationResult):
+                if isinstance(response, dict):
                     activated += 1
+                else:
+                    await self.repository.return_back_uc_code(
+                        response.uc_code, 
+                        response.uc_amount, 
+                        response.price
+                    )
+                    if isinstance(response, UCActivationError):
+                        errors.append({
+                            **response.model_dump(),
+                            "message": error_messages[response.status_code]
+                        })
+                    elif isinstance(response, Exception):
+                        errors.append({"message": f"Ошибка сервера {str(response)}"})
+            if len(errors) > 0:
+                any_error_is_raised = True
+
             uc_pack.activated_codes = activated
+            uc_pack.errors = errors
             activated = 0
-        return payload
+
+        payload.metadata.response =( 
+            {"detail": "Оплата прошла успешно, но возможно не все коды активировались"}
+            if any_error_is_raised
+            else {"detail": "Оплата прошла успешно"}
+        )
         
     async def get_uc_payment_url(self, form: UCCodeGetBuyUrlModel, tg_id: int) -> BuyUCCodeUrlModel:
         internal_order_id = str(uuid4())
@@ -95,7 +130,7 @@ class PaymentService:
         )
         return BuyUCCodeUrlModel(**response, internal_id=internal_order_id)
             
-    async def get_payment_url(self, payload: UCCodeGetBuyUrlModel) -> dict:
+    async def get_payment_url(self, payload: UCCodeGetBuyUrlModel) -> dict[str, str]:
         async with ClientSession() as session:
             async with session.post(
                 self.codeepay_api_url,

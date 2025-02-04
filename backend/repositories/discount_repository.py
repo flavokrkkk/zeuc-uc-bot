@@ -14,7 +14,7 @@ class DiscountRepository(SqlAlchemyRepository):
             )
         ).scalars().all()
     
-    async def delete_discount_from_user(self, tg_id: int, discount_id: int) -> Discount:
+    async def delete_discount_from_user(self, tg_id: int, discount_id: int) -> int | None:
         query = select(UserDiscounts).where(
             UserDiscounts.user_id == tg_id,
             UserDiscounts.discount_id == discount_id
