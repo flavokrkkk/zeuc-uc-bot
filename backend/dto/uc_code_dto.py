@@ -48,7 +48,7 @@ class BuyUCMetadataModel(BaseModel):
     notification_url: str
     internal_order_id: str
     discount: int = 0
-    response: dict
+    response: dict = {}
 
 
 class BuyPointMetadataModel(BaseModel):
