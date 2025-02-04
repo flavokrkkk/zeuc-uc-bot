@@ -26,7 +26,6 @@ class DatabaseMiddleware(BaseMiddleware):
             data['database'] = database
                         
             store_is_on = await database.settings.get_store_is_on()
-            print(store_is_on)
             if not store_is_on and event.message and event.message.text != "/admin":
                 if event.callback_query:
                     return await event.callback_query.message.edit_text("Магазин выключен")

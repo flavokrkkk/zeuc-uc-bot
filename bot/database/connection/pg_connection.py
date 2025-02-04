@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 
 
-from config.config import db_config
+from utils.config.config import db_config
 
 
 class DatabaseConnection:

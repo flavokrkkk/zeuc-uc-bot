@@ -1,7 +1,7 @@
 from collections import defaultdict
 import json
 
-from sqlalchemy import func, select
+from sqlalchemy import func, select, update
 from database.models.models import Purchase
 from database.repositories.base import SqlAlchemyRepository
 
@@ -40,3 +40,15 @@ class PurchaseRepository(SqlAlchemyRepository):
     async def get_by_order_id(self, order_id: str) -> Purchase:
         query = select(self.model).where(self.model.payment_id == order_id)
         return (await self.session.execute(query)).scalar_one_or_none()
+    
+    async def set_status(self, order_id: str, status: str) -> Purchase:
+        query = (
+            update(self.model)
+            .where(self.model.payment_id == order_id)
+            .values(status=status)
+            .returning(self.model)
+        )
+        item = (await self.session.execute(query)).scalar_one_or_none()
+        await self.session.commit()
+        await self.session.refresh(item)
+        return item

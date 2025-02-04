@@ -2,7 +2,7 @@ from uuid import uuid4
 from sqlalchemy import DECIMAL, BigInteger, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from database.models.base import Base
-from config.enums import PurchaseStatuses
+from utils.config.enums import PurchaseStatuses
 
 
 class Setting(Base):
