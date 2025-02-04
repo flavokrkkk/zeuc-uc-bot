@@ -69,7 +69,7 @@ async def get_buy_uc_code_url(
     return response.url
 
 
-@router.websocket("/wss/buy/status/{order_id}")
+@router.websocket("/buy/status/{order_id}")
 async def uc_code_status_checker(
     websocket: WebSocket,
     order_id: str,
