@@ -14,7 +14,6 @@ export const useWebSocketEvents = <T>(
     socket.onmessage = (event: MessageEvent) => {
       try {
         const parsedData = JSON.parse(event.data);
-        console.log(parsedData);
         if (parsedData.event === eventType) {
           callback(parsedData);
         }

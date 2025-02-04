@@ -1,5 +1,5 @@
 import { scoresSelectors } from "@/entities/scores/models/store/scoresSlice";
-import { spinWheel } from "@/features/helpers/spinWheel";
+import { spinWheel } from "@/features/scores/helpers/spinWheel";
 import { useAppSelector } from "@/shared/hooks/useAppSelector";
 import { useRef, useState } from "react";
 

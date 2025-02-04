@@ -23,14 +23,13 @@ export const socketSlice = createSliceWithThunks({
   reducers: (create) => ({
     connectionSocket: create.asyncThunk<
       WebSocket,
-      void,
+      { order_id: string },
       { rejectValue: string }
     >(
-      async (_, { rejectWithValue }) => {
+      async ({ order_id }, { rejectWithValue }) => {
         try {
-          const token = localStorage.getItem("token");
           const sockets = new WebSocket(
-            `ws://localhost:8080/ws?token=${token}`
+            `wss://zeusucbot.shop/api/uc_code/buy/status/${order_id}`
           );
           return sockets;
         } catch (err) {
