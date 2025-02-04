@@ -9,7 +9,7 @@ from database.models.models import Purchase
 from utils.config.enums import PurchaseStatuses
 from database.models.models import User
 from keyboards.commands import back_to_menu
-from keyboards.purchase import purchase_menu_keyboard, change_status_keyboard
+from keyboards.purchases import purchase_menu_keyboard, change_status_keyboard
 from states.purchases import PurchasesStates
 from database.db_main import Database
 
@@ -35,9 +35,9 @@ def format_purchase_data(purchase: Purchase, data: dict[str, str]) -> str:
     message_text = f"""
 <b>Заказ</b>: {purchase.payment_id}
 <b>Дата покупки</b>: {(
-    datetime
-    .fromtimestamp(purchase.created_at / 1000)
-    .strftime("%d.%m.%Y %H:%M:%S")
+        datetime
+        .fromtimestamp(purchase.created_at / 1000)
+        .strftime("%d.%m.%Y %H:%M:%S")
     )
 }
 <b>Игрок</b>: {purchase.player_id}
@@ -106,6 +106,7 @@ async def set_status(callback: CallbackQuery, state: FSMContext, database: Datab
     else:
         purchase = await database.purchases.set_status(order_id, PurchaseStatuses.IN_PROGRESS.value)
 
+    await state.set_state(PurchasesStates.check_order)
     await callback.message.edit_text(
         text=format_purchase_data(purchase, json.loads(purchase.metadata_)),
         reply_markup=purchase_menu_keyboard(purchase.tg_id)

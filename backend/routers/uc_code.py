@@ -69,7 +69,7 @@ async def get_buy_uc_code_url(
     return response.url
 
 
-@router.websocket("/ws/{order_id}")
+@router.websocket("/wss/buy/status/{order_id}")
 async def uc_code_status_checker(
     websocket: WebSocket,
     order_id: str,
@@ -84,7 +84,7 @@ async def uc_code_status_checker(
 
             is_paid, response = await purchase_service.check_is_paid(order_id)
             if is_paid:
-                await manager.send_message(order_id, response)
+                await manager.send_message(order_id, response, event="purchase_status")
                 break
             else:
                 await asyncio.sleep(0.5)
