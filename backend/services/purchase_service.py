@@ -71,11 +71,11 @@ class PurchaseService:
         )
         return PurchaseModel.model_validate(purchase, from_attributes=True)
     
-    async def check_is_paid(self, order_id: str) -> tuple[bool, dict]:
+    async def check_is_paid(self, order_id: str) -> bool | dict[str, str | int]:
         purchase: Purchase = await self.repository.get_by_attributes(
             (self.repository.model.payment_id, order_id),
             one_or_none=True
         )
-        if not purchase and not purchase.is_paid:
+        if not purchase or not purchase.is_paid:
             return False
-        return True, json.loads(purchase.metadata_).get("response")
+        return json.loads(purchase.metadata_).get("response")

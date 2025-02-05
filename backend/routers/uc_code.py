@@ -78,16 +78,21 @@ async def uc_code_status_checker(
 ) -> None:
     await manager.connect(order_id, websocket)
     try:
+        max_retries = 60
         while True:
             if websocket.client_state.name != "CONNECTED":
                 break
+            elif max_retries == 0:
+                await manager.send_message(order_id, {"error": "timeout"}, event="purchase_status")
+                break
 
-            is_paid, response = await purchase_service.check_is_paid(order_id)
-            if is_paid:
-                await manager.send_message(order_id, response, event="purchase_status")
+            is_paid_response = await purchase_service.check_is_paid(order_id)
+            if is_paid_response:
+                await manager.send_message(order_id, is_paid_response, event="purchase_status")
                 break
             else:
-                await asyncio.sleep(0.5)
+                await asyncio.sleep(1)
+            max_retries -= 1
     except Exception as e:
         await manager.send_message(order_id, {"error": str(e)}, event="purchase_status")
         raise e
