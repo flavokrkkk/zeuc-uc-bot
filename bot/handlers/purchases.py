@@ -20,36 +20,46 @@ router = Router()
 def format_purchase_data(purchase: Purchase, data: dict[str, str]) -> str:
     
     us_packs_info = [
-        f"""
-<b>Сумма</b>: {uc_pack['total_sum']} ₽
-<b>Количество UC</b>: {uc_pack['uc_amount']} UC x {uc_pack['quantity']}
+        """
+<b>Сумма</b>: {total_sum} ₽
+<b>Количество UC</b>: {uc_amount} UC x {quantity}
 <b>Ошибки активации(Код → Ошибка)</b>:
-{'\n'.join([
-    f"{err['uc_code']} → {err['message']}"  # Используем двойные кавычки здесь
-    for err in uc_pack['errors']
-]) if uc_pack['errors'] else "Нет ошибок"}
-""".strip()
-        for uc_pack in data['uc_packs']
-    ]
+{errors}
+""".format(
+        total_sum=uc_pack['total_sum'],
+        uc_amount=uc_pack['uc_amount'],
+        quantity=uc_pack['quantity'],
+        errors='\n'.join([
+            "{uc_code} → {message}".format(uc_code=err['uc_code'], message=err['message'])
+            for err in uc_pack['errors']
+        ]) if uc_pack['errors'] else "Нет ошибок"
+    ).strip()
+    for uc_pack in data['uc_packs']
+]
     
-    message_text = f"""
-<b>Заказ</b>: {purchase.payment_id}
-<b>Дата покупки</b>: {(
-        datetime
-        .fromtimestamp(purchase.created_at / 1000)
-        .strftime("%d.%m.%Y %H:%M:%S")
-    )
-}
-<b>Игрок</b>: {purchase.player_id}
-<b>Скидка</b>: {data['discount']} ₽
-<b>Сумма UC</b>: {purchase.uc_sum} ₽
-<b>Сумма заказа</b>: {purchase.price} ₽
-<b>Метод оплаты</b>: {purchase.payment_method}
-<b>Статус</b>: {purchase.status}
+    message_text = """
+<b>Заказ</b>: {payment_id}
+<b>Дата покупки</b>: {purchase_date}
+<b>Игрок</b>: {player_id}
+<b>Скидка</b>: {discount} ₽
+<b>Сумма UC</b>: {uc_sum} ₽
+<b>Сумма заказа</b>: {price} ₽
+<b>Метод оплаты</b>: {payment_method}
+<b>Статус</b>: {status}
 
 <b>Информация по UC-пакетам:</b>
-{'\n\n'.join(us_packs_info)}
-    """.strip()
+{uc_packs_info}
+""".format(
+    payment_id=purchase.payment_id,
+    purchase_date=datetime.fromtimestamp(purchase.created_at / 1000).strftime("%d.%m.%Y %H:%M:%S"),
+    player_id=purchase.player_id,
+    discount=data['discount'],
+    uc_sum=purchase.uc_sum,
+    price=purchase.price,
+    payment_method=purchase.payment_method,
+    status=purchase.status,
+    uc_packs_info='\n\n'.join(us_packs_info)
+).strip()
 
     return message_text
 
