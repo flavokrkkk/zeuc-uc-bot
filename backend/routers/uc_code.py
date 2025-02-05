@@ -87,7 +87,7 @@ async def uc_code_status_checker(
             #     break
 
             is_paid_response = await purchase_service.check_is_paid(order_id)
-            if is_paid_response:
+            if is_paid_response:    
                 await manager.send_message(order_id, is_paid_response, event="purchase_status")
                 break
             else:
