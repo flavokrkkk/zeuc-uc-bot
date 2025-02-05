@@ -17,30 +17,29 @@ from database.db_main import Database
 router = Router()
 
 
-from datetime import datetime
-
 def format_purchase_data(purchase: Purchase, data: dict[str, str]) -> str:
-    # Формируем список информации о UC-пакетах
+    
     us_packs_info = [
         f"""
 <b>Сумма</b>: {uc_pack['total_sum']} ₽
 <b>Количество UC</b>: {uc_pack['uc_amount']} UC x {uc_pack['quantity']}
 <b>Ошибки активации(Код → Ошибка)</b>:
-{"\n".join([
-    f"{err['uc_code']} → {err['message']}"
+{'\n'.join([
+    f"{err['uc_code']} → {err['message']}"  # Используем двойные кавычки здесь
     for err in uc_pack['errors']
 ]) if uc_pack['errors'] else "Нет ошибок"}
 """.strip()
         for uc_pack in data['uc_packs']
     ]
-
-    # Формируем дату покупки
-    formatted_date = datetime.fromtimestamp(purchase.created_at / 1000).strftime("%d.%m.%Y %H:%M:%S")
     
-    # Собираем основное сообщение
     message_text = f"""
 <b>Заказ</b>: {purchase.payment_id}
-<b>Дата покупки</b>: {formatted_date}
+<b>Дата покупки</b>: {(
+        datetime
+        .fromtimestamp(purchase.created_at / 1000)
+        .strftime("%d.%m.%Y %H:%M:%S")
+    )
+}
 <b>Игрок</b>: {purchase.player_id}
 <b>Скидка</b>: {data['discount']} ₽
 <b>Сумма UC</b>: {purchase.uc_sum} ₽
