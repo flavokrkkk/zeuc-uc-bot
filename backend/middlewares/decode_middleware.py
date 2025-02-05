@@ -34,7 +34,6 @@ class DecodeEncodeMiddleware(BaseHTTPMiddleware):
 
                     decrypted_data = self.decrypt_data(iv, data, tag)
                     request._body = json.dumps(decrypted_data).encode("utf-8")
-                    print(request._body)
             except Exception as e:
                 return JSONResponse(
                     status_code=400,
@@ -67,12 +66,4 @@ class DecodeEncodeMiddleware(BaseHTTPMiddleware):
             del response.headers["Content-Length"]
 
             response.body_iterator = encrypted_body_iterator()
-        b = b""
-        async for chunk in response.body_iterator:
-            b += chunk
-        print(b.decode("utf-8"))
-
-        async def decrypted_body_iterator():
-            yield b
-        response.body_iterator = decrypted_body_iterator()
         return response
