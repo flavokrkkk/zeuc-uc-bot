@@ -89,6 +89,7 @@ async def uc_code_status_checker(
             else:
                 await asyncio.sleep(0.5)
     except Exception as e:
-        print(e)
+        await manager.send_message(order_id, {"error": str(e)}, event="purchase_status")
+        raise e
     finally:
         await manager.disconnect(order_id)
