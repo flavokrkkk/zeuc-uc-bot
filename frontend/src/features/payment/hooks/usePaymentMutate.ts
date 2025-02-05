@@ -1,10 +1,12 @@
 import { EPaymentMethods, IPack } from "@/entities/packs/types/types";
 import { getPaymentUrl } from "@/entities/payment/libs/paymentService";
 import { IPayementRequest } from "@/entities/payment/types/types";
+import { socketSelectors } from "@/entities/socket/models/store/socketSlice";
 import { userSelectors } from "@/entities/user/models/store/userSlice";
+import { useActions } from "@/shared/hooks/useActions";
 import { useAppSelector } from "@/shared/hooks/useAppSelector";
 import { useMutation } from "@tanstack/react-query";
-import { ChangeEvent, useMemo, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 export const usePaymentMutate = ({
@@ -20,6 +22,10 @@ export const usePaymentMutate = ({
   const [discountId, setDiscountId] = useState<number>(0);
   const [playerId, setPlayerId] = useState("");
   const [playerError, setPlayerError] = useState<"success" | "error" | "">("");
+  const [orderId, setOrderId] = useState("");
+
+  const isConnected = useAppSelector(socketSelectors.isConnected);
+  const { connectionSocket } = useActions();
 
   const requestPayment = useMemo(
     () => ({
@@ -49,8 +55,10 @@ export const usePaymentMutate = ({
     },
     onSuccess: (response) => {
       if (window.Telegram && window.Telegram.WebApp) {
+        setOrderId(response.order_id);
         window.Telegram.WebApp.openLink(response.url);
       } else {
+        setOrderId(response.order_id);
         window.location.href = response.url;
       }
     },
@@ -103,6 +111,12 @@ export const usePaymentMutate = ({
     });
     setPlayerError("error");
   };
+
+  useEffect(() => {
+    if (!isConnected && orderId) {
+      connectionSocket({ order_id: orderId });
+    }
+  }, [isConnected, connectionSocket, orderId]);
 
   return {
     isPending,
