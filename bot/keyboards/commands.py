@@ -31,7 +31,6 @@ def main_menu_keyboard() -> InlineKeyboardMarkup:
             InlineKeyboardButton(text="Поддержка 📞", callback_data="support"),
             InlineKeyboardButton(text="Отзывы📕", callback_data="reviews")
         ],
-        [InlineKeyboardButton(text="Пригласить друга 📨", callback_data="invite")]
     ]
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
