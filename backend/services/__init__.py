@@ -5,3 +5,4 @@ from backend.services.purchase_service import PurchaseService
 from backend.services.reward_service import RewardService
 from backend.services.discount_service import DiscountService
 from backend.services.payment_service import PaymentService
+from backend.services.setting_service import SettingService

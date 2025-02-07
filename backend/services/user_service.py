@@ -82,14 +82,8 @@ class UserService:
     
         await self.repository.update_item(
             self.repository.model.tg_id,
-            item_id=referer.tg_id,
-            bonuses=referer.bonuses + 20
-        )
-        await self.repository.update_item(
-            self.repository.model.tg_id,
             item_id=current_user.tg_id,
             referer_id=referer.tg_id,
-            bonuses=current_user.bonuses + 20
         )
         return JSONResponse(
             status_code=200,

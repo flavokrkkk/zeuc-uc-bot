@@ -28,11 +28,21 @@ async def get_auth_service(session=Depends(get_session)) -> services.AuthService
     return services.AuthService(repositories.UserRepository(session=session))
 
 
+async def get_setting_service(session=Depends(get_session)) -> services.SettingService:
+    return services.SettingService(repositories.SettingRepository(session=session))
+
+
 async def get_current_user_dependency(
     auth_service: Annotated[services.AuthService, Depends(get_auth_service)],
     token: Annotated[HTTPBearer, Depends(bearer)],
 ) -> UserModel:
     return await auth_service.verify_token(token)
+
+
+async def get_store_is_on(
+    setting_service: Annotated[services.SettingService, Depends(get_setting_service)],
+):
+    return await setting_service.check_store_is_on()
 
 
 async def get_user_service(session=Depends(get_session)) -> services.UserService:
@@ -54,9 +64,11 @@ async def get_discount_service(session=Depends(get_session)) -> services.Discoun
 async def get_purchase_service(session=Depends(get_session)) -> services.PurchaseService:
     return services.PurchaseService(repositories.PurchaseRepository(session=session))
 
+
 async def get_payment_service(session=Depends(get_session)) -> services.PaymentService:
     return services.PaymentService(repositories.UCCodeRepository(session=session))
 
 
 async def get_websocket_manager() -> WebsocketManager:
     return WebsocketManager()
+    
