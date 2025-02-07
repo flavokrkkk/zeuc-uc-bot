@@ -26,7 +26,7 @@ class PurchaseRepository(SqlAlchemyRepository):
             
             for pack in uc_pack:
                 uc_amount = pack["uc_amount"]
-                count = pack["count"]
+                count = pack["quantity"]
                 stats[uc_amount] += count
 
         return stats
