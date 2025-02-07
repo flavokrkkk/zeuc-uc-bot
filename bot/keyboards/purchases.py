@@ -5,10 +5,10 @@ from utils.decorators import add_back_to_menu_button
 
 
 @add_back_to_menu_button(is_admin=True)
-def purchase_menu_keyboard(tg_id: int) -> InlineKeyboardMarkup:
+def purchase_menu_keyboard(username: int) -> InlineKeyboardMarkup:
     buttons = [
         InlineKeyboardButton(text="Изменить статус", callback_data="change_status"),
-        InlineKeyboardButton(text="Связаться с покупателем", url=f"tg://user?id={tg_id}"),
+        InlineKeyboardButton(text="Связаться с покупателем", url=f"t.me//{username}"),
     ]
     return InlineKeyboardMarkup(inline_keyboard=[buttons])
 

@@ -21,7 +21,7 @@ from datetime import datetime
 def format_purchase_data(purchase: Purchase, data: dict[str, str]) -> str:
     us_packs_info = []
     for uc_pack in data['uc_packs']:
-        errors = "\n".join([
+        errors = "\n" + "\n".join([
             "{uc_code} → {message}".format(uc_code=err['uc_code'], message=err['message'])
             for err in uc_pack['errors']
         ]) if uc_pack['errors'] else "Нет ошибок"
@@ -29,7 +29,7 @@ def format_purchase_data(purchase: Purchase, data: dict[str, str]) -> str:
         pack_info = (
             f"<b>Сумма</b>: {uc_pack['total_sum']} ₽\n"
             f"<b>Количество UC</b>: {uc_pack['uc_amount']} UC x {uc_pack['quantity']}\n"
-            f"<b>Ошибки активации (Код → Ошибка)</b>:\n{errors}"
+            f"<b>Ошибки активации (Код → Ошибка)</b>: {errors}"
         ).strip()
 
         us_packs_info.append(pack_info)
@@ -63,7 +63,8 @@ async def purchases(callback: CallbackQuery, state: FSMContext, database: Databa
 async def input_order_id(message: Message, state: FSMContext, database: Database):
     order_id = message.text
     purchase = await database.purchases.get_by_order_id(order_id)
-    
+    user = await database.users.get_item(purchase.tg_id)
+
     if not purchase:
         await message.answer(
             text="Покупка не найдена",
@@ -78,7 +79,7 @@ async def input_order_id(message: Message, state: FSMContext, database: Database
     await state.set_state(PurchasesStates.check_order)
     await message.answer(
         text=message_text,
-        reply_markup=purchase_menu_keyboard(purchase.tg_id)
+        reply_markup=purchase_menu_keyboard(user.username)
     )
 
 
@@ -97,6 +98,7 @@ async def change_status(callback: CallbackQuery, state: FSMContext, database: Da
 async def set_status(callback: CallbackQuery, state: FSMContext, database: Database):
     order_id = (await state.get_data()).get("order_id")
     status = callback.data.split("_")[-1]
+    user = await database.users.get_item(purchase.tg_id)
     
     if status == "completed":
         purchase = await database.purchases.set_status(order_id, PurchaseStatuses.COMPLETED.value)
@@ -106,5 +108,5 @@ async def set_status(callback: CallbackQuery, state: FSMContext, database: Datab
     await state.set_state(PurchasesStates.check_order)
     await callback.message.edit_text(
         text=format_purchase_data(purchase, json.loads(purchase.metadata_)),
-        reply_markup=purchase_menu_keyboard(purchase.tg_id)
+        reply_markup=purchase_menu_keyboard(user.username)
     )

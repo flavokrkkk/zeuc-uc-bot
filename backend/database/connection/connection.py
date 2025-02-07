@@ -21,7 +21,7 @@ class DatabaseConnection:
             if DB_CONFIG.DROP_DB:
                 await conn.run_sync(Base.metadata.drop_all)
                 await conn.run_sync(Base.metadata.create_all)
-        await test_db(await self.get_session())
-        await test_admins(await self.get_session())
+            await test_db(await self.get_session())
+            await test_admins(await self.get_session())
         return self
     
