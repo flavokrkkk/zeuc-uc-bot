@@ -47,7 +47,7 @@ class PaymentService:
                     uc_code=form.uc_code,
                     uc_amount=uc_amount,
                     price=price,
-                    message=(await response.json())["message"],
+                    message=(await response.json() or {}),
                     player_id=form.player_id
                 )
 

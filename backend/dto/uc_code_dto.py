@@ -74,7 +74,7 @@ class UCActivationError(BaseModel):
     uc_code: str
     uc_amount: int
     price: int
-    message: str
+    message: dict
     player_id: int
 
 
