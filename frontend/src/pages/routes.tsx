@@ -84,6 +84,10 @@ export const routes = createBrowserRouter([
           path: ERouteNames.AUTH_ERROR,
           element: <ErrorPage />,
         },
+        {
+          path: ERouteNames.CLOSE_ERROR,
+          element: <ErrorPage message="В данный момент магазин закрыт" />,
+        },
       ]),
     ],
   },

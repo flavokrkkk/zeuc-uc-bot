@@ -45,7 +45,7 @@ const CatalogPage = () => {
       </section>
 
       {isSelected && (
-        <div className="w-full  space-x-1 flex justify-center">
+        <div className="w-full absolute bottom-5  space-x-1 flex justify-center">
           <Button
             className="h-10  w-full cursor-pointer bg-gray-200 border border-gray-300 flex items-center justify-center rounded-md"
             bgColor={ButtonColors.GREEN}

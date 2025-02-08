@@ -16,9 +16,12 @@ const TicketsContent = () => {
         {currentUser?.bonuses} бонусов
       </span>
       <hr className="border-gray-600" />
-      <div className="text-white flex items-center justify-between">
+      <div
+        onClick={toggleIsHistory}
+        className="text-white cursor-pointer flex items-center justify-between"
+      >
         <span>Посмотреть историю начислений</span>
-        <span onClick={toggleIsHistory}>
+        <span>
           {isCheckHistory ? (
             <ChevronDown className="cursor-pointer" />
           ) : (

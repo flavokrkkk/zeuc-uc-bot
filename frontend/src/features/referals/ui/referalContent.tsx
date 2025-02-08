@@ -27,9 +27,9 @@ const ReferalContent = () => {
     <section className="space-y-10">
       <h1 className="text-2xl">Приглашайте друзей и получайте кредиты!</h1>
       <p>
-        Поделитесь кодом на приглашение с друзьями. И вы, и ваш приглашенный
-        получите <span className="text-yellow-400">20 бонусов</span>, когда они
-        зарегистрируются.
+        Поделитесь кодом на приглашение с друзьями и вы будете получать
+        <span className="text-yellow-400">10%</span> от баллов за покупки ваших
+        друзей
       </p>
       <div className="bg-dark-200 space-y-2 flex-col p-4 px-6  rounded-xl flex justify-between">
         <section className="items-center rounded-md flex justify-between space-x-5">

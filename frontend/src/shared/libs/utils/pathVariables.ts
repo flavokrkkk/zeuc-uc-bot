@@ -9,4 +9,5 @@ export const enum ERouteNames {
   SCORES_PAGE = "/main/scores",
   AUTH_PAGE = "/error",
   AUTH_ERROR = "/error/auth",
+  CLOSE_ERROR = "/error/close",
 }

@@ -7,6 +7,7 @@ import axios, {
   AxiosRequestConfig,
   AxiosResponse,
   AxiosError,
+  isAxiosError,
 } from "axios";
 
 import { RequestOptions } from "https";
@@ -79,7 +80,13 @@ export class AxiosClient {
         }
         return response;
       },
-      (error) => {
+      (error: Error) => {
+        if (isAxiosError(error)) {
+          if (error.status === 423) {
+            deleteAccessToken();
+            window.location.href = "http://localhost:3000/error/close";
+          }
+        }
         return Promise.reject(error);
       }
     );
