@@ -103,6 +103,14 @@ class UserService:
             for bonus in user.bonuses_history
         ]
     
+    async def udpate_bonuses(self, tg_id: int, amount: int, status: str) -> UserModel:
+        if status == BonusStatuses.GET.value:
+            await self.repository.add_bonuses(tg_id, amount)
+        elif status == BonusStatuses.USE.value:
+            await self.delete_bonuses(tg_id, amount)
+        user = await self.get_user(tg_id)
+        return UserModel.model_validate(user, from_attributes=True)
+    
     async def delete_bonuses(self, tg_id: int, bonuses: int):
         is_deleted = await self.repository.update_bonuses(tg_id, bonuses, BonusStatuses.USE.value)
         if not is_deleted:

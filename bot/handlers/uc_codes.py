@@ -222,3 +222,10 @@ async def upload_new_codes(
             text="Неверный формат файла",
             reply_markup=back_to_menu(is_admin=True)
         )
+
+
+@router.callback_query(F.data == "change_uc_code_price", UCCodesStates.option)
+async def change_uc_code_price(callback: CallbackQuery, state: FSMContext):
+    await state.set_state(UCCodesStates.change_price)
+    await callback.message.edit_text(text="Введите новую цену")
+    
