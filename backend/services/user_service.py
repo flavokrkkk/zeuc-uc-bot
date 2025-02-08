@@ -11,7 +11,7 @@ from backend.errors.user_errors import (
 )
 from backend.repositories import UserRepository
 from backend.utils.config.enums import BonusStatuses
-from backend.utils.config.config import BONUC_CIRCLE_PRICE
+from backend.utils.config.config import BONUS_CIRCLE_PRICE
 
 
 class UserService:
@@ -66,7 +66,7 @@ class UserService:
         await self.repository.update_item(
             self.repository.model.tg_id,
             user.tg_id, 
-            bonuses=user.bonuses - BONUC_CIRCLE_PRICE
+            bonuses=user.bonuses - BONUS_CIRCLE_PRICE
         )
 
     async def activate_referal_code(self, current_user: UserModel, referal_code: str) -> JSONResponse:
@@ -129,5 +129,5 @@ class UserService:
         raise InvalidPlayerId
     
     async def check_user_balance(self, user: UserModel):
-        if user.bonuses < BONUC_CIRCLE_PRICE:
+        if user.bonuses < BONUS_CIRCLE_PRICE:
             raise UserNotHaveEnoughBonuses

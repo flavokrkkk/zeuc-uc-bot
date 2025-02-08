@@ -78,7 +78,7 @@ async def uc_code_status_checker(
 ) -> None:
     await manager.connect(order_id, websocket)
     try:
-        max_retries = 60
+        # max_retries = 60
         while True:
             if websocket.client_state.name != "CONNECTED":
                 break
@@ -92,7 +92,7 @@ async def uc_code_status_checker(
                 break
             else:
                 await asyncio.sleep(1)
-            max_retries -= 1
+            # max_retries -= 1
     except Exception as e:
         await manager.send_message(order_id, {"error": str(e)}, event="purchase_status")
         raise e

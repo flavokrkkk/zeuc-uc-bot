@@ -2,7 +2,8 @@ from sqlalchemy import select, func, update
 from sqlalchemy.dialects.postgresql import array
 from sqlalchemy.dialects.postgresql.operators import OVERLAP
 
-from database.models.models import User
+from utils.config.enums import BonusStatuses
+from database.models.models import BonusesHistory, User
 from database.repositories.base import SqlAlchemyRepository
 
 
@@ -39,3 +40,14 @@ class UserRepository(SqlAlchemyRepository):
         await self.session.commit()
         return username
     
+    async def add_bonuses(self, username: str, amount: int) -> None:
+        user = await self.get_by_username(username)
+        user.bonuses += amount
+        user.bonuses_history.append(
+            BonusesHistory(
+                tg_id=user.tg_id, 
+                amount=amount, 
+                status=BonusStatuses.GET.value
+            )
+        )
+        await self.session.commit()

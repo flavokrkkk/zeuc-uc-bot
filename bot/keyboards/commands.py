@@ -10,10 +10,7 @@ async def set_bot_commands(bot: Bot) -> None:
         "/admin": "Admin panel",
     }
     commands = [
-        BotCommand(
-            command=command,
-            description=description
-        )
+        BotCommand(command=command, description=description)
         for command, description in menu_commands.items()
     ]
     await bot.set_my_commands(commands)
@@ -22,10 +19,7 @@ async def set_bot_commands(bot: Bot) -> None:
 def main_menu_keyboard() -> InlineKeyboardMarkup:
     buttons = [
         [
-            InlineKeyboardButton(
-                text="Купить UC 🛒",
-                web_app=WebAppInfo(url=WEB_APP_URL)
-            )
+            InlineKeyboardButton(text="Купить UC 🛒",web_app=WebAppInfo(url=WEB_APP_URL))
         ],
         [
             InlineKeyboardButton(text="Поддержка 📞", callback_data="support", url=SUPPORT_URL),
@@ -46,7 +40,8 @@ def admin_menu_keyboard() -> InlineKeyboardMarkup:
             InlineKeyboardButton(text="Статистика (UC)", callback_data="uc_stats")
         ],
         [InlineKeyboardButton(text="Вкл | выкл", callback_data="off_or_on_store")],
-        [InlineKeyboardButton(text="Черный список", callback_data="black_list")]
+        [InlineKeyboardButton(text="Черный список", callback_data="black_list")],
+        [InlineKeyboardButton(text="Начислить бонусы", callback_data="add_bonuses")]
     ]
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
