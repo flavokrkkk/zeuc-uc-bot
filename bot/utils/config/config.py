@@ -29,4 +29,6 @@ db_config = DatabaseConfig(
 bot_config = BotConfig(
     **{field: env.str(field.upper()) for field in BotConfig.model_fields}
 )
-webapp_url = env.str("WEBAPP_URL")
+WEB_APP_URL = env.str("WEBAPP_URL")
+SUPPORT_URL = env.str("SUPPORT_URL")
+REVIEWS_URL = env.str("REVIEWS_URL")

@@ -1,7 +1,7 @@
 from aiogram import Bot
 from aiogram.types import BotCommand, InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
 
-from utils.config.config import webapp_url
+from utils.config.config import REVIEWS_URL, SUPPORT_URL, WEB_APP_URL
 
 
 async def set_bot_commands(bot: Bot) -> None:
@@ -24,12 +24,12 @@ def main_menu_keyboard() -> InlineKeyboardMarkup:
         [
             InlineKeyboardButton(
                 text="Купить UC 🛒",
-                web_app=WebAppInfo(url=webapp_url)
+                web_app=WebAppInfo(url=WEB_APP_URL)
             )
         ],
         [
-            InlineKeyboardButton(text="Поддержка 📞", callback_data="support"),
-            InlineKeyboardButton(text="Отзывы📕", callback_data="reviews")
+            InlineKeyboardButton(text="Поддержка 📞", callback_data="support", url=SUPPORT_URL),
+            InlineKeyboardButton(text="Отзывы📕", callback_data="reviews", url=REVIEWS_URL)
         ],
     ]
     return InlineKeyboardMarkup(inline_keyboard=buttons)
