@@ -1,6 +1,7 @@
 import {
   deleteAccessToken,
   getAccessToken,
+  setStateCloseShop,
 } from "@/entities/token/libs/tokenService";
 import axios, {
   AxiosInstance,
@@ -29,7 +30,27 @@ export class AxiosClient {
 
     if (withAuth) {
       this.addAuthInterceptor();
+    } else {
+      this.addInterceptor();
     }
+  }
+
+  private addInterceptor() {
+    this.baseQueryV1Instance.interceptors.response.use(
+      async (config) => {
+        return config;
+      },
+      (error: Error) => {
+        if (isAxiosError(error)) {
+          if (error.status === 423) {
+            deleteAccessToken();
+            setStateCloseShop(false);
+            window.location.href = "http://localhost:3000/error/close";
+          }
+        }
+        return Promise.reject(error);
+      }
+    );
   }
 
   private addAuthInterceptor() {
@@ -74,6 +95,7 @@ export class AxiosClient {
               "9fGDzagmHOCYEvjw"
             );
             response.data = decryptedData;
+            setStateCloseShop(true);
           } catch (error) {
             console.error("Ошибка при расшифровке:", error);
           }
@@ -84,6 +106,7 @@ export class AxiosClient {
         if (isAxiosError(error)) {
           if (error.status === 423) {
             deleteAccessToken();
+            setStateCloseShop(false);
             window.location.href = "http://localhost:3000/error/close";
           }
         }
