@@ -8,6 +8,7 @@ class UCCodesStates(StatesGroup):
     delete_code = State()
     upload_codes = State()
     success = State()
+    change_price = State()
     
 
 class AddNewPackStates(StatesGroup):

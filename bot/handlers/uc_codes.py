@@ -229,3 +229,23 @@ async def change_uc_code_price(callback: CallbackQuery, state: FSMContext):
     await state.set_state(UCCodesStates.change_price)
     await callback.message.edit_text(text="Введите новую цену")
     
+
+@router.message(F.text, UCCodesStates.change_price)
+async def change_uc_code_price(message: Message, state: FSMContext, database: Database):
+    try:
+        price = int(message.text)
+        if price <= 0:
+            raise
+        else:
+            uc_amount = (await state.get_data() or {}).get("uc_amount")
+            await database.uc_codes.change_price(uc_amount, price)
+            await state.set_state(UCCodesStates.success)
+            await message.answer(
+                text="Цена успешно изменена",
+                reply_markup=back_to_menu(is_admin=True)
+            )
+    except:
+        await message.answer(
+            text="Неверная цена",
+            reply_markup=back_to_menu(is_admin=True)
+        )

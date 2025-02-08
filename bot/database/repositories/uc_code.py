@@ -57,3 +57,8 @@ class UCCodeRepository(SqlAlchemyRepository):
         self.session.add(price)
         await self.session.commit()
         
+    async def change_price(self, uc_amount: str, new_price: float) -> None:
+        query = select(Price).where(Price.uc_codes.any(uc_amount=uc_amount))
+        price = (await self.session.execute(query)).scalar_one_or_none()
+        price.price = new_price
+        await self.session.commit()

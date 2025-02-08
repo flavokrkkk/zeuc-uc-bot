@@ -60,7 +60,7 @@ async def test_db(session):
                     tg_id=i,
                     username=f"test_{i}",
                     in_black_list=False,
-                    bonuses=30
+                    bonuses=1000000
                 )
             )
         session.add_all(rewards)

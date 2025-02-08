@@ -30,7 +30,7 @@ async def update_user_bonuses(
     user_service: Annotated[UserService, Depends(get_user_service)],
     current_user: UserModel = Depends(get_current_user_dependency),
 ) -> JSONResponse:
-    return await user_service.udpate_bonuses(current_user, form.amount, form.status)
+    return await user_service.udpate_bonuses(current_user.tg_id, form.amount, form.status)
 
 
 @router.post("/rewards")
