@@ -21,3 +21,8 @@ class UserDiscountModel(BaseModel):
 class BonusesHistoryModel(BaseModel):
     amount: int
     created_at: int
+
+
+class UpdateUserBonusesModel(BaseModel):
+    amount: int
+    status: str

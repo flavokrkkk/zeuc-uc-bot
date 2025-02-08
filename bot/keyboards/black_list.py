@@ -33,21 +33,22 @@ def black_list_pagination(users: list[User], pages: int, page: int) -> InlineKey
         ]
     ])
     
-    pagination = []
-    if page > 1:
-        pagination.append(
-            InlineKeyboardButton(
-                text="←",
-                callback_data=f"black_list_page_{page - 1}"
+    if pages:
+        pagination = []
+        if page > 1:
+            pagination.append(
+                InlineKeyboardButton(
+                    text="←",
+                    callback_data=f"black_list_page_{page - 1}"
+                )
             )
-        )
-    if page < pages:
-        pagination.append(
-            InlineKeyboardButton(
-                text="→",
-                callback_data=f"black_list_page_{page + 1}"
+        if page < pages:
+            pagination.append(
+                InlineKeyboardButton(
+                    text="→",
+                    callback_data=f"black_list_page_{page + 1}"
+                )
             )
-        )
 
         users_buttons.append(pagination)
     return InlineKeyboardMarkup(inline_keyboard=users_buttons)

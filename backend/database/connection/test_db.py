@@ -1,7 +1,8 @@
+import json
 from random import choice
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from backend.database.models.models import Discount, Price, Reward, Setting, User, UserDiscounts
+from backend.database.models.models import Discount, Price, Purchase, Reward, Setting, User, UserDiscounts
 from backend.database.models.models import UCCode
 
 
@@ -67,6 +68,20 @@ async def test_db(session):
         for i in range(100):
             session.add(UserDiscounts(user_id=i, discount_id=choice(range(1, 4))))
 
+        # purchses = [
+        #     Purchase(
+        #         payment_id=f"pur{i}",
+        #         tg_id=i,
+        #         internal_order_id=f"pur{i}",
+        #         player_id=i,
+        #         uc_sum=100,
+        #         price=1000,
+        #         payment_method="test",
+        #         status="test",
+        #         metadata_=json.dumps({"uc_packs": [{"uc_amount": 60, "quantity": 1, "total_sum": 10, "errors": []}]})
+        #     ) for i in range(100)
+        # ]
+        # session.add_all(purchses)
         session.add_all(uc_codes)
         session.add(mago)
         session.add(setting)

@@ -5,7 +5,7 @@ from starlette.responses import JSONResponse
 from backend.dto.purchase_dto import PurchaseModel
 from backend.dto.reward import DiscountModel, UpdateUserRewardsModel
 from backend.dto.uc_code_dto import BuyPointCallbackModel, BuyPointModel
-from backend.dto.user_dto import BonusesHistoryModel, UserDiscountModel, UserModel
+from backend.dto.user_dto import BonusesHistoryModel, UpdateUserBonusesModel, UserDiscountModel, UserModel
 from backend.services.discount_service import DiscountService
 from backend.services.payment_service import PaymentService
 from backend.services.purchase_service import PurchaseService
@@ -24,6 +24,15 @@ from backend.utils.dependencies.dependencies import (
 router = APIRouter(prefix="/user", tags=["users"])
 
 
+@router.patch("/bonuses")
+async def update_user_bonuses(
+    form: UpdateUserBonusesModel,
+    user_service: Annotated[UserService, Depends(get_user_service)],
+    current_user: UserModel = Depends(get_current_user_dependency),
+) -> JSONResponse:
+    return await user_service.update_bonuses(current_user, form.amount, form.status)
+
+
 @router.post("/rewards")
 async def update_user_rewards(
     form: UpdateUserRewardsModel,
@@ -40,7 +49,7 @@ async def update_user_rewards(
             form.player_id
         )
     else:
-        await user_service.update_rewards(current_user, reward)
+        await user_service.add_discount(current_user, reward)
     return response
 
 

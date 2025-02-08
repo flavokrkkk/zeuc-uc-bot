@@ -52,3 +52,22 @@ class PurchaseRepository(SqlAlchemyRepository):
         await self.session.commit()
         await self.session.refresh(item)
         return item
+
+    async def get_pages_by_date(self, start_date: int, end_date: int) -> int | None:
+        pages_query = (
+            select(func.count())
+            .select_from(self.model)
+            .where(self.model.created_at.between(start_date, end_date))
+        )
+        pages = (await self.session.execute(pages_query)).scalar()
+        return pages // 10 if pages // 10 else 0
+    
+    async def get_by_date(self, start_date: int, end_date: int, page: int) -> list[Purchase]:
+        query = (
+            select(self.model)
+            .where(self.model.created_at.between(start_date, end_date))
+            .limit(10)
+            .offset(page * 10)
+            .order_by(self.model.created_at.desc())
+        )
+        return (await self.session.execute(query)).scalars().all() 

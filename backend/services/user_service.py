@@ -61,13 +61,8 @@ class UserService:
             raise UserNotFound
         await self.repository.delete_item(tg_id)
 
-    async def update_rewards(self, user: UserModel, reward: Reward) -> None:
+    async def add_discount(self, user: UserModel, reward: Reward) -> None:
         await self.repository.add_discount(user.tg_id, reward.discount_id)
-        await self.repository.update_item(
-            self.repository.model.tg_id,
-            user.tg_id, 
-            bonuses=user.bonuses - BONUS_CIRCLE_PRICE
-        )
 
     async def activate_referal_code(self, current_user: UserModel, referal_code: str) -> JSONResponse:
         if current_user.referer_id:
@@ -93,10 +88,11 @@ class UserService:
     async def send_bonuses_to_referer(self, user_id: int, bonuses: int) -> None:
         current_user: User = await self.repository.get_item(user_id)
         referer_user: User = await self.repository.get_item(current_user.referer_id)
+        await self.repository.update_bonuses(user_id, bonuses, BonusStatuses.GET.value)
         if referer_user and current_user.referer_id:
             await self.repository.update_bonuses(
                 current_user.referer_id, 
-                bonuses, 
+                int(bonuses * 0.1), 
                 BonusStatuses.GET.value
             )
 
