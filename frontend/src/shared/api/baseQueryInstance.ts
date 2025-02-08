@@ -91,7 +91,6 @@ export class AxiosClient {
       }
     );
   }
-
   public getInstance() {
     return this.baseQueryV1Instance;
   }
