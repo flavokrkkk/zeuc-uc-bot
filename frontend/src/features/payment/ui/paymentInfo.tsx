@@ -1,25 +1,19 @@
 import { IPack } from "@/entities/packs/types/types";
 import PacksBadge from "@/features/packs/ui/packsBadge";
-import { IconTypes } from "@/shared/ui/icon/libs/libs";
-import { Icon } from "@/shared/ui/icon/ui/icon";
 import { FC, useCallback } from "react";
-import {
-  Button,
-  ButtonColors,
-  ButtonRoundSizes,
-} from "../../../shared/ui/button/button";
 import { useActions } from "@/shared/hooks/useActions";
 import { useNavigate } from "react-router-dom";
 import { ERouteNames } from "@/shared/libs/utils/pathVariables";
 import { useAppSelector } from "@/shared/hooks/useAppSelector";
 import { userSelectors } from "@/entities/user/models/store/userSlice";
+import DiscountCard from "./discountCard";
 
 interface IPaymentInfo {
   discountId: number | null;
   totalPacks: number;
   totalPrice: number;
   selectedPacks: Array<IPack>;
-  handleUseDiscountId: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  handleUseDiscountId: (discountId: string) => void;
   handleSelectPack: (event: React.MouseEvent<HTMLButtonElement>) => void;
   handleUnSelectPack: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
@@ -34,7 +28,6 @@ const PaymentInfo: FC<IPaymentInfo> = ({
   handleUnSelectPack,
 }) => {
   const { setUnSelectPacks } = useActions();
-  const userInfo = useAppSelector(userSelectors.currentUser);
   const userDiscount = useAppSelector(userSelectors.userDiscount);
   const navigate = useNavigate();
 
@@ -67,39 +60,18 @@ const PaymentInfo: FC<IPaymentInfo> = ({
         </div>
       </section>
       <section className="flex w-full space-y-3 flex-col justify-end items-end">
-        <div className="flex space-x-3 items-center">
-          <span>Бонусов, при оплате через СБП: </span>
-          <span>
-            <Icon type={IconTypes.POINT_OUTLINED} className="h-6 w-6" />
-          </span>
-          <span>{userInfo?.bonuses}</span>
-        </div>
         <div className="space-x-2">
           <span>Итого:</span>
           <span className="text-2xl">{`${totalPacks} UC | ${totalPrice} ₽`}</span>
         </div>
-        {userDiscount.map((discount) => (
-          <div key={discount.discount.discount_id} className="flex space-x-6">
-            <div className="flex space-x-3 items-center">
-              <span>
-                {discount.discount.value}₽ скидка на покупку от{" "}
-                {discount.discount?.min_payment_value}₽
-              </span>
-            </div>
-            <Button
-              value={String(discount.discount.discount_id)}
-              isDisabled={
-                discount.discount?.min_payment_value > totalPrice ||
-                Boolean(discountId)
-              }
-              className="px-4"
-              rounded={ButtonRoundSizes.ROUNDED_LG}
-              bgColor={ButtonColors.GREEN}
-              onClick={handleUseDiscountId}
-            >
-              Использовать
-            </Button>
-          </div>
+        {userDiscount.map((discount, index) => (
+          <DiscountCard
+            key={index}
+            discount={discount}
+            discountId={discountId}
+            totalPrice={totalPrice}
+            handleUseDiscountId={handleUseDiscountId}
+          />
         ))}
       </section>
       <hr />

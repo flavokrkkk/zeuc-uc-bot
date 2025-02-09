@@ -105,6 +105,11 @@ export const packSlice = createSlice({
         (el) => el.multiplication_uc
       );
     }),
+    setChangeTotalPrice: create.reducer(
+      (state, { payload }: PayloadAction<number>) => {
+        state.totalPrice = payload;
+      }
+    ),
     resetTotalPacks: create.reducer((state) => {
       state.totalPrice = 0;
       state.totalPacks = 0;

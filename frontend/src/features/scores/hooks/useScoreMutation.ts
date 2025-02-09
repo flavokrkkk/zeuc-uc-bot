@@ -4,6 +4,7 @@ import { useActions } from "@/shared/hooks/useActions";
 import { useAppSelector } from "@/shared/hooks/useAppSelector";
 import { useMutation } from "@tanstack/react-query";
 import { ChangeEvent, useState } from "react";
+import { toast } from "sonner";
 
 export const useScoreMutation = (setIsOpen: (action: boolean) => void) => {
   const scoresValue = useAppSelector(scoresSelectors.scoresValue);
@@ -12,7 +13,7 @@ export const useScoreMutation = (setIsOpen: (action: boolean) => void) => {
   const [winnerType, setWinnerType] = useState<"uc" | "discount" | "">("");
   const { getAsyncCurrentUser, getAsyncDiscount } = useActions();
   const [isGetPrize, setIsGetPrize] = useState(false);
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationKey: ["score"],
     mutationFn: ({
       reward_id,
@@ -26,12 +27,15 @@ export const useScoreMutation = (setIsOpen: (action: boolean) => void) => {
         getAsyncCurrentUser();
       }
 
+      toast.info("Выигрыш начислен", {
+        position: "top-center",
+      });
+
       if (winnerType === "discount") {
         getAsyncDiscount();
       }
     },
   });
-
   const handleSetScoreGift = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (!event.currentTarget.value) throw new Error("Invalid value!");
 
@@ -60,6 +64,9 @@ export const useScoreMutation = (setIsOpen: (action: boolean) => void) => {
     if (playerId.length >= 9 && playerId.startsWith("5")) {
       setPlayerId(playerId);
       setIsOpen(false);
+      toast.success("ID подтвержден", {
+        position: "top-center",
+      });
       setPlayerError("success");
       return;
     }
@@ -75,6 +82,7 @@ export const useScoreMutation = (setIsOpen: (action: boolean) => void) => {
     handleChangeId,
     handleCheckId,
     setIsGetPrize,
+    isPending,
     handleSetScoreGift,
   };
 };

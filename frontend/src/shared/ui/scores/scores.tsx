@@ -2,7 +2,7 @@ import clsx from "clsx";
 import React, { useEffect } from "react";
 
 interface WheelProps {
-  segments: Array<{ title: string; reward_id: number }>;
+  segments: Array<{ title: string; reward_id: number; type: string }>;
   spinning: boolean;
   winnerIndex: number | null;
   wheelRef: React.RefObject<HTMLCanvasElement>;
@@ -65,10 +65,11 @@ const Wheel: React.FC<WheelProps> = ({
       context.rotate(startAngle + segmentAngle / 2);
       context.translate((outerRadius + innerRadius) / 2, 0);
       context.rotate(Math.PI / 2);
-      context.fillStyle = "#fff";
-      context.font = `${fontSize}px Arial`;
+      context.fillStyle = "black";
+
+      context.font = `${segment.type === "discount" ? 8 : fontSize}px Arial`;
       context.textAlign = "center";
-      context.fillText(segment.title, (innerRadius + outerRadius) / 2, 0);
+      context.fillText(segment.title, 0, 120);
       context.restore();
     });
     context.resetTransform();
@@ -86,28 +87,28 @@ const Wheel: React.FC<WheelProps> = ({
     <div className="flex flex-col relative">
       <img
         className={clsx(
-          "absolute top-[110px] left-[165px]",
+          "absolute top-[110px] left-[156px]",
           spinning && "animate-pulse"
         )}
         src="/images/score/Polygon 1.png"
       />
       <img
         className={clsx(
-          "absolute top-32 left-32 ",
+          "absolute top-32 left-[122px] ",
           spinning && "animate-pulse"
         )}
         src="/images/score/Ellipse 11.png"
       />
-      <span className="absolute top-[168px] left-[156px] text-gray-600">
+      <span className="absolute top-[168px] left-[151px] text-gray-600">
         Крутить
       </span>
-      <span className="absolute top-[185px] left-[159px] text-gray-600">
+      <span className="absolute top-[185px] left-[154px] text-gray-600">
         колесо
       </span>
       <canvas
         ref={wheelRef}
-        width="370"
-        height="370"
+        width="360"
+        height="360"
         className="mb-6 rounded-full shadow-lg"
       ></canvas>
     </div>

@@ -29,7 +29,7 @@ const SearchUser: FC<ISearchUser> = ({
   return (
     <section className="flex items-center justify-between">
       {isLabel && <h1>Ваш ID</h1>}
-      <span className="w-[132px]">
+      <span className="">
         <Input
           value={value}
           className={clsx(

@@ -2,12 +2,15 @@ import { ViewerContext } from "@/entities/viewer/models/context/providers";
 import Menu from "@/features/menu/ui/menu";
 import { useTelegramUser } from "@/features/user/hooks/useTelegramUser";
 import { pathNavigate } from "@/shared/libs/utils/pathNavigate";
+import { ERouteNames } from "@/shared/libs/utils/pathVariables";
 import { IconTypes } from "@/shared/ui/icon/libs/libs";
 import { Icon } from "@/shared/ui/icon/ui/icon";
+import clsx from "clsx";
 import { Suspense, useContext } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 
 const RootPage = () => {
+  const pathName = useLocation();
   const { isAuthenticated } = useContext(ViewerContext);
   useTelegramUser();
   return (
@@ -24,7 +27,14 @@ const RootPage = () => {
             className="absolute bottom-28 left-4 rotate-12 filter blur-sm bg-black opacity-10"
           />
         </div>
-        <div className="relative z-10 flex-1 overflow-hidden ">
+        <div
+          className={clsx(
+            "relative z-10 flex-1 ",
+            pathName.pathname === ERouteNames.PAYMENT_PAGE
+              ? "overflow-auto "
+              : "overflow-hidden "
+          )}
+        >
           <Outlet />
         </div>
       </Suspense>

@@ -137,6 +137,11 @@ export const userSlice = createSliceWithThunks({
         }));
       }
     ),
+    setCurrentUser: create.reducer(
+      (state, { payload }: PayloadAction<ICurrentUserResponse>) => {
+        state.currentUser = payload;
+      }
+    ),
   }),
 }).injectInto(rootReducer);
 

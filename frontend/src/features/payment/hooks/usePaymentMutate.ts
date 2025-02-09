@@ -25,7 +25,7 @@ export const usePaymentMutate = ({
   const [orderId, setOrderId] = useState("");
 
   const isConnected = useAppSelector(socketSelectors.isConnected);
-  const { connectionSocket } = useActions();
+  const { connectionSocket, setChangeTotalPrice } = useActions();
 
   const requestPayment = useMemo(
     () => ({
@@ -64,8 +64,8 @@ export const usePaymentMutate = ({
     },
   });
 
-  const handleUseDiscountId = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const discountId = Number(event?.currentTarget?.value);
+  const handleUseDiscountId = (discountIds: string) => {
+    const discountId = Number(discountIds);
 
     if (!discountId) throw new Error("Value is not a valid HTMLButtonElement!");
 
@@ -73,11 +73,22 @@ export const usePaymentMutate = ({
       (discount) => discount.discount.discount_id === discountId
     );
     if (searchDiscount) {
-      toast.info("Вы активировали скидку", {
-        position: "top-center",
-        description: `${searchDiscount.discount.value}₽ скидка на покупку от ${searchDiscount.discount?.min_payment_value}₽`,
+      setDiscountId((prev) => {
+        if (prev === searchDiscount.discount.discount_id) {
+          toast.info("Вы деактивировали скидку", {
+            position: "top-center",
+            description: `${searchDiscount.discount.value}₽ скидка на покупку от ${searchDiscount.discount?.min_payment_value}₽`,
+          });
+          setChangeTotalPrice(totalSum + searchDiscount.discount.value);
+          return 0;
+        }
+        toast.info("Вы активировали скидку", {
+          position: "top-center",
+          description: `${searchDiscount.discount.value}₽ скидка на покупку от ${searchDiscount.discount?.min_payment_value}₽`,
+        });
+        setChangeTotalPrice(totalSum - searchDiscount.discount.value);
+        return searchDiscount.discount.discount_id;
       });
-      setDiscountId(searchDiscount.discount.discount_id);
     }
   };
 

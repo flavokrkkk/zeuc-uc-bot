@@ -1,4 +1,5 @@
 import { packSlectors } from "@/entities/packs/model/store/packSlice";
+import { userSelectors } from "@/entities/user/models/store/userSlice";
 import { usePacks } from "@/features/packs/hooks/usePacks";
 import { usePaymentMutate } from "@/features/payment/hooks/usePaymentMutate";
 import PaymentInfo from "@/features/payment/ui/paymentInfo";
@@ -26,6 +27,7 @@ const PaymentPage = () => {
   } = usePacks();
 
   const selectedPacks = useAppSelector(packSlectors.selectedPacks);
+  const userInfo = useAppSelector(userSelectors.currentUser);
 
   const {
     handleGetPayLink,
@@ -60,7 +62,16 @@ const PaymentPage = () => {
           <span>Назад</span>
         </div>
       </Link>
-      <h1 className="text-2xl mb-4">Ваш заказ</h1>
+      <div className="flex justify-between">
+        <h1 className="text-2xl mb-4">Ваш заказ</h1>
+        <div className="flex items-center space-x-1">
+          <span>{userInfo?.bonuses}</span>
+          <span>
+            <Icon type={IconTypes.POINT_OUTLINED} className="h-6 w-6" />
+          </span>
+        </div>
+      </div>
+
       <PaymentInfo
         discountId={discountId}
         totalPacks={totalPacks}
@@ -78,7 +89,7 @@ const PaymentPage = () => {
           buttonText="Проверить ID"
           onClick={handleCheckId}
           onChange={handleChangeId}
-          searchPlaceholder="Введите Pubg ID"
+          searchPlaceholder="Введите Player ID"
         />
         <div className="flex flex-col w-full space-y-4">
           <Button
