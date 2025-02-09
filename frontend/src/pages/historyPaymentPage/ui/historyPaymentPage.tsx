@@ -1,8 +1,10 @@
 import { userSelectors } from "@/entities/user/models/store/userSlice";
+import { useHistoryPayment } from "@/features/payment/hooks/useHistoryPayment";
 import HistoryPayment from "@/features/payment/ui/historyPayment";
 import { useAppSelector } from "@/shared/hooks/useAppSelector";
 
 const HistoryPaymentPage = () => {
+  useHistoryPayment();
   const currentUser = useAppSelector(userSelectors.currentUser);
   const userInfo = useAppSelector(userSelectors.userInfo);
   return (

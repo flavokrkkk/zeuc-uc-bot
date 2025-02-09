@@ -17,6 +17,7 @@ import { setAccessToken } from "@/entities/token/libs/tokenService";
 import {
   ICurrentUserResponse,
   IUserDiscount,
+  IUserPurchases,
   IUserResponse,
 } from "../../types/types";
 import { decrypt } from "@/shared/helpers/cryptoHash";
@@ -125,8 +126,12 @@ export const userSlice = createSliceWithThunks({
       (state, { payload }: PayloadAction<IUserState["userPaymentHistory"]>) => {
         state.userPaymentHistory = payload.map((payload) => ({
           ...payload,
-          id: crypto.randomUUID(),
         }));
+      }
+    ),
+    setPaymentHistoryItem: create.reducer(
+      (state, { payload }: PayloadAction<IUserPurchases>) => {
+        state.userPaymentHistory.push({ ...payload });
       }
     ),
     setBonusesHistory: create.reducer(

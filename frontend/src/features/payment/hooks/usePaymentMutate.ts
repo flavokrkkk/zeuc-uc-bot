@@ -3,6 +3,7 @@ import { getPaymentUrl } from "@/entities/payment/libs/paymentService";
 import { IPayementRequest } from "@/entities/payment/types/types";
 import { socketSelectors } from "@/entities/socket/models/store/socketSlice";
 import { userSelectors } from "@/entities/user/models/store/userSlice";
+import { EUserPurchases } from "@/entities/user/types/types";
 import { useActions } from "@/shared/hooks/useActions";
 import { useAppSelector } from "@/shared/hooks/useAppSelector";
 import { useMutation } from "@tanstack/react-query";
@@ -25,7 +26,8 @@ export const usePaymentMutate = ({
   const [orderId, setOrderId] = useState("");
 
   const isConnected = useAppSelector(socketSelectors.isConnected);
-  const { connectionSocket, setChangeTotalPrice } = useActions();
+  const { connectionSocket, setChangeTotalPrice, setPaymentHistoryItem } =
+    useActions();
 
   const requestPayment = useMemo(
     () => ({
@@ -54,6 +56,18 @@ export const usePaymentMutate = ({
       return getPaymentUrl({ ...requestPayment, method_slug: paymentMethod });
     },
     onSuccess: (response) => {
+      setPaymentHistoryItem({
+        id: crypto.randomUUID(),
+        internal_order_id: response.order_id,
+        is_paid: true,
+        payment_id: response.order_id,
+        payment_method: EPaymentMethods.SBP,
+        player_id: 11,
+        price: totalSum,
+        status: EUserPurchases.COMPLETED,
+        tg_id: 11,
+        uc_sum: totalPacks,
+      });
       if (window.Telegram && window.Telegram.WebApp) {
         setOrderId(response.order_id);
         window.Telegram.WebApp.openLink(response.url);

@@ -60,7 +60,7 @@ const Wheel: React.FC<WheelProps> = ({
       context.rotate(startAngle + segmentAngle / 2);
       context.translate((outerRadius + innerRadius) / 2, 0);
       context.rotate(Math.PI / 2);
-      context.fillStyle = "black";
+      context.fillStyle = "white";
 
       const lines = segment.title.split("\n");
       const lineHeight = 12;
@@ -82,9 +82,8 @@ const Wheel: React.FC<WheelProps> = ({
 
         context.shadowColor = "transparent";
 
-        context.strokeStyle = "#19614a";
+        context.strokeStyle = "white";
         context.lineWidth = 1;
-        context.strokeText(line, 0, i * lineHeight + 110);
       });
 
       context.restore();
@@ -119,7 +118,7 @@ const Wheel: React.FC<WheelProps> = ({
           src="/images/score/Polygon 1.png"
           alt="Arrow"
         />
-        <span className="absolute top-[167px] left-[155px] text-2xl font-bold text-white">
+        <span className="absolute top-[168px] left-[155px] text-2xl font-bold text-white">
           Spin
         </span>
       </div>

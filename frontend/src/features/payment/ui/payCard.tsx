@@ -1,7 +1,7 @@
 import { IUserPurchases, statusColor } from "@/entities/user/types/types";
 import clsx from "clsx";
 import { ChevronDown, ChevronRight } from "lucide-react";
-import { FC, useState } from "react";
+import { FC, useMemo, useState } from "react";
 
 interface IPayCard {
   pay: IUserPurchases;
@@ -11,6 +11,14 @@ const PayCard: FC<IPayCard> = ({ pay }) => {
   const [isDetail, setIsDetail] = useState(false);
 
   const toggleDetail = () => setIsDetail((prev) => !prev);
+
+  const [day, month, year] = useMemo(() => {
+    return [
+      new Date().getDate(),
+      new Date().getMonth() + 1,
+      new Date().getFullYear(),
+    ];
+  }, []);
 
   return (
     <div className="flex xs:justify-between xs:space-x-3 space-y-2 xs:items-center xs:space-y-0 flex-col xs:flex-row  ">
@@ -30,7 +38,11 @@ const PayCard: FC<IPayCard> = ({ pay }) => {
               </span>
             </div>
             <div className="flex space-x-[26.5px]">
-              <span>Дата заказа:</span> <span>12.31.11</span>
+              <span>Дата заказа:</span>{" "}
+              <span>
+                {day.toString().padStart(2, "0")}.
+                {month.toString().padStart(2, "0")}.{year}
+              </span>
             </div>
           </div>
         )}
