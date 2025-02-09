@@ -63,7 +63,6 @@ export const usePaymentMutate = ({
       }
     },
   });
-
   const handleUseDiscountId = (discountIds: string) => {
     const discountId = Number(discountIds);
 
@@ -79,7 +78,7 @@ export const usePaymentMutate = ({
             position: "top-center",
             description: `${searchDiscount.discount.value}₽ скидка на покупку от ${searchDiscount.discount?.min_payment_value}₽`,
           });
-          setChangeTotalPrice(totalSum + searchDiscount.discount.value);
+          setChangeTotalPrice(totalSum);
           return 0;
         }
         toast.info("Вы активировали скидку", {

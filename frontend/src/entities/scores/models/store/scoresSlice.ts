@@ -31,7 +31,7 @@ export const scoresSlice = createSliceWithThunks({
         const scoresView = payload?.map((score) => {
           if (score.reward_type === ERewardTypes.DISCOUNT) {
             return {
-              title: `${score.discount?.value} скидка на покупку от ${score.discount?.min_payment_value}`,
+              title: `${score.discount?.value} скидка на покупку\n от ${score.discount?.min_payment_value}`,
               reward_id: score.reward_id,
               type: "discount",
             };

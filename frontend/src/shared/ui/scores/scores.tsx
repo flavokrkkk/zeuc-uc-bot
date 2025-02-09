@@ -38,23 +38,18 @@ const Wheel: React.FC<WheelProps> = ({
       const endAngle = startAngle + segmentAngle;
 
       const outerRadius = radius * heightFactor;
-
       const innerRadius = radius * 0.55;
 
       const colors = ["#41AE6D", "#FFB719"];
       const finalColors = segments.map((_, i) => colors[i % colors.length]);
 
       context.beginPath();
-
       context.arc(0, 0, outerRadius, startAngle, endAngle, false);
-
       context.lineTo(
         Math.cos(endAngle) * innerRadius,
         Math.sin(endAngle) * innerRadius
       );
-
       context.arc(0, 0, innerRadius, endAngle, startAngle, true);
-
       context.closePath();
 
       context.fillStyle =
@@ -67,9 +62,31 @@ const Wheel: React.FC<WheelProps> = ({
       context.rotate(Math.PI / 2);
       context.fillStyle = "black";
 
-      context.font = `${segment.type === "discount" ? 8 : fontSize}px Arial`;
-      context.textAlign = "center";
-      context.fillText(segment.title, 0, 120);
+      const lines = segment.title.split("\n");
+      const lineHeight = 12;
+
+      lines.forEach((line, i) => {
+        context.font = `${
+          segment.type === "discount"
+            ? "bold 10px Arial"
+            : "bold " + fontSize + "px Arial"
+        }`;
+        context.textAlign = "center";
+
+        context.shadowColor = "rgba(0, 0, 0, 0.5)";
+        context.shadowOffsetX = 1;
+        context.shadowOffsetY = 1;
+        context.shadowBlur = 2;
+
+        context.fillText(line, 0, i * lineHeight + 110);
+
+        context.shadowColor = "transparent";
+
+        context.strokeStyle = "#19614a";
+        context.lineWidth = 1;
+        context.strokeText(line, 0, i * lineHeight + 110);
+      });
+
       context.restore();
     });
     context.resetTransform();
@@ -85,26 +102,27 @@ const Wheel: React.FC<WheelProps> = ({
 
   return (
     <div className="flex flex-col relative">
-      <img
-        className={clsx(
-          "absolute top-[110px] left-[156px]",
-          spinning && "animate-pulse"
-        )}
-        src="/images/score/Polygon 1.png"
-      />
-      <img
-        className={clsx(
-          "absolute top-32 left-[122px] ",
-          spinning && "animate-pulse"
-        )}
-        src="/images/score/Ellipse 11.png"
-      />
-      <span className="absolute top-[168px] left-[151px] text-gray-600">
-        Крутить
-      </span>
-      <span className="absolute top-[185px] left-[154px] text-gray-600">
-        колесо
-      </span>
+      <div className="relative flex items-center justify-center">
+        <img
+          className={clsx(
+            "absolute top-32 left-[122px]",
+            spinning && "animate-pulse"
+          )}
+          src="/images/score/Ellipse 11.png"
+          alt="Circle"
+        />
+        <img
+          className={clsx(
+            "absolute top-[110px] left-[156px]",
+            spinning && "animate-pulse"
+          )}
+          src="/images/score/Polygon 1.png"
+          alt="Arrow"
+        />
+        <span className="absolute top-[167px] left-[155px] text-2xl font-bold text-white">
+          Spin
+        </span>
+      </div>
       <canvas
         ref={wheelRef}
         width="360"

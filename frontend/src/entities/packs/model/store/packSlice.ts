@@ -7,6 +7,7 @@ const initialState: IPackState = {
   isSelected: false,
   packSelects: [],
   selectedPacks: [],
+  totalDiscountPrice: 0,
   totalPrice: 0,
   totalPacks: 0,
 };
@@ -19,6 +20,7 @@ export const packSlice = createSlice({
     selectedPacks: (state) => state.selectedPacks,
     isSelected: (state) => state.isSelected,
     totalPrice: (state) => state.totalPrice,
+    totalDiscountPrice: (state) => state.totalDiscountPrice,
     totalPacks: (state) => state.totalPacks,
   },
   reducers: (create) => ({
@@ -107,12 +109,13 @@ export const packSlice = createSlice({
     }),
     setChangeTotalPrice: create.reducer(
       (state, { payload }: PayloadAction<number>) => {
-        state.totalPrice = payload;
+        state.totalDiscountPrice = payload;
       }
     ),
     resetTotalPacks: create.reducer((state) => {
       state.totalPrice = 0;
       state.totalPacks = 0;
+      state.totalDiscountPrice = 0;
       state.selectedPacks = [];
       state.isSelected = false;
       state.packSelects = state.packSelects.map((item) => ({

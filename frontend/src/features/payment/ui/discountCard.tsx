@@ -1,6 +1,6 @@
 import { IUserDiscount } from "@/entities/user/types/types";
 import { Check } from "lucide-react";
-import { FC, useState } from "react";
+import { FC } from "react";
 
 interface IDiscountCard {
   discount: IUserDiscount;
@@ -15,12 +15,9 @@ const DiscountCard: FC<IDiscountCard> = ({
   totalPrice,
   handleUseDiscountId,
 }) => {
-  const [isCheck, setIsCheck] = useState(false);
-
   const handleIsCheck = (event: React.MouseEvent<HTMLInputElement>) => {
     if (!(discount.discount?.min_payment_value > totalPrice) || discountId) {
       const discountId = event.currentTarget.value;
-      setIsCheck((prev) => !prev);
       handleUseDiscountId(discountId);
     }
   };
@@ -36,13 +33,13 @@ const DiscountCard: FC<IDiscountCard> = ({
       <label className="flex items-center cursor-pointer">
         <input
           value={String(discount.discount.discount_id)}
-          checked={isCheck}
+          checked={discountId === discount.discount.discount_id}
           type="checkbox"
           className="hidden peer"
           onClick={handleIsCheck}
         />
         <div className="w-5 h-5 bg-gradient-to-r from-green-400 to-blue-500 rounded-md flex items-center justify-center transition-opacity duration-200 peer-checked:opacity-100 opacity-50">
-          {isCheck && (
+          {discountId === discount.discount.discount_id && (
             <Check className="w-4 h-4 text-white transition-opacity duration-200 peer-checked:opacity-0" />
           )}
         </div>

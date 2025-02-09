@@ -21,6 +21,7 @@ const PaymentPage = () => {
   const {
     totalPrice,
     totalPacks,
+    totalDiscountPrice,
     handleSelectPack,
     handleUnSelectPack,
     handleResetTotalPacks,
@@ -75,7 +76,7 @@ const PaymentPage = () => {
       <PaymentInfo
         discountId={discountId}
         totalPacks={totalPacks}
-        totalPrice={totalPrice}
+        totalPrice={totalDiscountPrice ? totalDiscountPrice : totalPrice}
         selectedPacks={selectedPacks}
         handleUseDiscountId={handleUseDiscountId}
         handleSelectPack={handleSelectPack}

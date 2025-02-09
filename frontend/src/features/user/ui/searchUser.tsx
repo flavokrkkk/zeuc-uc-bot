@@ -27,8 +27,8 @@ const SearchUser: FC<ISearchUser> = ({
   onClick = () => {},
 }) => {
   return (
-    <section className="flex items-center justify-between">
-      {isLabel && <h1>Ваш ID</h1>}
+    <section className="flex items-center justify-between w-full">
+      {isLabel && <h1 className="text-sm">Ваш ID</h1>}
       <span className="">
         <Input
           value={value}

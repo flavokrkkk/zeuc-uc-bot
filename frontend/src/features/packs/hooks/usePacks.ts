@@ -10,6 +10,7 @@ export const usePacks = () => {
   const isSelected = useAppSelector(packSlectors.isSelected);
   const packs = useAppSelector(packSlectors.getPackSelects);
   const totalPrice = useAppSelector(packSlectors.totalPrice);
+  const totalDiscountPrice = useAppSelector(packSlectors.totalDiscountPrice);
   const totalPacks = useAppSelector(packSlectors.totalPacks);
 
   const {
@@ -47,6 +48,7 @@ export const usePacks = () => {
     packs,
     totalPrice,
     totalPacks,
+    totalDiscountPrice,
     handleSelectPack,
     handleUnSelectPack,
     handleSelectPacks,
