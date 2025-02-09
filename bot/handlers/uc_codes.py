@@ -241,7 +241,7 @@ async def change_uc_code_price(message: Message, state: FSMContext, database: Da
             await database.uc_codes.change_price(uc_amount, price)
             await state.set_state(UCCodesStates.success)
             await message.answer(
-                text="Цена успешно изменена",
+                text=f"Цена успешно изменена. Новая цена {price} для {uc_amount} UC",
                 reply_markup=back_to_menu(is_admin=True)
             )
     except:

@@ -20,7 +20,7 @@ class RewardService:
                 "message": (
                     f"Вы выиграли скидку {reward.discount.value}"
                     f"при покупке от {reward.discount.min_payment_value} рублей"
-                ) if reward.reward_type == "uc_code" else (
+                ) if reward.reward_type == "discount" else (
                     f"Вы выиграли {reward.uc_amount} UC"
                 )
             }
