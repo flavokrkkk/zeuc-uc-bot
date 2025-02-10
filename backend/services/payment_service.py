@@ -55,7 +55,8 @@ class PaymentService:
             f"<b>Игрок</b>: {purchase.player_id}\n"
             f"<b>Сумма UC</b>: {purchase.uc_sum} ₽\n"
             f"<b>Сумма заказа</b>: {purchase.price} ₽\n"
-            f"<b>Метод оплаты</b>: {purchase.payment_method}\n"
+            f"<b>Метод оплаты</b>: {purchase.payment_method}\n",
+            f"<b>Статус</b>: {purchase.status}\n\n"
             f"<b>Информация по UC-пакетам:</b>\n\n" + "\n\n".join(us_packs_info)
         ).strip()
 
