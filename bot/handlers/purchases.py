@@ -30,7 +30,7 @@ def format_purchase_data(purchase: Purchase, data: dict[str, str]) -> str:
             f"<b>Сумма</b>: {uc_pack['total_sum']} ₽\n"
             f"<b>Количество UC</b>: {uc_pack['uc_amount']} UC x {uc_pack['quantity']}\n"
             f"<b>Количество активированных кодов</b>: {uc_pack['activated_codes']}\n"
-            f"<b>Неуспешные Activation IDs</b>: [{', '.join(uc_pack.get('error_activation_ids', []))}]\n"
+            f"<b>Неуспешные Activation IDs</b>: [{', '.join(uc_pack['error_activation_ids'])}]\n"
             f"<b>Ошибки активации (Код → Ошибка)</b>: {errors}"
         ).strip()
 

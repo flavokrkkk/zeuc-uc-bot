@@ -44,7 +44,7 @@ class PaymentService:
                 f"<b>Сумма</b>: {uc_pack['total_sum']} ₽\n"
                 f"<b>Количество UC</b>: {uc_pack['uc_amount']} UC x {uc_pack['quantity']}\n"
                 f"<b>Количество активированных кодов</b>: {uc_pack['activated_codes']}\n"
-                f"<b>Неуспешные Activation IDs</b>: [{', '.join(uc_pack.get('error_activation_ids', []))}]\n"
+                f"<b>Неуспешные Activation IDs</b>: [{', '.join(uc_pack.get('error_activation_ids'))}]\n"
                 f"<b>Ошибки активации (Код → Ошибка)</b>: {errors}"
             ).strip()
 
@@ -154,7 +154,7 @@ class PaymentService:
                     )
                     if isinstance(response, UCActivationError):
                         error_activation_ids.append(
-                            (response.message.get("activation_data") or {}).get("activation_id")
+                            int((response.message.get("activation_data") or {}).get("activation_id", 0))
                         )
                         errors.append({
                             **response.model_dump(),
