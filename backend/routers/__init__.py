@@ -17,5 +17,5 @@ api_router = APIRouter(
 
 api_router.include_router(auth_router)
 api_router.include_router(users_router, dependencies=[PROTECTED])
-api_router.include_router(uc_code_router, dependencies=[PROTECTED])
+api_router.include_router(uc_code_router)
 api_router.include_router(reward_router, dependencies=[PROTECTED])
