@@ -1,10 +1,15 @@
 import asyncio
+from datetime import datetime
+import json
 from typing import Coroutine
 from uuid import uuid4
+from aiogram import Bot
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiohttp import ClientSession, payload
 from fastapi import HTTPException
 from starlette.responses import JSONResponse
 
+from backend.database.models.models import Purchase
 from backend.dto.purchase_dto import PurchaseModel
 from backend.dto.uc_code_dto import (
     BuyPointModel,
@@ -15,7 +20,7 @@ from backend.dto.uc_code_dto import (
     UCCodeGetBuyUrlModel,
 )
 from backend.repositories.uc_code_repository import UCCodeRepository
-from backend.utils.config.config import CODEEPAY_API_KEY, UCODEIUM_API_KEY
+from backend.utils.config.config import BOT_TOKEN, CODEEPAY_API_KEY, PAYMENT_NOTIFICATION_CHAT, UCODEIUM_API_KEY
 
 
 class PaymentService:
@@ -25,6 +30,38 @@ class PaymentService:
         self.codeepay_api_key = CODEEPAY_API_KEY
         self.ucodeium_api_key = UCODEIUM_API_KEY
         self.repository = repository
+        self.bot = Bot(token=BOT_TOKEN)
+
+    async def format_purchase_data(self, purchase: Purchase) -> str:
+        us_packs_info = []
+        for uc_pack in json.loads(purchase.metadata_)['uc_packs']:
+            errors = "\n" + "\n".join([
+                "{uc_code} → {message}".format(uc_code=err['uc_code'], message=err['message'])
+                for err in uc_pack['errors']
+            ]) if uc_pack['errors'] else "Нет ошибок"
+
+            pack_info = (
+                f"<b>Сумма</b>: {uc_pack['total_sum']} ₽\n"
+                f"<b>Количество UC</b>: {uc_pack['uc_amount']} UC x {uc_pack['quantity']}\n"
+                f"<b>Количество активированных кодов</b>: {uc_pack['activated_codes']}\n"
+                f"<b>Неуспешные Activation IDs</b>: [{', '.join(uc_pack['error_activation_ids'])}]\n"
+                f"<b>Ошибки активации (Код → Ошибка)</b>: {errors}"
+            ).strip()
+
+            us_packs_info.append(pack_info)
+
+        message_text = (
+            f"<b>Заказ</b>: {purchase.payment_id}\n"
+            f"<b>Игрок</b>: {purchase.player_id}\n"
+            f"<b>Сумма UC</b>: {purchase.uc_sum} ₽\n"
+            f"<b>Сумма заказа</b>: {purchase.price} ₽\n"
+            f"<b>Метод оплаты</b>: {purchase.payment_method}\n"
+            f"<b>Информация по UC-пакетам:</b>\n\n" + "\n\n".join(us_packs_info)
+        ).strip()
+
+        return message_text
+
+
 
     async def _post_request(
         self, 
@@ -50,12 +87,34 @@ class PaymentService:
                     message=(await response.json() or {}),
                     player_id=form.player_id
                 )
+            
+    async def send_payment_notification(self, purchase: PurchaseModel) -> None:
+        keyboard = InlineKeyboardMarkup(
+            inline_keyboard=[[
+                InlineKeyboardButton(
+                    text="Связаться с покупателем",
+                    url=f"t.me/{purchase.tg_id}"
+                ),
+                InlineKeyboardButton(
+                    text="Изменить статус",
+                    callback_data=f"change_status_from_notification_{purchase.payment_id}"
+                )
+            ]]
+        )
+        await self.bot.send_message(
+            chat_id=PAYMENT_NOTIFICATION_CHAT,
+            text=await self.format_purchase_data(purchase),
+            reply_markup=keyboard,
+            parse_mode="HTML"
+        )
+        await self.bot.close()
 
     async def activate_codes(self, payload: BuyUCCodeCallbackModel) -> None:
         any_error_is_raised = False
         for uc_pack in payload.metadata.uc_packs:
             tasks: list[Coroutine] = []
             activated = 0
+            error_activation_ids = []
 
             uc_codes = await self.repository.get_activating_codes(
                 uc_pack.uc_amount, 
@@ -94,9 +153,12 @@ class PaymentService:
                         response.price
                     )
                     if isinstance(response, UCActivationError):
+                        error_activation_ids.append(
+                            (response.message.get("activation_data") or {}).get("activation_id")
+                        )
                         errors.append({
                             **response.model_dump(),
-                            "message": error_messages[response.status_code]
+                            "message": error_messages[response.status_code],
                         })
                     elif isinstance(response, Exception):
                         errors.append({"message": f"Ошибка сервера {str(response)}"})
@@ -104,8 +166,8 @@ class PaymentService:
                 any_error_is_raised = True
 
             uc_pack.activated_codes = activated
+            uc_pack.error_activation_ids = error_activation_ids
             uc_pack.errors = errors
-            activated = 0
 
         payload.metadata.response =( 
             {"detail": "Оплата прошла успешно, но возможно не все коды активировались"}

@@ -1,13 +1,10 @@
 from io import BytesIO
-from tempfile import NamedTemporaryFile
-from typing import BinaryIO
-from aiogram import F, Bot, Router
-from aiogram.filters import Command
+from aiogram import F, Bot, Router      
 from aiogram.fsm.context import FSMContext
 from aiogram.types import BufferedInputFile, CallbackQuery, FSInputFile, Message
 from sqlalchemy.exc import IntegrityError
 
-from keyboards.commands import admin_menu_keyboard, back_to_menu
+from keyboards.commands import back_to_menu
 from states.uc_codes import AddNewPackStates, UCCodesStates
 from keyboards.uc_codes import all_uc_codes_keyboard, uc_codes_options_keyboard
 from database.db_main import Database

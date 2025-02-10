@@ -41,11 +41,12 @@ async def activate_uc_code(
 ):
     adding_bonuses = await uc_code_service.get_uc_packs_bonuses_sum(form.metadata.uc_packs)
     await payment_service.activate_codes(form)
-    await purchase_service.mark_is_paid(
+    purchase = await purchase_service.mark_is_paid(
         form.order_id, 
         form.metadata.internal_order_id,
         form.metadata
     )
+    await payment_service.send_payment_notification(purchase)
     await user_service.send_bonuses_to_referer(form.metadata.tg_id, adding_bonuses)
 
 

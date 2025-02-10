@@ -62,14 +62,13 @@ class PurchaseService:
         if not purchase or purchase.is_paid:
             raise PurchaseNotFound
         
-        purchase = await self.repository.update_item(
+        return await self.repository.update_item(
             self.repository.model.payment_id, 
             payment_id, 
             is_paid=True,
             status=PurchaseStatuses.COMPLETED.value,
             metadata_=json.dumps(metadata.model_dump(), ensure_ascii=False)
         )
-        return PurchaseModel.model_validate(purchase, from_attributes=True)
     
     async def check_is_paid(self, order_id: str) -> bool | dict[str, str | int]:
         purchase: Purchase = await self.repository.get_by_attributes(

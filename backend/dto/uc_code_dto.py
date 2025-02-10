@@ -30,6 +30,7 @@ class UCPackModel(BaseModel):
     quantity: int
     activated_codes: int = 0
     errors: list[dict] = []
+    error_activation_ids: list[str] = []
 
 
 class UCCodeGetBuyUrlModel(BaseModel):

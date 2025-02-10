@@ -31,6 +31,8 @@ DB_CONFIG = DatabaseConfig(
 JWT_CONFIG = JwtConfig(
     **{field: env.str(field.upper()) for field in JwtConfig.model_fields}
 )
+BOT_TOKEN = env.str("BOT_TOKEN")
 CODEEPAY_API_KEY = env.str("CODEEPAY_API_KEY")
 UCODEIUM_API_KEY = env.str("UCODEIUM_API_KEY")
 BONUS_CIRCLE_PRICE = 100
+PAYMENT_NOTIFICATION_CHAT=-1002355857002

@@ -43,7 +43,7 @@ def format_purchase_data(purchase: Purchase, data: dict[str, str]) -> str:
         f"<b>Сумма заказа</b>: {purchase.price} ₽\n"
         f"<b>Метод оплаты</b>: {purchase.payment_method}\n"
         f"<b>Статус</b>: {purchase.status}\n\n"
-        f"<b>Информация по UC-пакетам:</b>\n" + "\n\n".join(us_packs_info)
+        f"<b>Информация по UC-пакетам:</b>\n\n" + "\n\n".join(us_packs_info)
     ).strip()
 
     return message_text
@@ -176,6 +176,20 @@ async def change_status(callback: CallbackQuery, state: FSMContext, database: Da
     )
 
 
+@router.callback_query(F.data.startswith("change_status_from_notification_"))
+async def change_status_from_notificate(callback: CallbackQuery, state: FSMContext, database: Database):
+    order_id = callback.data.split("_")[-1]
+    purchase = await database.purchases.get_by_order_id(order_id)
+    
+    await state.update_data(order_id=order_id)
+    await state.set_state(PurchasesStates.set_status)
+    
+    await callback.message.edit_text(
+        text="Выберите новый статус",
+        reply_markup=change_status_keyboard(purchase.status)
+    )
+
+
 @router.callback_query(PurchasesStates.set_status, F.data.startswith("set_"))
 async def set_status(callback: CallbackQuery, state: FSMContext, database: Database):
     order_id = (await state.get_data()).get("order_id")
@@ -183,6 +197,8 @@ async def set_status(callback: CallbackQuery, state: FSMContext, database: Datab
     
     if status == "completed":
         purchase = await database.purchases.set_status(order_id, PurchaseStatuses.COMPLETED.value)
+    elif status == "canceled":
+        purchase = await database.purchases.set_status(order_id, PurchaseStatuses.CANCELED.value)
     else:
         purchase = await database.purchases.set_status(order_id, PurchaseStatuses.IN_PROGRESS.value)
     

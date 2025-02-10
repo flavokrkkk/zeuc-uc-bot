@@ -11,7 +11,7 @@ class CreatePurchaseModel(BaseModel):
     payment_id: str | None = None
     payment_method: str | None = None
     is_paid: bool = False
-    metadata_: str | None = None
+    metadata_: dict | None = None
 
 
 class PurchaseModel(BaseModel):

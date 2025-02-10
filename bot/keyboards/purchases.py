@@ -19,6 +19,7 @@ def change_status_keyboard(status: str) -> InlineKeyboardMarkup:
     buttons = [
         InlineKeyboardButton(text=PurchaseStatuses.IN_PROGRESS.value, callback_data="set_in_progress"),
         InlineKeyboardButton(text=PurchaseStatuses.COMPLETED.value, callback_data="set_completed"),
+        InlineKeyboardButton(text=PurchaseStatuses.CANCELED.value, callback_data="set_canceled")
     ]
     return InlineKeyboardMarkup(inline_keyboard=[buttons])
 
