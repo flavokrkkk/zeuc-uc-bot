@@ -10,5 +10,4 @@ def get_current_timestamp():
 
 
 class Base(DeclarativeBase):
-    created_at: Mapped[int] = mapped_column(BigInteger, default=get_current_timestamp())
-    pass
+    created_at: Mapped[int] = mapped_column(BigInteger, default=get_current_timestamp)

@@ -41,7 +41,7 @@ class UCCodeRepository(SqlAlchemyRepository):
         await self.session.commit()
         return returning_codes
     
-    async def add_new_codes(
+    async def add_uc_pack(
         self, 
         new_uc_codes: list[str], 
         uc_amount: int, 
@@ -62,3 +62,14 @@ class UCCodeRepository(SqlAlchemyRepository):
         price = (await self.session.execute(query)).scalar_one_or_none()
         price.price = new_price
         await self.session.commit()
+
+    async def add_new_codes(self, uc_codes: list[str], uc_amount: int) -> None:
+        price_query = select(Price).where(Price.uc_codes.any(UCCode.uc_amount == uc_amount))
+        price = (await self.session.execute(price_query)).scalar_one_or_none()
+        new_uc_codes = [
+            UCCode(price_id=price.price_id, uc_amount=uc_amount, code=uc_code)
+            for uc_code in uc_codes
+        ]
+        self.session.add_all(new_uc_codes)
+        await self.session.commit()
+        

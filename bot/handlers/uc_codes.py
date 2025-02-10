@@ -91,7 +91,7 @@ async def delete_codes_quantity(message: Message, state: FSMContext, database: D
 
 @router.callback_query(F.data == "add_uc_codes", UCCodesStates.option)
 async def add_uc_codes(callback: CallbackQuery, state: FSMContext):
-    message_text = "Отправьте файл с uc кодами"
+    message_text = "Отправьте файл с uc кодами или сообщение с кодами, где каждый код с новой строки"
 
     await state.set_state(UCCodesStates.upload_codes)
     await callback.message.edit_text(
@@ -100,8 +100,30 @@ async def add_uc_codes(callback: CallbackQuery, state: FSMContext):
     )
 
 
+@router.message(F.text, UCCodesStates.upload_codes)
+async def upload_new_codes_text(message: Message, state: FSMContext, database: Database):
+    try:
+        new_uc_codes = message.text.split("\n")
+        uc_amount = (await state.get_data() or {}).get("uc_amount")
+        await database.uc_codes.add_new_codes(new_uc_codes, uc_amount)
+        
+        message_text = f"Коды успешно добавлены. Вы добавили {len(new_uc_codes)} кодов"
+        await message.answer(
+            text=message_text
+        )
+    except IntegrityError:
+        await message.answer(
+            text="Код(-ы) уже добавлен(-ы)",
+            reply_markup=back_to_menu(is_admin=True)
+        )
+    except:
+        await message.answer(
+            text="Неверный формат",
+            reply_markup=back_to_menu(is_admin=True)
+        )
+
 @router.message(F.document, UCCodesStates.upload_codes)
-async def upload_new_codes(
+async def upload_new_codes_file(
     message: Message, 
     state: FSMContext, 
     database: Database, 
@@ -205,7 +227,7 @@ async def upload_new_codes(
         file = await bot.download(message.document.file_id, file_data)
         
         new_uc_codes = [uc_code.decode("utf-8") for uc_code in file.readlines()]
-        await database.uc_codes.add_new_codes(new_uc_codes, **(await state.get_data()))
+        await database.uc_codes.add_uc_pack(new_uc_codes, **(await state.get_data()))
         
         message_text = f"Коды успешно добавлены. Вы добавили {len(new_uc_codes)} кодов"
         await message.answer(
