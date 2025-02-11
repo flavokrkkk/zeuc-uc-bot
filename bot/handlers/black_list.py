@@ -3,6 +3,7 @@ from aiogram.exceptions import TelegramBadRequest
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
+from states.menu import AdminMenuStates
 from database.models.models import User
 from keyboards.commands import back_to_menu
 from states.black_list import BlackListStates
@@ -13,7 +14,7 @@ from keyboards.black_list import black_list_pagination
 router = Router()
 
 
-@router.callback_query(F.data == "black_list")
+@router.callback_query(F.data == "black_list", AdminMenuStates.main)
 async def get_black_list(callback: CallbackQuery, database: Database, state: FSMContext):
     users = await database.users.get_black_list()
     pages = await database.users.get_black_list_pages()

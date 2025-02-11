@@ -9,7 +9,7 @@ class Setting(Base):
     __tablename__ = "settings"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
-    store_is_on: Mapped[bool] = mapped_column(default=False)
+    store_is_on: Mapped[bool] = mapped_column(default=True)
 
 
 class User(Base):
@@ -76,11 +76,10 @@ class UCCode(Base):
     __tablename__ = "uc_codes"
 
     code: Mapped[str] = mapped_column(primary_key=True)
-    uc_amount: Mapped[int] 
+    uc_amount: Mapped[int]
     price_id: Mapped[str] = mapped_column(ForeignKey('prices.price_id'), nullable=True)
     
     price_per_uc: Mapped['Price'] = relationship(back_populates='uc_codes', lazy="selectin")
-    rewards: Mapped[list['Reward']] = relationship(back_populates='uc_code', uselist=True)
 
 
 class Discount(Base):
@@ -105,8 +104,8 @@ class Reward(Base):
     reward_type: Mapped[str]
     discount_id: Mapped[int] = mapped_column(ForeignKey('discounts.discount_id'), nullable=True)
     uc_pack_id: Mapped[str] = mapped_column(ForeignKey('uc_codes.code'), nullable=True)
-
-    uc_code: Mapped['UCCode'] = relationship(back_populates='rewards', uselist=False, lazy="selectin")
+    uc_amount: Mapped[int] = mapped_column(nullable=True)
+    
     discount: Mapped['Discount'] = relationship(back_populates='rewards', uselist=False, lazy="selectin")
 
 

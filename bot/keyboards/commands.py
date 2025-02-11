@@ -36,11 +36,16 @@ def admin_menu_keyboard() -> InlineKeyboardMarkup:
             InlineKeyboardButton(text="Покупки", callback_data="purchases")
         ],
         [
+            InlineKeyboardButton(text="Награды в колесе", callback_data="rewards")
+        ],
+        [
             InlineKeyboardButton(text="Статистика (Bot)", callback_data="bot_stats"),
             InlineKeyboardButton(text="Статистика (UC)", callback_data="uc_stats")
         ],
-        [InlineKeyboardButton(text="Вкл | выкл", callback_data="off_or_on_store")],
-        [InlineKeyboardButton(text="Черный список", callback_data="black_list")],
+        [
+            InlineKeyboardButton(text="Вкл | выкл", callback_data="off_or_on_store"),
+            InlineKeyboardButton(text="Черный список", callback_data="black_list")
+        ],
         [InlineKeyboardButton(text="Начислить бонусы", callback_data="add_bonuses")]
     ]
     return InlineKeyboardMarkup(inline_keyboard=buttons)

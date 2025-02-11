@@ -2,6 +2,7 @@ from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
+from states.menu import AdminMenuStates
 from database.db_main import Database
 from states.bonuses import AddBonusesStates
 from keyboards.commands import back_to_menu
@@ -10,7 +11,7 @@ from keyboards.commands import back_to_menu
 router = Router()
 
 
-@router.callback_query(F.data == "add_bonuses")
+@router.callback_query(F.data == "add_bonuses", AdminMenuStates.main)
 async def add_bonuses(callback: CallbackQuery, state: FSMContext):
     await state.set_state(AddBonusesStates.input_username)
     await callback.message.edit_text(

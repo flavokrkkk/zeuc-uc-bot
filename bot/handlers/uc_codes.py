@@ -4,6 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import BufferedInputFile, CallbackQuery, FSInputFile, Message
 from sqlalchemy.exc import IntegrityError
 
+from states.menu import AdminMenuStates
 from keyboards.commands import back_to_menu
 from states.uc_codes import AddNewPackStates, UCCodesStates
 from keyboards.uc_codes import all_uc_codes_keyboard, uc_codes_options_keyboard
@@ -13,7 +14,7 @@ from database.db_main import Database
 router = Router()
 
 
-@router.callback_query(F.data == "uc_codes")
+@router.callback_query(F.data == "uc_codes", AdminMenuStates.main)
 async def get_uc_codes(callback: CallbackQuery, state: FSMContext, database: Database):
     message_text = "Выберите позицию для удаления или добавления"
     await state.set_state(UCCodesStates.main)
@@ -114,6 +115,7 @@ async def upload_new_codes_text(message: Message, state: FSMContext, database: D
             reply_markup=back_to_menu(is_admin=True)
         )
     except:
+        raise e
         await message.answer(
             text="Неверный формат",
             reply_markup=back_to_menu(is_admin=True)
@@ -202,7 +204,8 @@ async def add_uc_pack_point(message: Message, state: FSMContext):
         else:
             await state.update_data(point=point)
             await state.set_state(AddNewPackStates.add_uc_pack_file)
-            await message.answer(text="Отправьте файл с uc кодами")
+            message_text = "Отправьте файл с uc кодами или сообщение с кодами, где каждый код с новой строки"
+            await message.answer(text=message_text)
     except:
         await message.answer(
             text="Неверное количество бонусов",
@@ -239,6 +242,29 @@ async def upload_new_codes(
     except:
         await message.answer(
             text="Неверный формат файла",
+            reply_markup=back_to_menu(is_admin=True)
+        )
+
+
+@router.message(F.text, AddNewPackStates.add_uc_pack_file)
+async def upload_new_codes_text(message: Message, state: FSMContext, database: Database):
+    try:
+        new_uc_codes = message.text.split("\n")
+        await database.uc_codes.add_uc_pack(new_uc_codes, **(await state.get_data()))
+        
+        message_text = f"Коды успешно добавлены. Вы добавили {len(new_uc_codes)} кодов"
+        await message.answer(
+            text=message_text,
+            reply_markup=back_to_menu(is_admin=True)
+        )
+    except IntegrityError:
+        await message.answer(
+            text="Код(-ы) уже добавлен(-ы)",
+            reply_markup=back_to_menu(is_admin=True)
+        )
+    except:
+        await message.answer(
+            text="Неверный формат",
             reply_markup=back_to_menu(is_admin=True)
         )
 

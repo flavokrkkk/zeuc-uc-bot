@@ -1,14 +1,12 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from database.repositories.settigns import SettingsRepository
-from database.repositories.purchase import PurchaseRepository
-from database.repositories.uc_code import UCCodeRepository
-from database.repositories.user import UserRepository
-
+import database.repositories as repositories
 
 class Database:
     def __init__(self, session: AsyncSession):
-        self.users = UserRepository(session=session)
-        self.uc_codes= UCCodeRepository(session=session)
-        self.purchases = PurchaseRepository(session=session)
-        self.settings = SettingsRepository(session=session)
+        self.users = repositories.UserRepository(session=session)
+        self.uc_codes= repositories.UCCodeRepository(session=session)
+        self.purchases = repositories.PurchaseRepository(session=session)
+        self.settings = repositories.SettingsRepository(session=session)
+        self.discounts = repositories.DiscountRepository(session=session)
+        self.rewards = repositories.RewardRepository(session=session)

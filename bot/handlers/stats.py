@@ -3,6 +3,7 @@ from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
+from states.menu import AdminMenuStates
 from states.stats import UCStatsState
 from database.db_main import Database
 from keyboards.commands import back_to_menu
@@ -12,7 +13,7 @@ from keyboards.uc_stats import get_stats_by_date_keyboard
 router = Router()
 
 
-@router.callback_query(F.data == "uc_stats")
+@router.callback_query(F.data == "uc_stats", AdminMenuStates.main)
 async def get_bot_stats(callback: CallbackQuery, state: FSMContext, database: Database):
     uc_stats = await database.purchases.get_stats()
     message_text = "\n".join(
