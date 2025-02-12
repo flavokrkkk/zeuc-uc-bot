@@ -28,4 +28,5 @@ class DiscountService:
         )
         if not discount:
             raise UserDiscountNotFound
+        discount_id = discount
         return discount

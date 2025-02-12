@@ -54,8 +54,9 @@ class AuthService:
             )
             tg_id = payload.get("sub")
             username = payload.get("username")
+            bot_token = payload.get("bot_token")
 
-            if tg_id is None or username is None:
+            if tg_id is None or username is None or bot_token != BOT_TOKEN:
                 raise InvalidToken
             
             user = await self.authenticate_user(tg_id=int(tg_id), username=username)

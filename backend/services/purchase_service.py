@@ -23,12 +23,13 @@ class PurchaseService:
             payment_id=response.order_id,
             internal_order_id=response.internal_id,
             uc_sum=form.uc_sum,
-            price=form.amount - form.discount or 0,
+            price=form.amount - form.discount,
             payment_method=form.method_slug,
             player_id=form.player_id,
             metadata_={
                 "tg_id": current_user.tg_id,
                 "uc_packs": form.uc_packs,
+                "discount": form.discount
             }
         )
         if new_purchase.metadata_:
