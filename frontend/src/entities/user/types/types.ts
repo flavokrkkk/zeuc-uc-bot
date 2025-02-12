@@ -29,6 +29,7 @@ export interface IUserPurchases {
   payment_method: string | null;
   is_paid: boolean;
   status: EUserPurchases;
+  created_at: string;
 }
 
 export const statusColor: Record<EUserPurchases, string> = {

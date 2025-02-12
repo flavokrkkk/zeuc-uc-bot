@@ -23,11 +23,13 @@ const TicketsContent = () => {
       >
         <span>Посмотреть историю начислений</span>
         <span>
-          {isCheckHistory ? (
-            <ChevronDown className="cursor-pointer" />
-          ) : (
-            <ChevronRight className="cursor-pointer" />
-          )}
+          <button>
+            {isCheckHistory ? (
+              <ChevronDown className="text-green-100 cursor-pointer w-7 h-7  transition-all duration-300 hover:translate-y-1 hover:text-red-400" />
+            ) : (
+              <ChevronRight className="text-green-100 cursor-pointer w-7 h-7 transition-all duration-300 hover:translate-x-1 hover:text-red-400" />
+            )}
+          </button>
         </span>
       </div>
       {isCheckHistory && (

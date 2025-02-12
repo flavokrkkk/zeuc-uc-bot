@@ -16,7 +16,7 @@ const HistoryPayment = () => {
   return (
     <div className="space-y-4 h-full ">
       <h1 className="text-2xl">История заказов</h1>
-      {!userPaymentHistory.length ? (
+      {userPaymentHistory.length ? (
         <div className="space-y-2">
           {userPaymentHistory.map((pay, index) => (
             <PayCard key={index} pay={pay} />
