@@ -11,7 +11,7 @@ const HistoryPaymentPage = () => {
     <section className="w-full text-white space-y-2 flex flex-col justify-between pt-2">
       <section className="space-y-5">
         <div className="text-white flex justify-between items-center">
-          <h1>Привет {currentUser?.username}</h1>
+          <h1>Привет 👋, {currentUser?.username}</h1>
           <span>
             <span>
               <img

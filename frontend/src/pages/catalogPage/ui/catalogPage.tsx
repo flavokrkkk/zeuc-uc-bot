@@ -33,7 +33,7 @@ const CatalogPage = () => {
     >
       <section className="space-y-5">
         <div className="text-white flex justify-between items-center">
-          <h1>Привет {currentUser?.username}</h1>
+          <h1>Привет 👋, {currentUser?.username}</h1>
           <span>
             <img
               src={userInfo?.photo_url}
