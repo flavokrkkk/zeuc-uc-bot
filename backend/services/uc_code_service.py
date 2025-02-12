@@ -1,6 +1,6 @@
 from backend.database.models.models import UCCode
 from backend.dto.uc_code_dto import CreateUCCodeModel, UCCodeModel, UCPackModel
-from backend.errors.uc_code_errors import UCCodeAlreadyExists, UCCodeNotFound
+from backend.errors.uc_code_errors import InvalidUcPackData, UCCodeAlreadyExists, UCCodeNotFound, UCPackNotFound
 from backend.repositories.uc_code_repository import UCCodeRepository
 
 
@@ -65,3 +65,17 @@ class UCCodeService:
             point = await self.repository.get_point_by_uc_amount(uc_pack.uc_amount)
             bonuses += point
         return bonuses
+    
+    async def check_packs(self, uc_packs: list[UCPackModel], uc_sum: int, total_sum: int) -> None:
+        for uc_pack in uc_packs:
+            total_sum_db = 0
+            uc_pack_db = await self.repository.get_activating_code(uc_pack.uc_amount)
+            if not uc_pack_db:
+                raise UCPackNotFound
+            if uc_pack_db.price_per_uc.price != uc_pack.price_per_uc:
+                raise InvalidUcPackData
+            total_sum_db += uc_pack_db.price_per_uc.price * uc_pack.quantity
+            if total_sum_db != uc_pack.total_sum:
+                raise InvalidUcPackData
+        if total_sum != uc_sum:
+            raise InvalidUcPackData

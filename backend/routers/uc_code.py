@@ -57,8 +57,10 @@ async def get_buy_uc_code_url(
     purchase_service: Annotated[PurchaseService, Depends(get_purchase_service)],
     discount_service: Annotated[DiscountService, Depends(get_discount_service)],
     user_service: Annotated[UserService, Depends(get_user_service)],
+    uc_code_service: Annotated[UCCodeService, Depends(get_uc_code_service)],
     current_user: UserModel = Depends(get_current_user_dependency),
 ) -> BuyUCCodeUrlModel: 
+    await uc_code_service.check_packs(form.uc_packs, form.uc_sum, form.amount)
     if form.discount:
         form.discount = await discount_service.delete_discount_from_user(
             current_user.tg_id,

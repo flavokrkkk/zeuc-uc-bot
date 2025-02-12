@@ -9,7 +9,7 @@ from backend.errors.user_errors import UserInBlackList
 from backend.repositories.user_repository import UserRepository
 from backend.dto.user_dto import UserModel
 from backend.database.models.models import User
-from backend.utils.config.config import JWT_CONFIG
+from backend.utils.config.config import BOT_TOKEN, JWT_CONFIG
 from backend.errors.auth_errors import (
     InvalidToken,
     UserAlreadyNotRegister,
@@ -39,7 +39,7 @@ class AuthService:
         expire = datetime.now() + timedelta(
             minutes=JWT_CONFIG.JWT_ACCESS_TOKEN_TIME
         )
-        data = {"sub": str(tg_id), "username": username, "exp": expire}
+        data = {"sub": str(tg_id), "username": username, "exp": expire, "bot_token": BOT_TOKEN}
         token = encode(
             data, JWT_CONFIG.JWT_SECRET, algorithm=JWT_CONFIG.JWT_ALGORITHM
         )

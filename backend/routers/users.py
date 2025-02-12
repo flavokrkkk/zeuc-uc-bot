@@ -2,7 +2,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 from starlette.responses import JSONResponse
 
-from backend.dto.purchase_dto import PurchaseModel
+from backend.dto.purchase_dto import BasePurchaseModel
 from backend.dto.reward import DiscountModel, UpdateUserRewardsModel
 from backend.dto.uc_code_dto import BuyPointCallbackModel, BuyPointModel
 from backend.dto.user_dto import BonusesHistoryModel, UpdateUserBonusesModel, UserDiscountModel, UserModel
@@ -74,7 +74,7 @@ async def activate_referal_code(
 async def get_user_purchases(
     purchase_service: Annotated[PurchaseService, Depends(get_purchase_service)],
     current_user: UserModel = Depends(get_current_user_dependency),
-) -> list[PurchaseModel]:
+) -> list[BasePurchaseModel]:
     return await purchase_service.get_by_tg_id(current_user.tg_id)
 
 
