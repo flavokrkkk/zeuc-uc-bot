@@ -14,7 +14,7 @@ const TicketsContent = () => {
   return (
     <div className="bg-dark-200 rounded-2xl p-4 pb-8 py-7  px-10 space-y-5">
       <span className="text-yellow-300 text-[32px]">
-        {currentUser?.bonuses} бонусов
+        {currentUser?.bonuses ?? 0} бонусов
       </span>
       <hr className="border-gray-600" />
       <div
