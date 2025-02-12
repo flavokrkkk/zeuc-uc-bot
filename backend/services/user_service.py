@@ -88,11 +88,11 @@ class UserService:
     async def send_bonuses_to_referer(self, user_id: int, bonuses: int) -> None:
         current_user: User = await self.repository.get_item(user_id)
         referer_user: User = await self.repository.get_item(current_user.referer_id)
-        await self.repository.update_bonuses(user_id, bonuses, BonusStatuses.GET.value)
-        if referer_user and current_user.referer_id:
+        current_user = await self.repository.update_bonuses(user_id, bonuses, BonusStatuses.GET.value)
+        if referer_user and current_user.referer_id != current_user.tg_id:
             await self.repository.update_bonuses(
                 current_user.referer_id, 
-                int(bonuses * 0.1), 
+                bonuses * 0.1, 
                 BonusStatuses.GET.value
             )
 

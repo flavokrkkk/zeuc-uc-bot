@@ -1,6 +1,7 @@
 from typing import Annotated, AsyncGenerator
 
-from fastapi import Depends
+from aiogram import Bot
+from fastapi import Depends, Request
 from fastapi.security import HTTPBearer
 from sqlalchemy.ext.asyncio.session import AsyncSession
 from starlette.requests import HTTPConnection
@@ -12,6 +13,10 @@ from backend.utils.websocket.manager import WebsocketManager
 
 
 bearer = HTTPBearer(auto_error=False)
+
+
+async def get_bot(request: Request) -> Bot:
+    return request.app.state.bot
 
 
 async def get_session(
@@ -65,8 +70,11 @@ async def get_purchase_service(session=Depends(get_session)) -> services.Purchas
     return services.PurchaseService(repositories.PurchaseRepository(session=session))
 
 
-async def get_payment_service(session=Depends(get_session)) -> services.PaymentService:
-    return services.PaymentService(repositories.UCCodeRepository(session=session))
+async def get_payment_service(session=Depends(get_session), bot=Depends(get_bot)) -> services.PaymentService:
+    return services.PaymentService(
+        bot=bot,
+        repository=repositories.UCCodeRepository(session=session)
+    )
 
 
 async def get_websocket_manager() -> WebsocketManager:

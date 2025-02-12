@@ -115,7 +115,6 @@ async def upload_new_codes_text(message: Message, state: FSMContext, database: D
             reply_markup=back_to_menu(is_admin=True)
         )
     except:
-        raise e
         await message.answer(
             text="Неверный формат",
             reply_markup=back_to_menu(is_admin=True)

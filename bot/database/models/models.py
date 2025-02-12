@@ -19,7 +19,7 @@ class User(Base):
     username: Mapped[str] = mapped_column(nullable=True)
     is_admin: Mapped[bool] = mapped_column(default=False)
     referer_id: Mapped[int] = mapped_column(BigInteger, nullable=True)
-    bonuses: Mapped[int] = mapped_column(BigInteger, default=0)
+    bonuses: Mapped[float] = mapped_column(default=0.0)
     referal_code: Mapped[str] = mapped_column(default=lambda: str(uuid4()))
     balance: Mapped[float] = mapped_column(BigInteger, default=0)
     in_black_list: Mapped[bool] = mapped_column(default=False)
@@ -40,7 +40,7 @@ class BonusesHistory(Base):
     __tablename__ = "bonuses"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     tg_id: Mapped[int] = mapped_column(ForeignKey('users.tg_id'))
-    amount: Mapped[int]
+    amount: Mapped[float]
     created_at: Mapped[int]
     status: Mapped[str]
 

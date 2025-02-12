@@ -4,6 +4,7 @@ import json
 from typing import Coroutine
 from uuid import uuid4
 from aiogram import Bot
+from aiogram.exceptions import TelegramRetryAfter
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiohttp import ClientSession, payload
 from fastapi import HTTPException
@@ -24,13 +25,13 @@ from backend.utils.config.config import BOT_TOKEN, CODEEPAY_API_KEY, PAYMENT_NOT
 
 
 class PaymentService:
-    def __init__(self, repository: UCCodeRepository):
+    def __init__(self, repository: UCCodeRepository, bot: Bot):
         self.codeepay_api_url = "https://codeepay.ru/initiate_payment"
         self.ucodeium_api_url = "https://ucodeium.com/api/activate"
         self.codeepay_api_key = CODEEPAY_API_KEY
         self.ucodeium_api_key = UCODEIUM_API_KEY
         self.repository = repository
-        self.bot = Bot(token=BOT_TOKEN)
+        self.bot = bot
 
     async def format_purchase_data(self, purchase: Purchase) -> str:
         us_packs_info = []
@@ -55,7 +56,7 @@ class PaymentService:
             f"<b>Игрок</b>: {purchase.player_id}\n"
             f"<b>Сумма UC</b>: {purchase.uc_sum} ₽\n"
             f"<b>Сумма заказа</b>: {purchase.price} ₽\n"
-            f"<b>Метод оплаты</b>: {purchase.payment_method}\n",
+            f"<b>Метод оплаты</b>: {purchase.payment_method}\n"
             f"<b>Статус</b>: {purchase.status}\n\n"
             f"<b>Информация по UC-пакетам:</b>\n\n" + "\n\n".join(us_packs_info)
         ).strip()
@@ -101,14 +102,22 @@ class PaymentService:
                     callback_data=f"change_status_from_notification_{purchase.payment_id}"
                 )
             ]]
-        )
-        await self.bot.send_message(
-            chat_id=PAYMENT_NOTIFICATION_CHAT,
-            text=await self.format_purchase_data(purchase),
-            reply_markup=keyboard,
-            parse_mode="HTML"
-        )
-        await self.bot.close()
+            )
+        try:
+            await self.bot.send_message(
+                chat_id=PAYMENT_NOTIFICATION_CHAT,
+                text=await self.format_purchase_data(purchase),
+                reply_markup=keyboard,
+                parse_mode="HTML"
+            )
+        except TelegramRetryAfter as e:
+            await asyncio.sleep(e.retry_after)
+            await self.bot.send_message(
+                chat_id=PAYMENT_NOTIFICATION_CHAT,
+                text=await self.format_purchase_data(purchase),
+                reply_markup=keyboard,
+                parse_mode="HTML"
+            )
 
     async def activate_codes(self, payload: BuyUCCodeCallbackModel) -> None:
         any_error_is_raised = False
@@ -147,12 +156,9 @@ class PaymentService:
             for response in responses:
                 if isinstance(response, dict):
                     activated += 1
+                elif isinstance(response, Exception):
+                    errors.append({"message": f"Ошибка сервера {str(response)}"})
                 else:
-                    await self.repository.return_back_uc_code(
-                        response.uc_code, 
-                        response.uc_amount, 
-                        response.price
-                    )
                     if isinstance(response, UCActivationError):
                         error_activation_ids.append(
                             int((response.message.get("activation_data") or {}).get("activation_id", 0))
@@ -161,8 +167,11 @@ class PaymentService:
                             **response.model_dump(),
                             "message": error_messages[response.status_code],
                         })
-                    elif isinstance(response, Exception):
-                        errors.append({"message": f"Ошибка сервера {str(response)}"})
+                    await self.repository.return_back_uc_code(
+                        response.uc_code, 
+                        response.uc_amount, 
+                        response.price
+                    )
             if len(errors) > 0:
                 any_error_is_raised = True
 

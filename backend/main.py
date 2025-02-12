@@ -1,3 +1,4 @@
+from aiogram import Bot
 from fastapi import FastAPI, Request
 from starlette.middleware.cors import CORSMiddleware
 
@@ -5,11 +6,13 @@ from backend.database.connection.connection import DatabaseConnection
 from backend.database.connection.test_db import test_admins, test_db
 from backend.middlewares.decode_middleware import DecodeEncodeMiddleware
 from backend.routers import api_router
+from backend.utils.config.config import BOT_TOKEN
 
 
 async def lifespan(app: FastAPI):
     db_connection = await DatabaseConnection()()
     app.state.db_connection = db_connection
+    app.state.bot = Bot(token=BOT_TOKEN)
     await test_db(await db_connection.get_session())
     await test_admins(await db_connection.get_session())
     yield

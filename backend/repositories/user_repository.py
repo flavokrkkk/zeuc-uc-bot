@@ -38,7 +38,8 @@ class UserRepository(SqlAlchemyRepository):
             BonusesHistory(tg_id=tg_id, amount=bonuses, status=status)
         )
         await self.session.commit()
-        return True
+        await self.session.refresh(user)
+        return user
 
     async def delete_discount_from_user(self, tg_id: int, discount_id: int) -> None:
         pass

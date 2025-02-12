@@ -63,6 +63,5 @@ class UCCodeService:
         bonuses = 0
         for uc_pack in uc_packs:
             point = await self.repository.get_point_by_uc_amount(uc_pack.uc_amount)
-            print(point)
             bonuses += point
         return bonuses

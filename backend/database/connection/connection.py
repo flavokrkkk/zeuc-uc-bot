@@ -19,7 +19,7 @@ class DatabaseConnection:
     async def __call__(self):
         async with self._engine.begin() as conn:
             if DB_CONFIG.DROP_DB:
-                await conn.run_sync(Base.metadata.drop_all)
+                # await conn.run_sync(Base.metadata.drop_all)
                 await conn.run_sync(Base.metadata.create_all)
         return self
     
