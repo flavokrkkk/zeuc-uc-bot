@@ -67,15 +67,21 @@ class UCCodeService:
         return bonuses
     
     async def check_packs(self, uc_packs: list[UCPackModel], uc_sum: int, total_sum: int) -> None:
+        total_sum_db = 0
         for uc_pack in uc_packs:
-            total_sum_db = 0
+            total_sum_pack_db = 0
             uc_pack_db = await self.repository.get_activating_code(uc_pack.uc_amount)
+
             if not uc_pack_db:
                 raise UCPackNotFound
             if uc_pack_db.price_per_uc.price != uc_pack.price_per_uc:
                 raise InvalidUcPackData
-            total_sum_db += uc_pack_db.price_per_uc.price * uc_pack.quantity
-            if total_sum_db != uc_pack.total_sum:
+            
+            total_sum_pack += uc_pack_db.price_per_uc.price * uc_pack.quantity
+            if total_sum_pack_db != uc_pack.total_sum:
                 raise InvalidUcPackData
+            total_sum_db += total_sum_pack
+
         if total_sum != uc_sum:
             raise InvalidUcPackData
+        
