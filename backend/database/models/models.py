@@ -34,6 +34,11 @@ class User(Base):
         uselist=True,
         lazy="selectin"
     )
+    user_rewards: Mapped[list['UserRewards']] = relationship(
+        back_populates='user',
+        uselist=True,
+        lazy="selectin"
+    )
 
 
 class BonusesHistory(Base):
@@ -107,6 +112,7 @@ class Reward(Base):
     uc_amount: Mapped[int] = mapped_column(nullable=True)
     
     discount: Mapped['Discount'] = relationship(back_populates='rewards', uselist=False, lazy="selectin")
+    user_rewards: Mapped[list['UserRewards']] = relationship(back_populates='reward')
 
 
 class UserDiscounts(Base):
@@ -115,3 +121,16 @@ class UserDiscounts(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey('users.tg_id'), primary_key=True)
     discount_id: Mapped[int] = mapped_column(ForeignKey('discounts.discount_id'), primary_key=True)
     count: Mapped[int] = mapped_column(default=0)
+
+
+class UserRewards(Base):
+    __tablename__ = "user_rewards"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.tg_id'))
+    reward_id: Mapped[int] = mapped_column(ForeignKey('scores.reward_id'), nullable=True)
+    secret_key: Mapped[str] 
+    is_used: Mapped[bool] = mapped_column(default=False)
+
+    user: Mapped['User'] = relationship(back_populates='user_rewards')
+    reward: Mapped['Reward'] = relationship(back_populates='user_rewards')

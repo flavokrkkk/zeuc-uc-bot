@@ -1,6 +1,6 @@
 from sqlalchemy import select
 
-from backend.database.models.models import User
+from backend.database.models.models import User, UserRewards
 from backend.database.models.models import BonusesHistory, UserDiscounts
 from backend.repositories.base import SqlAlchemyRepository
 from backend.utils.config.enums import BonusStatuses
@@ -41,5 +41,6 @@ class UserRepository(SqlAlchemyRepository):
         await self.session.refresh(user)
         return user
 
-    async def delete_discount_from_user(self, tg_id: int, discount_id: int) -> None:
-        pass
+    async def create_user_reward(self, user_id: int, secret_key: str) -> None:
+        self.session.add(UserRewards(user_id=user_id, secret_key=secret_key))
+        await self.session.commit()

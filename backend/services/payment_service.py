@@ -6,7 +6,7 @@ from uuid import uuid4
 from aiogram import Bot
 from aiogram.exceptions import TelegramRetryAfter
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from aiohttp import ClientSession, payload
+from aiohttp import ClientSession, ClientTimeout, payload
 from fastapi import HTTPException
 from starlette.responses import JSONResponse
 
@@ -71,7 +71,7 @@ class PaymentService:
         uc_amount: int,
         price: float
     ) -> dict[str, str]:
-        async with ClientSession() as session:
+        async with ClientSession(timeout=ClientTimeout(total=600)) as session:
             async with session.post(
                 self.ucodeium_api_url,
                 headers={"X-Api-Key": self.ucodeium_api_key},

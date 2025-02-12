@@ -1,3 +1,4 @@
+from uuid import uuid4
 from starlette.responses import JSONResponse
 from backend.database.models.models import Reward, User
 from backend.dto.uc_code_dto import BuyPointCallbackModel
@@ -136,3 +137,11 @@ class UserService:
         if user.bonuses < BONUS_CIRCLE_PRICE:
             raise UserNotHaveEnoughBonuses
         await self.udpate_bonuses(user.tg_id, BONUS_CIRCLE_PRICE, BonusStatuses.USE.value)
+
+    async def create_user_reward(self, tg_id: int) -> JSONResponse:
+        secret_key = str(uuid4())
+        await self.repository.create_user_reward(user_id=tg_id, secret_key=secret_key)
+        return JSONResponse(
+            status_code=200,
+            content={"rewards_key": secret_key}
+        )

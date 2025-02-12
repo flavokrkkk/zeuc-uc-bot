@@ -17,3 +17,4 @@ class RewardModel(BaseModel):
 class UpdateUserRewardsModel(BaseModel):
     reward_id: int
     player_id: int | None = None
+    rewards_key: str

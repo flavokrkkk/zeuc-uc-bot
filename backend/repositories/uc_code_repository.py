@@ -1,3 +1,4 @@
+from sqlalchemy.orm import selectinload
 from backend.database.models.models import Price, UCCode
 from backend.repositories.base import SqlAlchemyRepository
 from sqlalchemy import select, func
@@ -11,6 +12,12 @@ class UCCodeRepository(SqlAlchemyRepository):
         await self.delete_item(uc_code)
 
     async def group_by_amount(self):
+        # query = select(Price).options(selectinload(Price.uc_codes))
+        # prices: list[Price] = (await self.session.execute(query)).scalars().all()
+        # return [
+        #     [price.uc_codes[0].uc_amount, price.price, len(price.uc_codes), price.point]
+        #     for price in prices
+        # ]
         query = (
             select(
                 self.model.uc_amount, 
@@ -22,8 +29,7 @@ class UCCodeRepository(SqlAlchemyRepository):
             .group_by(Price.price, self.model.uc_amount, Price.point)
             .order_by(self.model.uc_amount)
         )
-        uc_codes = await self.session.execute(query)
-        return uc_codes.all()
+        return (await self.session.execute(query)).all()
     
     async def get_activating_codes(self, uc_amount: int, quantity: int) -> list[str]:
         query = (

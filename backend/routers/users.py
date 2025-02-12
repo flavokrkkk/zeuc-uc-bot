@@ -30,7 +30,11 @@ async def update_user_bonuses(
     form: UpdateUserBonusesModel,
     user_service: Annotated[UserService, Depends(get_user_service)],
     current_user: UserModel = Depends(get_current_user_dependency),
+    for_circle: bool = False
 ) -> JSONResponse:
+    if for_circle:
+        await user_service.check_user_balance_for_circle(current_user)
+        return await user_service.create_user_reward(current_user.tg_id)
     return await user_service.udpate_bonuses(current_user.tg_id, form.amount, form.status)
 
 
@@ -42,8 +46,9 @@ async def update_user_rewards(
     payment_service: Annotated[PaymentService, Depends(get_payment_service)],
     current_user: UserModel = Depends(get_current_user_dependency),
 ) -> JSONResponse:
-    await user_service.check_user_balance_for_circle(current_user)
-    reward, response = await reward_service.get_winned_reward(form.reward_id)
+    reward, response = await reward_service.get_winned_reward(
+        current_user.tg_id, form.reward_id, form.rewards_key
+    )
     if reward.reward_type == "uc_code": 
         await payment_service.activate_code_without_callback(
             reward.uc_amount, 
