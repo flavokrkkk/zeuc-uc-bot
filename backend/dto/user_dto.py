@@ -1,3 +1,4 @@
+from datetime import datetime
 from pydantic import BaseModel, field_validator
 
 from backend.dto.reward import DiscountModel
@@ -20,7 +21,12 @@ class UserDiscountModel(BaseModel):
 
 class BonusesHistoryModel(BaseModel):
     amount: int
-    created_at: int
+    status: str
+    created_at: int | str
+
+    @field_validator("created_at")
+    def validate_created_at(cls, value: int):
+        return datetime.fromtimestamp(value / 1000).strftime("%d.%m.%Y %H:%M:%S")
 
 
 class UpdateUserBonusesModel(BaseModel):

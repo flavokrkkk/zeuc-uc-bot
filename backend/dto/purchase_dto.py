@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 from pydantic import BaseModel, field_validator
 
@@ -25,6 +26,11 @@ class PurchaseModel(BaseModel):
     is_paid: bool = False
     metadata_: dict | str 
     status: str
+    created_at: int | str
+
+    @field_validator("created_at")
+    def validate_created_at(cls, value: int):
+        return datetime.fromtimestamp(value / 1000).strftime("%d.%m.%Y %H:%M:%S")
 
     @field_validator("metadata_")
     def validate_metadata(cls, value):
