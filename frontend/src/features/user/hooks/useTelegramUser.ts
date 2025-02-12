@@ -8,8 +8,8 @@ export const useTelegramUser = () => {
   const navigate = useNavigate();
   useEffect(() => {
     if (window.Telegram) {
-      // const user = window.Telegram.WebApp.initDataUnsafe?.user;
-      const user = { id: 1, username: "test_1" };
+      const user = window.Telegram.WebApp.initDataUnsafe?.user;
+      // const user = { id: 1, username: "test_1" };
       if (user) {
         Promise.all([setUserCredentials(user)]).then(([payload]) => {
           const { meta }: { meta: { requestStatus: string } } =
