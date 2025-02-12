@@ -74,7 +74,7 @@ export const ButtonColorClasses: Record<ButtonColors, IButtonClasses> = {
 export const ButtonSizeClasses: Record<ButtonSizes, string> = {
   [ButtonSizes.LARGE]: "px-[95px] py-[6px] text-base",
   [ButtonSizes.MEDIUM]: "p-6",
-  [ButtonSizes.SMALL]: "p-2",
+  [ButtonSizes.SMALL]: "p-[6px]",
 };
 export const ButtonBorderSizeClasses: Record<ButtonBorderSizes, string> = {
   [ButtonBorderSizes.NONE]: "border-0",

@@ -8,6 +8,7 @@ import {
   ButtonRoundSizes,
   ButtonSizes,
 } from "@/shared/ui/button/button";
+import clsx from "clsx";
 
 const CatalogPage = () => {
   const {
@@ -24,7 +25,12 @@ const CatalogPage = () => {
   const userInfo = useAppSelector(userSelectors.userInfo);
 
   return (
-    <section className="w-full space-y-2 flex flex-col justify-between pt-2">
+    <section
+      className={clsx(
+        "w-full  relative space-y-2 flex flex-col justify-between pt-2",
+        isSelected && "pb-16"
+      )}
+    >
       <section className="space-y-5">
         <div className="text-white flex justify-between items-center">
           <h1>Привет {currentUser?.username}</h1>
@@ -45,9 +51,9 @@ const CatalogPage = () => {
       </section>
 
       {isSelected && (
-        <div className="w-full absolute bottom-5  space-x-1 flex justify-center">
+        <div className="fixed bottom-28 left-0 right-0 px-4 flex justify-center">
           <Button
-            className="h-10  w-full cursor-pointer bg-gray-200 border border-gray-300 flex items-center justify-center rounded-md"
+            className="h-10 px-4 cursor-pointer w-full  bg-gray-200 border border-gray-300 flex items-center justify-center rounded-md"
             bgColor={ButtonColors.GREEN}
             rounded={ButtonRoundSizes.ROUNDED_XL}
             size={ButtonSizes.MEDIUM}
