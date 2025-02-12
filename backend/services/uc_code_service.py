@@ -76,20 +76,16 @@ class UCCodeService:
             if not uc_pack_db:
                 raise UCPackNotFound
             if uc_pack_db.price_per_uc.price != uc_pack.price_per_uc:
-                print(1, uc_pack_db.price_per_uc.price, uc_pack.price_per_uc)
                 raise InvalidUcPackData
             
             total_sum_pack_db += uc_pack_db.price_per_uc.price * uc_pack.quantity
             if total_sum_pack_db != uc_pack.total_sum:
-                print(2, total_sum_pack_db, uc_pack.total_sum)
                 raise InvalidUcPackData
             total_sum_db += total_sum_pack_db
             uc_sum_db += uc_pack_db.uc_amount * uc_pack.quantity
 
         if total_sum_db != total_sum:
-            print(3, total_sum, uc_sum)
             raise InvalidUcPackData
         if uc_sum_db != uc_sum:
-            print(4, uc_sum_db, uc_sum)
             raise InvalidUcPackData
         
