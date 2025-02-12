@@ -11,6 +11,7 @@ from backend.services.payment_service import PaymentService
 from backend.services.purchase_service import PurchaseService
 from backend.services.reward_service import RewardService
 from backend.services.user_service import UserService
+from backend.utils.config.config import BONUS_CIRCLE_PRICE
 from backend.utils.dependencies.dependencies import (
     get_current_user_dependency,
     get_discount_service,
@@ -41,7 +42,7 @@ async def update_user_rewards(
     payment_service: Annotated[PaymentService, Depends(get_payment_service)],
     current_user: UserModel = Depends(get_current_user_dependency),
 ) -> JSONResponse:
-    await user_service.check_user_balance(current_user)
+    await user_service.check_user_balance_for_circle(current_user)
     reward, response = await reward_service.get_winned_reward(form.reward_id)
     if reward.reward_type == "uc_code": 
         await payment_service.activate_code_without_callback(

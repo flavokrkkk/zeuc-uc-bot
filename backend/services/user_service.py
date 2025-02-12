@@ -132,6 +132,7 @@ class UserService:
             return
         raise InvalidPlayerId
     
-    async def check_user_balance(self, user: UserModel):
+    async def check_user_balance_for_circle(self, user: UserModel):
         if user.bonuses < BONUS_CIRCLE_PRICE:
             raise UserNotHaveEnoughBonuses
+        await self.udpate_bonuses(user.tg_id, BONUS_CIRCLE_PRICE, BonusStatuses.USE.value)
