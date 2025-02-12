@@ -23,7 +23,7 @@ const MainPage = () => {
     }) => {
       toast.info(data.detail, {
         position: "top-center",
-        duration: Infinity,
+        duration: 30000,
         dismissible: true,
       });
     }

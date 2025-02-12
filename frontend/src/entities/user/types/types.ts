@@ -33,16 +33,17 @@ export interface IUserPurchases {
 
 export const statusColor: Record<EUserPurchases, string> = {
   [EUserPurchases.IN_PROGRESS]: "bg-yellow-500",
-  [EUserPurchases.COMPLETED]: "bg-green-300",
+  [EUserPurchases.COMPLETED]: "bg-green-100",
   [EUserPurchases.CANCELED]: "bg-red-300",
-  [EUserPurchases.GET]: "bg-green-300",
-  [EUserPurchases.USE]: "bg-green-300",
+  [EUserPurchases.GET]: "bg-green-100",
+  [EUserPurchases.USE]: "bg-green-100",
 };
 
 export interface IUserBonusesHistory {
   id: string;
   amount: number;
   created_at: number;
+  status: string;
 }
 
 export interface IDiscountModel {
