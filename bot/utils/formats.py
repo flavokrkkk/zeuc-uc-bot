@@ -1,6 +1,7 @@
 from datetime import datetime
 
-from database.models.models import Purchase
+from database.db_main import Database
+from database.models.models import Discount, Purchase, UserRewards
 
 
 def format_purchase_data(purchase: Purchase, data: dict[str, str]) -> str:
@@ -33,3 +34,20 @@ def format_purchase_data(purchase: Purchase, data: dict[str, str]) -> str:
     ).strip()
 
     return message_text
+
+
+async def format_user_reward(user_reward: UserRewards, database: Database) -> str:
+    reward = user_reward.reward
+    if reward.reward_type == "discount":
+        discount: Discount = await database.discounts.get_item(reward.discount.discount_id)
+        reward_value_text = f"Награда: скидка {discount.value} при покупке от {discount.min_payment_value}"
+    else:
+        reward_value_text = f"Награда: {reward.uc_amount} UC"
+    return (
+        f"Юзернейм: {user_reward.user.username}\n"
+        f"Id: {user_reward.user_id}\n"
+        f"Тип награды: {user_reward.reward.reward_type}\n"
+        f"{reward_value_text}\n"
+        f"Дата: {datetime.fromtimestamp(user_reward.created_at / 1000).strftime('%d.%m.%Y %H:%M:%S')}"
+        f"Статус награды: {"Не получен" if not user_reward.is_used else "Получен"}"
+    )

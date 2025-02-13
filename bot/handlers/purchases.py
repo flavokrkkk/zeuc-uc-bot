@@ -70,7 +70,6 @@ async def input_date(message: Message, state: FSMContext, database: Database):
             text="Неверный формат даты",
             reply_markup=back_to_menu(is_admin=True)
         )
-        raise e
 
 
 @router.callback_query(F.data.startswith("purchases_page_"), PurchasesStates.check_order)
@@ -91,7 +90,6 @@ async def get_next_page(callback: CallbackQuery, state: FSMContext, database: Da
 @router.callback_query(F.data.startswith("purchase_"), PurchasesStates.check_order)
 async def get_purchase(callback: CallbackQuery, state: FSMContext, database: Database):
     order_id = callback.data.split("_")[-1]
-    print(order_id)
     purchase = await database.purchases.get_by_order_id(order_id)
     user: User = await database.users.get_item(purchase.tg_id)
 

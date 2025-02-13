@@ -132,5 +132,5 @@ class UserRewards(Base):
     secret_key: Mapped[str] 
     is_used: Mapped[bool] = mapped_column(default=False)
 
-    user: Mapped['User'] = relationship(back_populates='user_rewards')
-    reward: Mapped['Reward'] = relationship(back_populates='user_rewards')
+    user: Mapped['User'] = relationship(back_populates='user_rewards', lazy="selectin")
+    reward: Mapped['Reward'] = relationship(back_populates='user_rewards', lazy="selectin")

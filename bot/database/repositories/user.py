@@ -3,7 +3,7 @@ from sqlalchemy.dialects.postgresql import array
 from sqlalchemy.dialects.postgresql.operators import OVERLAP
 
 from utils.config.enums import BonusStatuses
-from database.models.models import BonusesHistory, User
+from database.models.models import BonusesHistory, User, UserRewards
 from database.repositories.base import SqlAlchemyRepository
 
 

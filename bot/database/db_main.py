@@ -10,3 +10,4 @@ class Database:
         self.settings = repositories.SettingsRepository(session=session)
         self.discounts = repositories.DiscountRepository(session=session)
         self.rewards = repositories.RewardRepository(session=session)
+        self.user_rewards = repositories.UserRewardsRepository(session=session)

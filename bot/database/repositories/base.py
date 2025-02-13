@@ -57,17 +57,22 @@ class SqlAlchemyRepository(BaseRepository):
         await self.session.commit()
 
     async def update_item(
-        self, item_id: int | str | UUID4, **update_values
+        self, 
+        item_fk: MappedColumn[Any], 
+        item_id: int | str, 
+        **update_values
     ) -> ModelType:
         query = (
             update(self.model)
-            .where(self.model.tg_id == item_id)
+            .where(item_fk == item_id)
             .values(update_values)
             .returning(self.model)
         )
         item: Result = await self.session.execute(query)
+        item = item.scalar_one_or_none()
         await self.session.commit()
-        return item.scalars().all()[0]
+        await self.session.refresh(item)
+        return item
 
     async def get_model(self, **kwargs: int | str | UUID4) -> ModelType:
         return self.model(**kwargs)

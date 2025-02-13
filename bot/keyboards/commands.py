@@ -42,11 +42,12 @@ def admin_menu_keyboard() -> InlineKeyboardMarkup:
             InlineKeyboardButton(text="Статистика (Bot)", callback_data="bot_stats"),
             InlineKeyboardButton(text="Статистика (UC)", callback_data="uc_stats")
         ],
+        [InlineKeyboardButton(text="Начислить бонусы", callback_data="add_bonuses")],
         [
             InlineKeyboardButton(text="Вкл | выкл", callback_data="off_or_on_store"),
             InlineKeyboardButton(text="Черный список", callback_data="black_list")
         ],
-        [InlineKeyboardButton(text="Начислить бонусы", callback_data="add_bonuses")]
+        [InlineKeyboardButton(text="История наград", callback_data="user_rewards")]
     ]
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
