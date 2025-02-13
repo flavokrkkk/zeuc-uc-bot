@@ -41,7 +41,8 @@ class DatabaseMiddleware(BaseMiddleware):
                 )
             elif user_in_db.username != user_data.username:
                 await database.users.update_item(
-                    item_id=user_data.id,
+                    User.tg_id,
+                    user_data.id,
                     username=user_data.username
                 )
             return await handler(event, data)
