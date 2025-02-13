@@ -11,7 +11,7 @@ class UCCodeRepository(SqlAlchemyRepository):
         query = select(Price).options(selectinload(Price.uc_codes))
         prices: list[Price] = (await self.session.execute(query)).scalars().all()
         return [
-            [price.uc_amount, price.price, len(price.uc_codes), price.point]
+            [price.uc_amount, len(price.uc_codes)]
             for price in prices
         ]
     
