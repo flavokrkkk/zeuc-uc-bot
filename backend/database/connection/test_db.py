@@ -24,7 +24,8 @@ async def test_db(session):
         for key, value in uc_codes_values.items():
             price = Price(
                 price=value[0], 
-                point=value[1]
+                point=value[1],
+                uc_amount=key
             )
             for i in range(10):
                 uc_codes.append(

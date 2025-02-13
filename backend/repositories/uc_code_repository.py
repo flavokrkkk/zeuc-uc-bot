@@ -12,24 +12,12 @@ class UCCodeRepository(SqlAlchemyRepository):
         await self.delete_item(uc_code)
 
     async def group_by_amount(self):
-        # query = select(Price).options(selectinload(Price.uc_codes))
-        # prices: list[Price] = (await self.session.execute(query)).scalars().all()
-        # return [
-        #     [price.uc_codes[0].uc_amount, price.price, len(price.uc_codes), price.point]
-        #     for price in prices
-        # ]
-        query = (
-            select(
-                self.model.uc_amount, 
-                Price.price, 
-                func.count(self.model.uc_amount).label("quantity"),
-                Price.point
-            )
-            .join(Price, UCCode.price_id == Price.price_id)
-            .group_by(Price.price, self.model.uc_amount, Price.point)
-            .order_by(self.model.uc_amount)
-        )
-        return (await self.session.execute(query)).all()
+        query = select(Price).options(selectinload(Price.uc_codes))
+        prices: list[Price] = (await self.session.execute(query)).scalars().all()
+        return [
+            [price.uc_amount, price.price, len(price.uc_codes), price.point]
+            for price in prices
+        ]
     
     async def get_activating_codes(self, uc_amount: int, quantity: int) -> list[str]:
         query = (
@@ -50,6 +38,7 @@ class UCCodeRepository(SqlAlchemyRepository):
             price_id=(
                 select(Price.price_id)
                 .where(Price.price == price)
+                .limit(1)
                 .scalar_subquery()
             )
         )

@@ -46,7 +46,7 @@ async def format_user_reward(user_reward: UserRewards, database: Database) -> st
         reward_value_text = f"Награда: {reward.uc_amount} UC"
     return (
         f"Юзернейм: {user_reward.user.username}\n"
-        f"Id: {user_reward.user_id}\n""
+        f"Id: {user_reward.user_id}\n"
         f"Тип награды: {user_reward.reward.reward_type}\n"
         f"{reward_value_text}\n"
         f"Дата: {datetime.fromtimestamp(user_reward.created_at / 1000).strftime('%d.%m.%Y %H:%M:%S')}\n"

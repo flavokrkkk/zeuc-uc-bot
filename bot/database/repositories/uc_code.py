@@ -1,4 +1,5 @@
 from sqlalchemy import func, select
+from sqlalchemy.orm import selectinload
 from database.models.models import Price, UCCode
 from database.repositories.base import SqlAlchemyRepository
 
@@ -7,16 +8,12 @@ class UCCodeRepository(SqlAlchemyRepository):
     model = UCCode
 
     async def group_by_amount(self) -> list[tuple[int, int]]:
-        query = (
-            select(
-                self.model.uc_amount,
-                func.count(self.model.uc_amount).label("count")
-            )
-            .group_by(self.model.uc_amount)
-            .order_by(self.model.uc_amount)
-        )
-        uc_codes = await self.session.execute(query)
-        return uc_codes.all()
+        query = select(Price).options(selectinload(Price.uc_codes))
+        prices: list[Price] = (await self.session.execute(query)).scalars().all()
+        return [
+            [price.uc_amount, price.price, len(price.uc_codes), price.point]
+            for price in prices
+        ]
     
     async def get_count_by_amount(self, uc_amount: int) -> int:
         query = (
@@ -48,7 +45,7 @@ class UCCodeRepository(SqlAlchemyRepository):
         price_per_uc: int, 
         point: int
     ) -> None:
-        price = Price(price=price_per_uc, point=point)
+        price = Price(price=price_per_uc, point=point, uc_amount=uc_amount)
         uc_codes = [
             UCCode(code=uc_code, uc_amount=uc_amount) 
             for uc_code in new_uc_codes
@@ -58,13 +55,13 @@ class UCCodeRepository(SqlAlchemyRepository):
         await self.session.commit()
         
     async def change_price(self, uc_amount: str, new_price: float) -> None:
-        query = select(Price).where(Price.uc_codes.any(uc_amount=uc_amount))
+        query = select(Price).where(Price.uc_amount == uc_amount)
         price = (await self.session.execute(query)).scalar_one_or_none()
         price.price = new_price
         await self.session.commit()
 
     async def add_new_codes(self, uc_codes: list[str], uc_amount: int) -> None:
-        price_query = select(Price).where(Price.uc_codes.any(UCCode.uc_amount == uc_amount))
+        price_query = select(Price).where(Price.uc_amount == uc_amount)
         price = (await self.session.execute(price_query)).scalar_one_or_none()
         new_uc_codes = [
             UCCode(price_id=price.price_id, uc_amount=uc_amount, code=uc_code)

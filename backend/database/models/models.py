@@ -58,6 +58,7 @@ class Price(Base):
     price_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     price: Mapped[float] = mapped_column(DECIMAL(10, 2))
     point: Mapped[int]
+    uc_amount: Mapped[int]
 
     uc_codes: Mapped[list['UCCode']] = relationship(back_populates='price_per_uc')
 
