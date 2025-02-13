@@ -27,7 +27,7 @@ router = APIRouter(prefix="/user", tags=["users"])
 
 @router.patch("/bonuses")
 async def update_user_bonuses(
-    form: UpdateUserBonusesModel,
+    # form: UpdateUserBonusesModel,
     user_service: Annotated[UserService, Depends(get_user_service)],
     current_user: UserModel = Depends(get_current_user_dependency),
     for_circle: bool = False
@@ -35,7 +35,7 @@ async def update_user_bonuses(
     if for_circle:
         await user_service.check_user_balance_for_circle(current_user)
         return await user_service.create_user_reward(current_user.tg_id)
-    return await user_service.udpate_bonuses(current_user.tg_id, form.amount, form.status)
+    # return await user_service.udpate_bonuses(current_user.tg_id, form.amount, form.status)
 
 
 @router.post("/rewards")
