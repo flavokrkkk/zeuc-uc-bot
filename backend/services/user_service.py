@@ -140,5 +140,6 @@ class UserService:
 
     async def create_user_reward(self, tg_id: int) -> JSONResponse:
         secret_key = str(uuid4())
-        user_reward = await self.repository.create_user_reward(user_id=tg_id, secret_key=secret_key)
-        return UserForCircleBonusesModel.model_validate(user_reward, from_attributes=True)
+        await self.repository.create_user_reward(user_id=tg_id, secret_key=secret_key)
+        user = await self.get_user(tg_id)
+        return UserForCircleBonusesModel(user=user, rewards_key=secret_key)

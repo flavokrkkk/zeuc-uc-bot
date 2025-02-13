@@ -45,6 +45,3 @@ class UserRepository(SqlAlchemyRepository):
         user_reward = UserRewards(user_id=user_id, secret_key=secret_key)
         self.session.add(user_reward)
         await self.session.commit()
-        await self.session.refresh(user_reward)
-        await self.session.refresh(user_reward.user)
-        return user_reward
