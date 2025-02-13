@@ -39,7 +39,11 @@ class ScoresService {
     return data;
   }
 
-  public async setScoreGift(body: { reward_id: number; player_id: number }) {
+  public async setScoreGift(body: {
+    reward_id: number;
+    player_id: number;
+    rewards_key: string;
+  }) {
     const { data } = await axiosAuth.post(`${EScoresEndpoints.SET_GIFTS}`, {
       ...body,
     });
