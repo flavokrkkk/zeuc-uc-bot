@@ -32,3 +32,8 @@ class BonusesHistoryModel(BaseModel):
 class UpdateUserBonusesModel(BaseModel):
     amount: int
     status: str
+
+
+class UserForCircleBonusesModel(BaseModel):
+    user: UserModel
+    rewards_key: str

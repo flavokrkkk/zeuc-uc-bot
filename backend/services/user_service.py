@@ -2,7 +2,7 @@ from uuid import uuid4
 from starlette.responses import JSONResponse
 from backend.database.models.models import Reward, User
 from backend.dto.uc_code_dto import BuyPointCallbackModel
-from backend.dto.user_dto import BonusesHistoryModel, UserModel
+from backend.dto.user_dto import BonusesHistoryModel, UserForCircleBonusesModel, UserModel
 from backend.errors.purchase_errors import InvalidPlayerId
 from backend.errors.user_errors import (
     UserAlreadyActivateReferal, 
@@ -140,8 +140,5 @@ class UserService:
 
     async def create_user_reward(self, tg_id: int) -> JSONResponse:
         secret_key = str(uuid4())
-        await self.repository.create_user_reward(user_id=tg_id, secret_key=secret_key)
-        return JSONResponse(
-            status_code=200,
-            content={"rewards_key": secret_key}
-        )
+        user_reward =await self.repository.create_user_reward(user_id=tg_id, secret_key=secret_key)
+        return UserForCircleBonusesModel.model_validate(user_reward, from_attributes=True)
