@@ -31,11 +31,11 @@ class ScoresService {
   public async setWriteBonuses(requestBody: {
     amount: number;
     status: EBonusStatuses;
-  }): Promise<ICurrentUserResponse> {
-    const { data } = await axiosAuth.patch<ICurrentUserResponse>(
-      EScoresEndpoints.SET_WRITE,
-      requestBody
-    );
+  }): Promise<{ user: ICurrentUserResponse; rewards_key?: string }> {
+    const { data } = await axiosAuth.patch<{
+      user: ICurrentUserResponse;
+      rewards_key?: string;
+    }>(EScoresEndpoints.SET_WRITE, requestBody);
     return data;
   }
 

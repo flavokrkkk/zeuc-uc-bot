@@ -9,7 +9,6 @@ export interface ICurrentUserResponse {
   tg_id: number;
   bonuses: number;
   is_admin: boolean;
-  rewards_key?: string;
   referal_code: string;
 }
 export const enum EUserPurchases {

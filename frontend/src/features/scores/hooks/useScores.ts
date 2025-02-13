@@ -2,6 +2,7 @@ import { setWriteBonuses } from "@/entities/scores/libs/scoresService";
 import { EBonusStatuses } from "@/entities/scores/libs/utils/rewards";
 import { scoresSelectors } from "@/entities/scores/models/store/scoresSlice";
 import { spinWheel } from "@/features/scores/helpers/spinWheel";
+import { useActions } from "@/shared/hooks/useActions";
 import { useAppSelector } from "@/shared/hooks/useAppSelector";
 import { useMutation } from "@tanstack/react-query";
 import { useRef, useState } from "react";
@@ -20,6 +21,7 @@ export const useScopes = (
     reward_id: number;
     type: string;
   } | null>(null);
+  const { setCurrentUser } = useActions();
   const scoresValue = useAppSelector(scoresSelectors.scoresValue);
 
   const wheelRef = useRef<HTMLCanvasElement | null>(null);
@@ -40,6 +42,7 @@ export const useScopes = (
     mutationKey: ["scores-write"],
     mutationFn: setWriteBonuses,
     onSuccess: (data) => {
+      setCurrentUser(data.user);
       handleSetRewardsKey({ key: data.rewards_key ?? "" });
       setIsGetPrize((prev) => prev && !prev);
       spinWheel(
