@@ -42,5 +42,8 @@ class UserRepository(SqlAlchemyRepository):
         return user
 
     async def create_user_reward(self, user_id: int, secret_key: str) -> None:
-        self.session.add(UserRewards(user_id=user_id, secret_key=secret_key))
+        user_reward = UserRewards(user_id=user_id, secret_key=secret_key)
+        self.session.add(user_reward)
         await self.session.commit()
+        await self.session.refresh(user_reward)
+        return user_reward

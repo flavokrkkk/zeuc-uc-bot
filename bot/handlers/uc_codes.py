@@ -261,12 +261,11 @@ async def upload_new_codes_text(message: Message, state: FSMContext, database: D
             text="Код(-ы) уже добавлен(-ы)",
             reply_markup=back_to_menu(is_admin=True)
         )
-    except:
+    except Exception as e:
         await message.answer(
             text="Неверный формат",
             reply_markup=back_to_menu(is_admin=True)
         )
-
 
 @router.callback_query(F.data == "change_uc_code_price", UCCodesStates.option)
 async def change_uc_code_price(callback: CallbackQuery, state: FSMContext):
