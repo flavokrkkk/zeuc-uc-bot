@@ -9,6 +9,7 @@ import { toast } from "sonner";
 export const useScoreMutation = (setIsOpen: (action: boolean) => void) => {
   const scoresValue = useAppSelector(scoresSelectors.scoresValue);
   const [playerId, setPlayerId] = useState("");
+  const [rewardsKey, setRewardsKey] = useState("");
   const [playerError, setPlayerError] = useState<"success" | "error" | "">("");
   const [winnerType, setWinnerType] = useState<"uc" | "discount" | "">("");
   const { getAsyncCurrentUser, getAsyncDiscount } = useActions();
@@ -18,10 +19,12 @@ export const useScoreMutation = (setIsOpen: (action: boolean) => void) => {
     mutationFn: ({
       reward_id,
       player_id,
+      rewards_key,
     }: {
       reward_id: number;
       player_id: number;
-    }) => setScoreGift({ reward_id, player_id }),
+      rewards_key: string;
+    }) => setScoreGift({ reward_id, player_id, rewards_key }),
     onSuccess: () => {
       if (winnerType === "uc") {
         getAsyncCurrentUser();
@@ -46,6 +49,8 @@ export const useScoreMutation = (setIsOpen: (action: boolean) => void) => {
     mutate({
       reward_id: Number(event.currentTarget.value),
       player_id: Number(playerId),
+
+      rewards_key: rewardsKey,
     });
 
     setIsGetPrize(true);
@@ -74,6 +79,10 @@ export const useScoreMutation = (setIsOpen: (action: boolean) => void) => {
     setPlayerError("error");
   };
 
+  const handleSetRewardsKey = ({ key }: { key: string }) => {
+    setRewardsKey(key);
+  };
+
   return {
     isGetPrize,
     playerId,
@@ -83,6 +92,7 @@ export const useScoreMutation = (setIsOpen: (action: boolean) => void) => {
     handleCheckId,
     setIsGetPrize,
     isPending,
+    handleSetRewardsKey,
     handleSetScoreGift,
   };
 };

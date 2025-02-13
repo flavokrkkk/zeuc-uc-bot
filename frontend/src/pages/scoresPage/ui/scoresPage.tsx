@@ -26,6 +26,7 @@ const ScoresPage = () => {
     handleCheckId,
     setPlayerId,
     playerError,
+    handleSetRewardsKey,
     isPending,
     playerId,
   } = useScoreMutation(setIsOpen);
@@ -38,7 +39,7 @@ const ScoresPage = () => {
     winnerIndex,
     calcSpinWheel,
     isLoading,
-  } = useScopes(setIsGetPrize, setIsOpen, setPlayerId);
+  } = useScopes(setIsGetPrize, setIsOpen, setPlayerId, handleSetRewardsKey);
   return (
     <section className="w-full  text-white h-full items-center space-y-2 flex flex-col justify-center pt-8">
       <div className="flex justify-center w-full  items-center flex-col overflow-hidden pt-10">

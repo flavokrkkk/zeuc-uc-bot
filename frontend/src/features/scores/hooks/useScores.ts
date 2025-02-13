@@ -2,7 +2,6 @@ import { setWriteBonuses } from "@/entities/scores/libs/scoresService";
 import { EBonusStatuses } from "@/entities/scores/libs/utils/rewards";
 import { scoresSelectors } from "@/entities/scores/models/store/scoresSlice";
 import { spinWheel } from "@/features/scores/helpers/spinWheel";
-import { useActions } from "@/shared/hooks/useActions";
 import { useAppSelector } from "@/shared/hooks/useAppSelector";
 import { useMutation } from "@tanstack/react-query";
 import { useRef, useState } from "react";
@@ -11,9 +10,9 @@ import { toast } from "sonner";
 export const useScopes = (
   setIsGetPrize: React.Dispatch<React.SetStateAction<boolean>>,
   setIsOpen: (action: boolean) => void,
-  setPlayerId: (playerId: string) => void
+  setPlayerId: (playerId: string) => void,
+  handleSetRewardsKey: ({ key }: { key: string }) => void
 ) => {
-  const { setCurrentUser } = useActions();
   const [spinning, setSpinning] = useState(false);
   const [winnerIndex, setWinnerIndex] = useState<number | null>(null);
   const [winner, setWinner] = useState<{
@@ -41,8 +40,8 @@ export const useScopes = (
     mutationKey: ["scores-write"],
     mutationFn: setWriteBonuses,
     onSuccess: (data) => {
+      handleSetRewardsKey({ key: data.rewards_key ?? "" });
       setIsGetPrize((prev) => prev && !prev);
-      setCurrentUser(data);
       spinWheel(
         scoresValue,
         wheelRef,
