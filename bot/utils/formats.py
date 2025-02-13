@@ -4,7 +4,7 @@ from database.db_main import Database
 from database.models.models import Discount, Purchase, UserRewards
 
 
-def format_purchase_data(purchase: Purchase, data: dict[str, str]) -> str:
+def format_purchase_data(purchase: Purchase, data: dict[str, str], username: str) -> str:
     us_packs_info = []
     for uc_pack in data['uc_packs']:
         errors = "\n" + "\n".join([
@@ -26,6 +26,7 @@ def format_purchase_data(purchase: Purchase, data: dict[str, str]) -> str:
         f"<b>Заказ</b>: {purchase.payment_id}\n"
         f"<b>Дата покупки</b>: {datetime.fromtimestamp(purchase.created_at / 1000).strftime('%d.%m.%Y %H:%M:%S')}\n"
         f"<b>Игрок</b>: {purchase.player_id}\n"
+        f"<b>Покупатель</b>: @{username}\n"
         f"<b>Сумма UC</b>: {purchase.uc_sum} ₽\n"
         f"<b>Сумма заказа</b>: {purchase.price} ₽\n"
         f"<b>Метод оплаты</b>: {purchase.payment_method}\n"
@@ -45,7 +46,7 @@ async def format_user_reward(user_reward: UserRewards, database: Database) -> st
         reward_value_text = f"Награда: {reward.uc_amount} UC"
     return (
         f"Юзернейм: {user_reward.user.username}\n"
-        f"Id: {user_reward.user_id}\n"
+        f"Id: {user_reward.user_id}\n""
         f"Тип награды: {user_reward.reward.reward_type}\n"
         f"{reward_value_text}\n"
         f"Дата: {datetime.fromtimestamp(user_reward.created_at / 1000).strftime('%d.%m.%Y %H:%M:%S')}\n"

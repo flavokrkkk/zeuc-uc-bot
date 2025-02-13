@@ -9,7 +9,6 @@ from utils.decorators import add_back_to_menu_button
 def purchase_menu_keyboard(username: int) -> InlineKeyboardMarkup:
     buttons = [
         InlineKeyboardButton(text="Изменить статус", callback_data="change_status"),
-        InlineKeyboardButton(text="Связаться с покупателем", url=f"t.me//{username}"),
     ]
     return InlineKeyboardMarkup(inline_keyboard=[buttons])
 

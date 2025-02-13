@@ -96,7 +96,7 @@ async def get_purchase(callback: CallbackQuery, state: FSMContext, database: Dat
     await state.update_data(order_id=order_id)
     await state.set_state(PurchasesStates.check_order)
     await callback.message.edit_text(
-        text=format_purchase_data(purchase, json.loads(purchase.metadata_)),
+        text=format_purchase_data(purchase, json.loads(purchase.metadata_), user.username),
         reply_markup=purchase_menu_keyboard(user.username)
     )
 
@@ -124,7 +124,7 @@ async def input_order_id(message: Message, state: FSMContext, database: Database
     
     user = await database.users.get_item(purchase.tg_id)
     data = json.loads(purchase.metadata_)
-    message_text = format_purchase_data(purchase, data)
+    message_text = format_purchase_data(purchase, data, user.username)
 
     await state.update_data(order_id=order_id)
     await state.set_state(PurchasesStates.check_order)
@@ -175,6 +175,6 @@ async def set_status(callback: CallbackQuery, state: FSMContext, database: Datab
 
     await state.set_state(PurchasesStates.check_order)
     await callback.message.edit_text(
-        text=format_purchase_data(purchase, json.loads(purchase.metadata_)),
+        text=format_purchase_data(purchase, json.loads(purchase.metadata_), user.username),
         reply_markup=purchase_menu_keyboard(user.username)
     )

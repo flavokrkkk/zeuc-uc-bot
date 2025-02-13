@@ -50,7 +50,6 @@ def user_rewards_keyboard(user_rewards: list[UserRewards], pages: int, page: int
 def user_reward_edit_keyboard(username: str) -> InlineKeyboardMarkup:
     buttons = [
         InlineKeyboardButton(text="Изменить статус", callback_data="change_status"),
-        InlineKeyboardButton(text="Связаться с покупателем", callback_data=f"t.me//{username}")
     ]
     return InlineKeyboardMarkup(inline_keyboard=[buttons])
 
