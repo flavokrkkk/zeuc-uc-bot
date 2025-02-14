@@ -1,7 +1,10 @@
 import { FC, PropsWithChildren, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useViewer } from "../../models/context/providers";
-import { getAccessToken } from "@/entities/token/libs/tokenService";
+import {
+  getAccessToken,
+  getStateCloseShop,
+} from "@/entities/token/libs/tokenService";
 import { ERouteNames } from "@/shared/libs/utils/pathVariables";
 
 export const privatePage = (children: React.ReactNode) => {
@@ -16,11 +19,16 @@ const PrivatePage: FC<PropsWithChildren> = ({ children }) => {
 
   useEffect(() => {
     const token = getAccessToken();
+    const shopState = getStateCloseShop();
     if (token) {
       loginViewer(token);
       setIsLoading(false);
     } else {
       setIsLoading(false);
+      if (!shopState) {
+        navigate(ERouteNames.CLOSE_ERROR);
+        return;
+      }
       navigate(ERouteNames.AUTH_ERROR);
     }
   }, [pathname]);

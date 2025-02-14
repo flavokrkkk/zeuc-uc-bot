@@ -1,3 +1,4 @@
+import { useActions } from "@/shared/hooks/useActions";
 import { pathNavigate } from "@/shared/libs/utils/pathNavigate";
 import { Icon } from "@/shared/ui/icon/ui/icon";
 import { FC } from "react";
@@ -8,6 +9,8 @@ interface IMenu {
 }
 
 const Menu: FC<IMenu> = ({ navigates }) => {
+  const { resetTotalPacks } = useActions();
+  const handleResetTotalPacks = () => resetTotalPacks();
   return (
     <div className="flex w-full justify-between">
       {navigates.map((nav) => (
@@ -17,6 +20,7 @@ const Menu: FC<IMenu> = ({ navigates }) => {
           }
           key={nav.id}
           to={nav.path}
+          onClick={handleResetTotalPacks}
         >
           <Icon type={nav.icon} />
         </NavLink>

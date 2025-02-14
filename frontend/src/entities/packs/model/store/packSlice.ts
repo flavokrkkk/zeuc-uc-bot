@@ -7,6 +7,7 @@ const initialState: IPackState = {
   isSelected: false,
   packSelects: [],
   selectedPacks: [],
+  totalDiscountPrice: 0,
   totalPrice: 0,
   totalPacks: 0,
 };
@@ -19,6 +20,7 @@ export const packSlice = createSlice({
     selectedPacks: (state) => state.selectedPacks,
     isSelected: (state) => state.isSelected,
     totalPrice: (state) => state.totalPrice,
+    totalDiscountPrice: (state) => state.totalDiscountPrice,
     totalPacks: (state) => state.totalPacks,
   },
   reducers: (create) => ({
@@ -29,19 +31,18 @@ export const packSlice = createSlice({
         if (~searchUc) {
           const finishPrice =
             state.packSelects[searchUc].total_sum +
-            Number(state.packSelects[searchUc].price_per_uc.price);
+            Number(state.packSelects[searchUc].price_per_uc);
 
           state.packSelects[searchUc].total_sum = finishPrice;
 
           state.packSelects[searchUc].multiplication_uc = Math.round(
-            finishPrice / Number(state.packSelects[searchUc].price_per_uc.price)
+            finishPrice / Number(state.packSelects[searchUc].price_per_uc)
           );
           state.isSelected = true;
         }
 
         state.selectedPacks = state.selectedPacks.map((el) => {
           if (el.id === state.packSelects[searchUc].id) {
-            console.log("eee");
             return state.packSelects[searchUc];
           }
           return el;
@@ -56,28 +57,40 @@ export const packSlice = createSlice({
       }
     ),
     setUnSelectPacks: create.reducer(
-      (state, { payload }: PayloadAction<IPack["id"]>) => {
-        const searchUc = state.packSelects.findIndex((uc) => uc.id === payload);
+      (
+        state,
+        {
+          payload,
+        }: PayloadAction<{ id: IPack["id"]; type?: "total" | "count" }>
+      ) => {
+        const searchUc = state.packSelects.findIndex(
+          (uc) => uc.id === payload.id
+        );
 
         if (~searchUc) {
           const finishPrice =
             state.packSelects[searchUc].total_sum -
-            Number(state.packSelects[searchUc].price_per_uc.price);
+            Number(state.packSelects[searchUc].price_per_uc);
 
           state.packSelects[searchUc].total_sum = finishPrice;
 
           state.packSelects[searchUc].multiplication_uc = Math.round(
-            finishPrice / Number(state.packSelects[searchUc].price_per_uc.price)
+            finishPrice / Number(state.packSelects[searchUc].price_per_uc)
           );
         }
 
         state.selectedPacks = state.selectedPacks.map((el) => {
           if (el.id === state.packSelects[searchUc].id) {
-            console.log("eee");
             return state.packSelects[searchUc];
           }
           return el;
         });
+
+        if (payload.type === "total") {
+          state.selectedPacks = state.selectedPacks.filter(
+            (pack) => pack.id !== payload.id
+          );
+        }
 
         state.totalPrice = state.packSelects.reduce((acc, item) => {
           return acc + item.total_sum;
@@ -94,9 +107,15 @@ export const packSlice = createSlice({
         (el) => el.multiplication_uc
       );
     }),
+    setChangeTotalPrice: create.reducer(
+      (state, { payload }: PayloadAction<number>) => {
+        state.totalDiscountPrice = payload;
+      }
+    ),
     resetTotalPacks: create.reducer((state) => {
       state.totalPrice = 0;
       state.totalPacks = 0;
+      state.totalDiscountPrice = 0;
       state.selectedPacks = [];
       state.isSelected = false;
       state.packSelects = state.packSelects.map((item) => ({

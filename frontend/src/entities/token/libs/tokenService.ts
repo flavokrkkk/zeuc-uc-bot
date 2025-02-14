@@ -10,7 +10,20 @@ class TokenService {
   public getAccessToken() {
     return localStorage.getItem("accessToken");
   }
+
+  public getStateCloseShop() {
+    return localStorage.getItem("state_shop");
+  }
+
+  public setStateCloseShop(value: boolean) {
+    return localStorage.setItem("state_shop", String(value));
+  }
 }
 
-export const { deleteAccessToken, getAccessToken, setAccessToken } =
-  new TokenService();
+export const {
+  deleteAccessToken,
+  getAccessToken,
+  setAccessToken,
+  setStateCloseShop,
+  getStateCloseShop,
+} = new TokenService();

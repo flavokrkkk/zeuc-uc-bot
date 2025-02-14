@@ -12,32 +12,42 @@ import { FC } from "react";
 interface IPacksCard {
   card: IPack;
   handleSelectPack: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  handleUnSelectPack: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
-const PacksCard: FC<IPacksCard> = ({ card, handleSelectPack }) => {
+const PacksCard: FC<IPacksCard> = ({
+  card,
+  handleSelectPack,
+  handleUnSelectPack,
+}) => {
   return (
     <div key={card.id} className="w-full space-y-1 text-white">
-      <div className="h-[162px] space-y-0 bg-dark-200 px-4 justify-evenly flex-col w-full  аcursor-pointer border border-green-100 flex rounded-2xl">
-        <section className="space-y-1">
+      <div className="h-[166px] space-y-0 bg-dark-200 px-4 justify-evenly flex-col w-full  аcursor-pointer border border-green-100 flex rounded-2xl">
+        <section className="space-y-1 mb-2">
           <section className="flex justify-between items-center">
             <span className="flex items-center space-x-1">
               <h1 className="text-2xl">{card.uc_amount}</h1>
               <Icon type={IconTypes.UC_OUTLINED} />
             </span>
             <span className="flex items-center space-x-1">
-              <h1 className="text-xs">20</h1>
+              <h1 className="text-xs">{card.point}</h1>
               <Icon type={IconTypes.POINT_OUTLINED} />
             </span>
           </section>
-          <p className="text-xs">{card.price_per_uc.price} рублей</p>
+          <p className="text-xs">{card.price_per_uc} рублей</p>
         </section>
         <Button
-          isDisabled={!!card.multiplication_uc}
           value={card.id}
-          bgColor={ButtonColors.GREEN}
+          bgColor={
+            card.multiplication_uc
+              ? ButtonColors.LIGHT_GREEN
+              : ButtonColors.GREEN
+          }
           rounded={ButtonRoundSizes.ROUNDED_XL}
           size={ButtonSizes.SMALL}
-          onClick={handleSelectPack}
+          onClick={
+            !card.multiplication_uc ? handleSelectPack : handleUnSelectPack
+          }
         >
           Выбрать
         </Button>

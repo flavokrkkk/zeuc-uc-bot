@@ -4,11 +4,13 @@ import {
   ButtonRoundSizes,
 } from "@/shared/ui/button/button";
 import { Input } from "@/shared/ui/input/input";
+import clsx from "clsx";
 import { FC } from "react";
 
 interface ISearchUser {
   value?: string;
   isLabel?: boolean;
+  error: "success" | "error" | "";
   searchPlaceholder: string;
   buttonText: string;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -18,18 +20,25 @@ interface ISearchUser {
 const SearchUser: FC<ISearchUser> = ({
   value = "",
   isLabel = true,
+  error,
   buttonText,
   searchPlaceholder,
   onChange = () => {},
   onClick = () => {},
 }) => {
   return (
-    <section className="flex items-center justify-between">
-      {isLabel && <h1>Ваш ID</h1>}
-      <span className="w-[132px]">
+    <section className="flex items-center justify-between w-full">
+      {isLabel && <h1 className="text-sm">Ваш ID</h1>}
+      <span className="">
         <Input
           value={value}
-          className="border-none"
+          className={clsx(
+            error === "error"
+              ? "border-red-600"
+              : error === "success"
+              ? "border-green-600"
+              : "border-none"
+          )}
           placeholder={searchPlaceholder}
           onChange={onChange}
         />

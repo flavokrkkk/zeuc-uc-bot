@@ -1,3 +1,5 @@
+import { EPaymentMethods } from "@/entities/packs/types/types";
+
 export interface IUserResponse {
   access_token: string;
 }
@@ -27,23 +29,37 @@ export interface IUserPurchases {
   payment_method: string | null;
   is_paid: boolean;
   status: EUserPurchases;
+  created_at: string;
 }
 
 export const statusColor: Record<EUserPurchases, string> = {
   [EUserPurchases.IN_PROGRESS]: "bg-yellow-500",
-  [EUserPurchases.COMPLETED]: "bg-green-300",
+  [EUserPurchases.COMPLETED]: "bg-green-100",
   [EUserPurchases.CANCELED]: "bg-red-300",
-  [EUserPurchases.GET]: "bg-green-300",
-  [EUserPurchases.USE]: "bg-green-300",
+  [EUserPurchases.GET]: "bg-green-100",
+  [EUserPurchases.USE]: "bg-green-100",
 };
 
 export interface IUserBonusesHistory {
   id: string;
   amount: number;
   created_at: number;
+  status: string;
+}
+
+export interface IDiscountModel {
+  discount_id: number;
+  value: number;
+  min_payment_value: number;
 }
 
 export interface IUserDiscount {
   count: number;
-  discount: number;
+  discount: IDiscountModel;
+}
+
+export interface IUserPackRequest {
+  method_slug: EPaymentMethods;
+  point: number;
+  amount: number;
 }

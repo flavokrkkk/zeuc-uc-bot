@@ -5,5 +5,6 @@ export interface IPackState {
   packSelects: Array<IPack>;
   totalPrice: number;
   totalPacks: number;
+  totalDiscountPrice: number;
   selectedPacks: Array<IPack>;
 }
