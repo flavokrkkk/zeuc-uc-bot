@@ -69,4 +69,14 @@ class UCCodeRepository(SqlAlchemyRepository):
         ]
         self.session.add_all(new_uc_codes)
         await self.session.commit()
+
+    async def change_point(self, uc_amount: int, point: int) -> None:
+        query = select(Price).where(Price.uc_amount == uc_amount)
+        price = (await self.session.execute(query)).scalar_one_or_none()
+        price.point = point 
+        await self.session.commit()
         
+    async def get_price_by_amount(self, uc_amount: int) -> Price:
+        query = select(Price).where(Price.uc_amount == uc_amount)
+        price = (await self.session.execute(query)).scalar_one_or_none()
+        return price

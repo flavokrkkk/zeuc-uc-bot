@@ -1,6 +1,6 @@
 import asyncio
 from typing import Annotated
-from fastapi import APIRouter, Depends, WebSocket
+from fastapi import APIRouter, BackgroundTasks, Depends, WebSocket
 
 from backend.dto.uc_code_dto import BuyUCCodeCallbackModel, BuyUCCodeUrlModel, UCCodeGetBuyUrlModel
 from backend.dto.user_dto import UserModel
@@ -38,16 +38,18 @@ async def activate_uc_code(
     uc_code_service: Annotated[UCCodeService, Depends(get_uc_code_service)],
     purchase_service: Annotated[PurchaseService, Depends(get_purchase_service)],
     user_service: Annotated[UserService, Depends(get_user_service)],
+    background_tasks: BackgroundTasks
 ):
-    adding_bonuses = await uc_code_service.get_uc_packs_bonuses_sum(form.metadata.uc_packs)
+    # adding_bonuses = await uc_code_service.get_uc_packs_bonuses_sum(form.metadata.uc_packs)
     await payment_service.activate_codes(form)
     purchase = await purchase_service.mark_is_paid(
         form.order_id, 
         form.metadata.internal_order_id,
         form.metadata
     )
-    await payment_service.send_payment_notification(purchase)
-    await user_service.send_bonuses_to_referer(form.metadata.tg_id, adding_bonuses)
+    await asyncio.sleep(5)
+    # await payment_service.send_payment_notification(purchase)
+    # await user_service.send_bonuses_to_referer(form.metadata.tg_id, adding_bonuses)
 
 
 @router.post("/buy/url")

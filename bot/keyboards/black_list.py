@@ -20,19 +20,6 @@ def black_list_pagination(users: list[User], pages: int, page: int) -> InlineKey
         ] for user in users
     ]
     
-    users_buttons.extend([
-        [
-            InlineKeyboardButton(
-                text="Добавить", 
-                callback_data="add_to_black_list"
-            ),
-            InlineKeyboardButton(
-                text="Удалить",
-                callback_data="remove_from_black_list"
-            )
-        ]
-    ])
-    
     if pages:
         pagination = []
         if page > 1:
@@ -51,4 +38,17 @@ def black_list_pagination(users: list[User], pages: int, page: int) -> InlineKey
             )
 
         users_buttons.append(pagination)
+    users_buttons.extend([
+        [
+            InlineKeyboardButton(
+                text="Добавить", 
+                callback_data="add_to_black_list"
+            ),
+            InlineKeyboardButton(
+                text="Удалить",
+                callback_data="remove_from_black_list"
+            )
+        ]
+    ])
+    
     return InlineKeyboardMarkup(inline_keyboard=users_buttons)

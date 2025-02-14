@@ -6,9 +6,8 @@ from uuid import uuid4
 from aiogram import Bot
 from aiogram.exceptions import TelegramRetryAfter
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from aiohttp import ClientSession, ClientTimeout, payload
+from aiohttp import ClientSession, ClientTimeout
 from fastapi import HTTPException
-from starlette.responses import JSONResponse
 
 from backend.database.models.models import Purchase
 from backend.dto.purchase_dto import PurchaseModel
@@ -69,27 +68,29 @@ class PaymentService:
         self, 
         form: UCActivateRequestModel, 
         uc_amount: int,
-        price: float
+        price: float,
+        semaphore: asyncio.Semaphore
     ) -> dict[str, str]:
-        async with ClientSession(timeout=ClientTimeout(total=600)) as session:
-            async with session.post(
-                self.ucodeium_api_url,
-                headers={"X-Api-Key": self.ucodeium_api_key},
-                json=form.model_dump(),
-                ssl=False,
-            ) as response:
-                json_res = await response.json()
-                if json_res.get("result_code") == 0:
-                    return json_res
-                return UCActivationError(
-                    status_code=json_res.get("result_code"),
-                    uc_code=form.uc_code,
-                    uc_amount=uc_amount,
-                    price=price,
-                    message=(await response.json() or {}),
-                    player_id=form.player_id
-                )
-            
+        async with semaphore:
+            async with ClientSession(timeout=ClientTimeout(total=600)) as session:
+                async with session.post(
+                    "test",
+                    headers={"X-Api-Key": self.ucodeium_api_key},
+                    json=form.model_dump(),
+                    ssl=False,
+                ) as response:
+                    json_res = await response.json()
+                    if json_res.get("result_code") == 0:
+                        return json_res
+                    return UCActivationError(
+                        status_code=json_res.get("result_code"),
+                        uc_code=form.uc_code,
+                        uc_amount=uc_amount,
+                        price=price,
+                        message=(await response.json() or {}),
+                        player_id=form.player_id
+                    )
+                
     async def send_payment_notification(self, purchase: PurchaseModel) -> None:
         keyboard = InlineKeyboardMarkup(
             inline_keyboard=[[
@@ -121,6 +122,8 @@ class PaymentService:
 
     async def activate_codes(self, payload: BuyUCCodeCallbackModel) -> None:
         any_error_is_raised = False
+        semaphore = asyncio.Semaphore(10)
+
         for uc_pack in payload.metadata.uc_packs:
             tasks: list[Coroutine] = []
             activated = 0
@@ -139,7 +142,8 @@ class PaymentService:
                             player_id=payload.metadata.player_id,
                         ),
                         uc_amount=uc_pack.uc_amount,
-                        price=uc_pack.price_per_uc
+                        price=uc_pack.price_per_uc,
+                        semaphore=semaphore
                     )
                 )
             responses = await asyncio.gather(*tasks, return_exceptions=True)

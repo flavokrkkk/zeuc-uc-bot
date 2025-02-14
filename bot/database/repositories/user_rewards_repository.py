@@ -20,11 +20,10 @@ class UserRewardsRepository(SqlAlchemyRepository):
         )
         return (await self.session.execute(query)).scalars().all()
     
-    async def get_user_rewards_by_date(self, tg_id: int, start_date: int, end_date: int, page: int) -> list[UserRewards]:
+    async def get_user_rewards_by_date(self, start_date: int, end_date: int, page: int) -> list[UserRewards]:
         query = (
             select(UserRewards)
-            .where(self.model.tg_id == tg_id)
-            .join(self.model, UserRewards.user_id == self.model.tg_id)
+            .where(UserRewards.created_at.between(start_date, end_date))
             .limit(10)
             .offset(page * 10)
         )

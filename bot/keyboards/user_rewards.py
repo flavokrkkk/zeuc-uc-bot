@@ -15,13 +15,16 @@ def user_rewards_options_keyboard() -> InlineKeyboardMarkup:
 @add_back_to_menu_button(is_admin=True)
 def user_rewards_keyboard(user_rewards: list[UserRewards], pages: int, page: int) -> InlineKeyboardMarkup:
     buttons = [
-        InlineKeyboardButton(
-            text=(
-                f"{user_reward.reward.uc_amount} UC" 
-                if user_reward.reward.reward_type == "uc_code"
-                else f"{user_reward.reward.discount.value} при покупке от {user_reward.reward.discount.min_payment_value}"
-            ),
-            callback_data=f"check_reward_{user_reward.reward_id}")
+        [
+            InlineKeyboardButton(
+                text=(
+                    f"{user_reward.reward.uc_amount} UC" 
+                    if user_reward.reward.reward_type == "uc_code"
+                    else f"{user_reward.reward.discount.value} при покупке от {user_reward.reward.discount.min_payment_value}"
+                ),
+                callback_data=f"check_reward_{user_reward.reward_id}"
+            )
+        ]
         for user_reward in user_rewards
     ]
 
@@ -43,7 +46,7 @@ def user_rewards_keyboard(user_rewards: list[UserRewards], pages: int, page: int
             )
 
         buttons.append(pagination)  
-    return InlineKeyboardMarkup(inline_keyboard=[buttons])
+    return InlineKeyboardMarkup(inline_keyboard=buttons)
 
 
 @add_back_to_menu_button(is_admin=True)

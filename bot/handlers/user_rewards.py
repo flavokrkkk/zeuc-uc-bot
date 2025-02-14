@@ -164,5 +164,5 @@ async def change_status(callback: CallbackQuery, state: FSMContext, database: Da
     await state.set_state(UserRewardsStates.check_page)
     await callback.message.edit_text(
         text=await format_user_reward(user_reward, database),
-        reply_markup=user_reward_edit_keyboard()
+        reply_markup=user_reward_edit_keyboard(user_reward.user.username)
     )

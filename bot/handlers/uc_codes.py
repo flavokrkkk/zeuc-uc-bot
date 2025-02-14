@@ -27,9 +27,14 @@ async def get_uc_codes(callback: CallbackQuery, state: FSMContext, database: Dat
 
 
 @router.callback_query(F.data.startswith("uc_codes"), UCCodesStates.main)
-async def uc_codes_by_value(callback: CallbackQuery, state: FSMContext):
+async def uc_codes_by_value(callback: CallbackQuery, state: FSMContext, database: Database):
     uc_amount = int(callback.data.split("_")[-1])
-    message_text = "Выберите желаемую опцию"
+    price = await database.uc_codes.get_price_by_amount(uc_amount)
+    message_text = (
+        f"Цена: {price.price}\n"
+        f"Количество бонусов: {price.point}\n"
+        f"UC Pack: {price.uc_amount}"
+    )
     
     await state.set_state(UCCodesStates.option)
     await state.update_data(uc_amount=uc_amount)
@@ -38,6 +43,33 @@ async def uc_codes_by_value(callback: CallbackQuery, state: FSMContext):
         text=message_text,
         reply_markup=uc_codes_options_keyboard()
     )
+
+
+@router.callback_query(F.data == "change_uc_code_point", UCCodesStates.option)
+async def input_uc_code_point(callback: CallbackQuery, state: FSMContext):
+    await state.set_state(UCCodesStates.change_uc_code_point)
+    await callback.message.edit_text(text="Введите новое количество бонусов")
+
+
+@router.message(F.text, UCCodesStates.change_uc_code_point)
+async def update_uc_pack_point(message: Message, state: FSMContext, database: Database):
+    try:
+        point = int(message.text)
+        if point <= 0:
+            raise
+        else:
+            uc_amount = (await state.get_data() or {}).get("uc_amount")
+            await database.uc_codes.change_point(uc_amount, point)
+            await state.set_state(UCCodesStates.success)
+            await message.answer(
+                text="Количество бонусов успешно изменено",
+                reply_markup=back_to_menu(is_admin=True)
+            )
+    except:
+        await message.answer(
+            text="Неверное количество бонусов",
+            reply_markup=back_to_menu(is_admin=True)
+        )
 
 
 @router.callback_query(F.data == "delete_uc_codes", UCCodesStates.option)

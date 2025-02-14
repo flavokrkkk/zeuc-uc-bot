@@ -1,12 +1,15 @@
 from typing import Annotated, AsyncGenerator
 
 from aiogram import Bot
+from asyncpg import TooManyConnectionsError
 from fastapi import Depends, Request
 from fastapi.security import HTTPBearer
 from sqlalchemy.ext.asyncio.session import AsyncSession
 from starlette.requests import HTTPConnection
 
+from backend.database.connection.connection import DatabaseConnection
 from backend.dto.user_dto import UserModel
+from backend.errors.auth_errors import ManyRequestsError
 import backend.services as services
 import backend.repositories as repositories
 from backend.utils.websocket.manager import WebsocketManager
@@ -22,9 +25,15 @@ async def get_bot(request: Request) -> Bot:
 async def get_session(
     request: HTTPConnection,
 ) -> AsyncGenerator[AsyncSession, None]:
-    session = await request.app.state.db_connection.get_session()
+    db_connection: DatabaseConnection = request.app.state.db_connection
+    if await db_connection.get_opened_connections() >= 100:
+        raise ManyRequestsError
+
+    session = await db_connection.get_session()
     try:
         yield session
+    except TooManyConnectionsError:
+        raise ManyRequestsError
     finally:
         await session.close()
 

@@ -119,7 +119,7 @@ async def add_discount_reward_value(message: Message, state: FSMContext, databas
                 text="Введите минимальную сумму покупки",
                 reply_markup=back_to_menu(is_admin=True)
             )
-    except:
+    except Exception as e:
         await message.answer(
             text="Неверная скидка",
             reply_markup=back_to_menu(is_admin=True)

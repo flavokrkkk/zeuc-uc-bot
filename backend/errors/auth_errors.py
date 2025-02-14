@@ -16,3 +16,11 @@ class UserAlreadyNotRegister(HTTPException):
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Пользователь с такими данными не найден!",
         )
+
+
+class ManyRequestsError(HTTPException):
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Слишком много запросов",
+        )

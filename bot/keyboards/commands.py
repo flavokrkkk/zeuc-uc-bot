@@ -7,7 +7,7 @@ from utils.config.config import REVIEWS_URL, SUPPORT_URL, WEB_APP_URL
 async def set_bot_commands(bot: Bot) -> None:
     menu_commands = {
         "/start": "Start",
-        "/admin": "Admin panel",
+        # "/admin": "Admin panel",
     }
     commands = [
         BotCommand(command=command, description=description)

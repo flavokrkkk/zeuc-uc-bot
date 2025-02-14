@@ -1,3 +1,4 @@
+from textwrap import dedent
 from aiogram import F, Router
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.fsm.context import FSMContext
@@ -20,11 +21,11 @@ async def get_black_list(callback: CallbackQuery, database: Database, state: FSM
     pages = await database.users.get_black_list_pages()
     await state.set_state(BlackListStates.check)
     await callback.message.edit_text(
-        text="""
+        text=dedent("""
         Черный спиоск пользователей магазина, 
         чтобы удалить пользователя из списка нажмите 
         на него или нажмите на кнопку ниже и введите username
-        """,
+        """),
         reply_markup=black_list_pagination(users, pages, 1)
     )
 

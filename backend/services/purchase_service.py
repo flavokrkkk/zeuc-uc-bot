@@ -66,8 +66,8 @@ class PurchaseService:
         return await self.repository.update_item(
             self.repository.model.payment_id, 
             payment_id, 
-            is_paid=True,
-            status=PurchaseStatuses.COMPLETED.value,
+            is_paid=False,
+            status=PurchaseStatuses.IN_PROGRESS.value,
             metadata_=json.dumps(metadata.model_dump(), ensure_ascii=False)
         )
     
