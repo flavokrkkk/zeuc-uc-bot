@@ -12,7 +12,7 @@ class UCCodeRepository(SqlAlchemyRepository):
         await self.delete_item(uc_code)
 
     async def group_by_amount(self):
-        query = select(Price).options(selectinload(Price.uc_codes))
+        query = select(Price).options(selectinload(Price.uc_codes)).order_by(Price.uc_amount)
         prices: list[Price] = (await self.session.execute(query)).scalars().all()
         return [
             [price.uc_amount, price.price, len(price.uc_codes), price.point]

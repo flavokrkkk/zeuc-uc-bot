@@ -15,7 +15,6 @@ router = Router()
 
 @router.message(CommandStart())
 async def start_bot(message: Message):
-
     message_text = dedent(
         """
         Это автоматический бот пополнения,

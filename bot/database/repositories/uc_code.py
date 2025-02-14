@@ -8,7 +8,7 @@ class UCCodeRepository(SqlAlchemyRepository):
     model = UCCode
 
     async def group_by_amount(self) -> list[tuple[int, int]]:
-        query = select(Price).options(selectinload(Price.uc_codes))
+        query = select(Price).options(selectinload(Price.uc_codes)).order_by(Price.uc_amount)
         prices: list[Price] = (await self.session.execute(query)).scalars().all()
         return [
             [price.uc_amount, len(price.uc_codes)]
