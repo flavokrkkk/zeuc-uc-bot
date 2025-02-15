@@ -121,7 +121,7 @@ class PaymentService:
             await asyncio.sleep(e.retry_after)
             await self.bot.send_message(
                 chat_id=PAYMENT_NOTIFICATION_CHAT,
-                text=await self.format_purchase_data(purchase),
+                text=await self.format_purchase_data(purchase, all_activated),
                 reply_markup=keyboard,
                 parse_mode="HTML"
             )
@@ -196,7 +196,7 @@ class PaymentService:
             else {"detail": "Оплата прошла успешно"}
         )
 
-        return any(uc_pack.activated_codes < uc_pack.quantity for uc_pack in payload.metadata.uc_packs)
+        return all(uc_pack.activated_codes == uc_pack.quantity for uc_pack in payload.metadata.uc_packs)
             
         
     async def get_uc_payment_url(self, form: UCCodeGetBuyUrlModel, tg_id: int) -> BuyUCCodeUrlModel:
