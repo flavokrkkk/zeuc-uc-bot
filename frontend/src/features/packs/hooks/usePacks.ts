@@ -19,7 +19,7 @@ export const usePacks = () => {
     resetTotalPacks,
     setUnSelectPacks,
   } = useActions();
-
+  console.log(totalPrice);
   const handleSelectPack = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       if (!event.currentTarget.value) throw new Error("Invalidate id uc!");

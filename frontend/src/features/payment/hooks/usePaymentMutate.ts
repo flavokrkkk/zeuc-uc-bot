@@ -1,3 +1,4 @@
+import { packSlectors } from "@/entities/packs/model/store/packSlice";
 import { EPaymentMethods, IPack } from "@/entities/packs/types/types";
 import { getPaymentUrl } from "@/entities/payment/libs/paymentService";
 import { IPayementRequest } from "@/entities/payment/types/types";
@@ -20,6 +21,7 @@ export const usePaymentMutate = ({
   totalPacks: number;
 }) => {
   const userDiscount = useAppSelector(userSelectors.userDiscount);
+  const discountSum = useAppSelector(packSlectors.totalDiscountPrice);
   const [discountId, setDiscountId] = useState<number>(0);
   const [playerId, setPlayerId] = useState("");
   const [playerError, setPlayerError] = useState<"success" | "error" | "">("");
@@ -28,7 +30,6 @@ export const usePaymentMutate = ({
   const isConnected = useAppSelector(socketSelectors.isConnected);
   const { connectionSocket, setChangeTotalPrice, setPaymentHistoryItem } =
     useActions();
-
   const requestPayment = useMemo(
     () => ({
       amount: totalSum,
@@ -67,7 +68,9 @@ export const usePaymentMutate = ({
         status: EUserPurchases.COMPLETED,
         tg_id: 11,
         uc_sum: totalPacks,
+        created_at: "",
       });
+
       if (window.Telegram && window.Telegram.WebApp) {
         setOrderId(response.order_id);
         window.Telegram.WebApp.openLink(response.url);
@@ -92,14 +95,14 @@ export const usePaymentMutate = ({
             position: "top-center",
             description: `${searchDiscount.discount.value}₽ скидка на покупку от ${searchDiscount.discount?.min_payment_value}₽`,
           });
-          setChangeTotalPrice(totalSum);
+          setChangeTotalPrice(discountSum - searchDiscount.discount.value);
           return 0;
         }
         toast.info("Вы активировали скидку", {
           position: "top-center",
           description: `${searchDiscount.discount.value}₽ скидка на покупку от ${searchDiscount.discount?.min_payment_value}₽`,
         });
-        setChangeTotalPrice(totalSum - searchDiscount.discount.value);
+        setChangeTotalPrice(discountSum + searchDiscount.discount.value);
         return searchDiscount.discount.discount_id;
       });
     }

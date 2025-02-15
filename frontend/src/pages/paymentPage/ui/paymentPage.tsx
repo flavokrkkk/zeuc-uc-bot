@@ -76,7 +76,7 @@ const PaymentPage = () => {
       <PaymentInfo
         discountId={discountId}
         totalPacks={totalPacks}
-        totalPrice={totalDiscountPrice ? totalDiscountPrice : totalPrice}
+        totalPrice={totalPrice - totalDiscountPrice}
         selectedPacks={selectedPacks}
         handleUseDiscountId={handleUseDiscountId}
         handleSelectPack={handleSelectPack}
