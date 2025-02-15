@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 export const useTelegramUser = () => {
   const { setUserCredentials } = useActions();
   const navigate = useNavigate();
-
   useEffect(() => {
     if (window.Telegram && window.Telegram.WebApp) {
       window.Telegram.WebApp.expand();
