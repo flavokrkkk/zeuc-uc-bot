@@ -46,10 +46,7 @@ class UCCodeRepository(SqlAlchemyRepository):
         await self.session.commit()
 
     async def get_point_by_uc_amount(self, uc_amount: int) -> float:
-        query = (
-            select(Price.point)
-            .where(Price.uc_amount == uc_amount)
-        )
+        query = select(Price.point).where(Price.uc_amount == uc_amount)
         price = (await self.session.execute(query)).scalar_one_or_none()
         return price
     

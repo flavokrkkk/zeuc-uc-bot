@@ -32,7 +32,7 @@ class PaymentService:
         self.repository = repository
         self.bot = bot
 
-    async def format_purchase_data(self, purchase: Purchase) -> str:
+    async def format_purchase_data(self, purchase: Purchase, all_activated: bool) -> str:
         us_packs_info = []
         for uc_pack in json.loads(purchase.metadata_)['uc_packs']:
             errors = "\n" + "\n".join([
@@ -60,7 +60,7 @@ class PaymentService:
             f"<b>Информация по UC-пакетам:</b>\n\n" + "\n\n".join(us_packs_info)
         ).strip()
 
-        return message_text
+        return "ЗАКАЗ ТРЕБУЕТ РУЧНОЙ АКТИВАЦИИ ‼️" + message_text if not all_activated else message_text
     
     async def limited_post_request(
         self, 
@@ -97,7 +97,7 @@ class PaymentService:
                     player_id=form.player_id
                 )
             
-    async def send_payment_notification(self, purchase: PurchaseModel) -> None:
+    async def send_payment_notification(self, purchase: PurchaseModel, all_activated: bool) -> None:
         keyboard = InlineKeyboardMarkup(
             inline_keyboard=[[
                 InlineKeyboardButton(
@@ -113,7 +113,7 @@ class PaymentService:
         try:
             await self.bot.send_message(
                 chat_id=PAYMENT_NOTIFICATION_CHAT,
-                text=await self.format_purchase_data(purchase),
+                text=await self.format_purchase_data(purchase, all_activated),
                 reply_markup=keyboard,
                 parse_mode="HTML"
             )
@@ -139,6 +139,7 @@ class PaymentService:
                 uc_pack.uc_amount, 
                 uc_pack.quantity
             )
+
             for uc_code in uc_codes:
                 tasks.append(
                     self.limited_post_request(
@@ -194,6 +195,9 @@ class PaymentService:
             if any_error_is_raised
             else {"detail": "Оплата прошла успешно"}
         )
+
+        return any(uc_pack.activated_codes < uc_pack.quantity for uc_pack in payload.metadata.uc_packs)
+            
         
     async def get_uc_payment_url(self, form: UCCodeGetBuyUrlModel, tg_id: int) -> BuyUCCodeUrlModel:
         internal_order_id = str(uuid4())

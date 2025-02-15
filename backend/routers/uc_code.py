@@ -37,18 +37,16 @@ async def activate_uc_code(
     payment_service: Annotated[PaymentService, Depends(get_payment_service)],
     uc_code_service: Annotated[UCCodeService, Depends(get_uc_code_service)],
     purchase_service: Annotated[PurchaseService, Depends(get_purchase_service)],
-    user_service: Annotated[UserService, Depends(get_user_service)],
-    background_tasks: BackgroundTasks
+    user_service: Annotated[UserService, Depends(get_user_service)]
 ):
     adding_bonuses = await uc_code_service.get_uc_packs_bonuses_sum(form.metadata.uc_packs)
-    await payment_service.activate_codes(form)
+    all_activated = await payment_service.activate_codes(form)
     purchase = await purchase_service.mark_is_paid(
         form.order_id, 
         form.metadata.internal_order_id,
         form.metadata
     )
-    await asyncio.sleep(5)
-    await payment_service.send_payment_notification(purchase)
+    await payment_service.send_payment_notification(purchase, all_activated)
     await user_service.send_bonuses_to_referer(form.metadata.tg_id, adding_bonuses)
 
 
