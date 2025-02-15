@@ -80,7 +80,7 @@ class PaymentService:
     ) -> dict[str, str]:
         async with ClientSession(timeout=ClientTimeout(total=600)) as session:
             async with session.post(
-                "test",
+                self.ucodeium_api_url,
                 headers={"X-Api-Key": self.ucodeium_api_key},
                 json=form.model_dump(),
                 ssl=False,

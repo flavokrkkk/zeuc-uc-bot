@@ -40,7 +40,7 @@ async def activate_uc_code(
     user_service: Annotated[UserService, Depends(get_user_service)],
     background_tasks: BackgroundTasks
 ):
-    # adding_bonuses = await uc_code_service.get_uc_packs_bonuses_sum(form.metadata.uc_packs)
+    adding_bonuses = await uc_code_service.get_uc_packs_bonuses_sum(form.metadata.uc_packs)
     await payment_service.activate_codes(form)
     purchase = await purchase_service.mark_is_paid(
         form.order_id, 
@@ -48,8 +48,8 @@ async def activate_uc_code(
         form.metadata
     )
     await asyncio.sleep(5)
-    # await payment_service.send_payment_notification(purchase)
-    # await user_service.send_bonuses_to_referer(form.metadata.tg_id, adding_bonuses)
+    await payment_service.send_payment_notification(purchase)
+    await user_service.send_bonuses_to_referer(form.metadata.tg_id, adding_bonuses)
 
 
 @router.post("/buy/url")
