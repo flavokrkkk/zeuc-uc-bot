@@ -60,7 +60,7 @@ class PaymentService:
             f"<b>Информация по UC-пакетам:</b>\n\n" + "\n\n".join(us_packs_info)
         ).strip()
 
-        return "ЗАКАЗ ТРЕБУЕТ РУЧНОЙ АКТИВАЦИИ ‼️" + message_text if not all_activated else message_text
+        return "ЗАКАЗ ТРЕБУЕТ РУЧНОЙ АКТИВАЦИИ‼️\n" + message_text if not all_activated else message_text
     
     async def limited_post_request(
         self, 
