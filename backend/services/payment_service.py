@@ -61,10 +61,8 @@ class PaymentService:
         ).strip()
 
         return message_text
-
-
-
-    async def _post_request(
+    
+    async def limited_post_request(
         self, 
         form: UCActivateRequestModel, 
         uc_amount: int,
@@ -72,25 +70,33 @@ class PaymentService:
         semaphore: asyncio.Semaphore
     ) -> dict[str, str]:
         async with semaphore:
-            async with ClientSession(timeout=ClientTimeout(total=600)) as session:
-                async with session.post(
-                    "test",
-                    headers={"X-Api-Key": self.ucodeium_api_key},
-                    json=form.model_dump(),
-                    ssl=False,
-                ) as response:
-                    json_res = await response.json()
-                    if json_res.get("result_code") == 0:
-                        return json_res
-                    return UCActivationError(
-                        status_code=json_res.get("result_code"),
-                        uc_code=form.uc_code,
-                        uc_amount=uc_amount,
-                        price=price,
-                        message=(await response.json() or {}),
-                        player_id=form.player_id
-                    )
-                
+            return await self._post_request(form, uc_amount, price)
+
+    async def _post_request(
+        self, 
+        form: UCActivateRequestModel, 
+        uc_amount: int,
+        price: float,
+    ) -> dict[str, str]:
+        async with ClientSession(timeout=ClientTimeout(total=600)) as session:
+            async with session.post(
+                "test",
+                headers={"X-Api-Key": self.ucodeium_api_key},
+                json=form.model_dump(),
+                ssl=False,
+            ) as response:
+                json_res = await response.json()
+                if json_res.get("result_code") == 0:
+                    return json_res
+                return UCActivationError(
+                    status_code=json_res.get("result_code"),
+                    uc_code=form.uc_code,
+                    uc_amount=uc_amount,
+                    price=price,
+                    message=(await response.json() or {}),
+                    player_id=form.player_id
+                )
+            
     async def send_payment_notification(self, purchase: PurchaseModel) -> None:
         keyboard = InlineKeyboardMarkup(
             inline_keyboard=[[
@@ -135,7 +141,7 @@ class PaymentService:
             )
             for uc_code in uc_codes:
                 tasks.append(
-                    self._post_request(
+                    self.limited_post_request(
                         UCActivateRequestModel(
                             uc_value=f"{uc_pack.uc_amount} UC",
                             uc_code=uc_code,
