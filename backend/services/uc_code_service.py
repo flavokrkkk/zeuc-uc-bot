@@ -71,18 +71,18 @@ class UCCodeService:
         uc_sum_db = 0
         for uc_pack in uc_packs:
             total_sum_pack_db = 0
-            uc_pack_db = await self.repository.get_activating_code(uc_pack.uc_amount)
+            price = await self.repository.get_price_by_amount(uc_pack.uc_amount)
 
-            if not uc_pack_db:
+            if not price:
                 raise UCPackNotFound
-            if uc_pack_db.price_per_uc.price != uc_pack.price_per_uc:
+            if price.price != uc_pack.price_per_uc:
                 raise InvalidUcPackData
             
-            total_sum_pack_db += uc_pack_db.price_per_uc.price * uc_pack.quantity
+            total_sum_pack_db += price.price * uc_pack.quantity
             if total_sum_pack_db != uc_pack.total_sum:
                 raise InvalidUcPackData
             total_sum_db += total_sum_pack_db
-            uc_sum_db += uc_pack_db.uc_amount * uc_pack.quantity
+            uc_sum_db += price.uc_amount * uc_pack.quantity
 
         if total_sum_db != total_sum:
             raise InvalidUcPackData

@@ -63,3 +63,8 @@ class UCCodeRepository(SqlAlchemyRepository):
         )
         uc_code = (await self.session.execute(query)).scalar_one_or_none()
         return uc_code
+    
+    async def get_price_by_amount(self, uc_amount: int) -> Price:
+        query = select(Price).where(Price.uc_amount == uc_amount)
+        price = (await self.session.execute(query)).scalar_one_or_none()
+        return price
