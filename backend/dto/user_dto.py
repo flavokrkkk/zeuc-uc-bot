@@ -8,7 +8,7 @@ class UserModel(BaseModel):
     username: str
     tg_id: int
     is_admin: bool
-    bonuses: int
+    bonuses: float
     referal_code: str
     balance: float
     referer_id: int | None = None
