@@ -14,7 +14,7 @@ class UserRewardsRepository(SqlAlchemyRepository):
     async def get_user_rewards(self, tg_id: str, page: int) -> list[UserRewards]:
         query = (
             select(UserRewards)
-            .where(self.model.user_id == tg_id)
+            .where(self.model.user_id == tg_id, UserRewards.reward_id.is_not(None))
             .limit(10)
             .offset(page * 10)
         )
