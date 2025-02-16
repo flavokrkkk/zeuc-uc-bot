@@ -20,7 +20,7 @@ class UserDiscountModel(BaseModel):
 
 
 class BonusesHistoryModel(BaseModel):
-    amount: int
+    amount: float
     status: str
     created_at: int | str
 
