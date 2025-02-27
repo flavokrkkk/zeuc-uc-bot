@@ -126,7 +126,7 @@ class PaymentService:
                 parse_mode="HTML"
             )
 
-    async def activate_codes(self, payload: BuyUCCodeCallbackModel) -> None:
+    async def activate_codes(self, payload: BuyUCCodeCallbackModel) -> bool:
         any_error_is_raised = False
         semaphore = asyncio.Semaphore(10)
 

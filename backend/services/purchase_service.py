@@ -53,7 +53,8 @@ class PurchaseService:
         self, 
         payment_id: str, 
         internal_order_id: str, 
-        metadata: BuyUCMetadataModel
+        metadata: BuyUCMetadataModel,
+        all_activated: bool
     ) -> PurchaseModel:
         purchase = await self.repository.get_by_attributes(
             (self.repository.model.payment_id, payment_id),
@@ -67,7 +68,7 @@ class PurchaseService:
             self.repository.model.payment_id, 
             payment_id, 
             is_paid=False,
-            status=PurchaseStatuses.IN_PROGRESS.value,
+            status=PurchaseStatuses.IN_PROGRESS.value if not all_activated else PurchaseStatuses.COMPLETED.value,
             metadata_=json.dumps(metadata.model_dump(), ensure_ascii=False)
         )
     

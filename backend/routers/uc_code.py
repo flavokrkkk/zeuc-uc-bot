@@ -44,7 +44,8 @@ async def activate_uc_code(
     purchase = await purchase_service.mark_is_paid(
         form.order_id, 
         form.metadata.internal_order_id,
-        form.metadata
+        form.metadata,
+        all_activated
     )
     await payment_service.send_payment_notification(purchase, all_activated)
     await user_service.send_bonuses_to_referer(form.metadata.tg_id, adding_bonuses)
