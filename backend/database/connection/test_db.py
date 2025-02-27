@@ -6,15 +6,13 @@ from backend.database.models.models import Discount, Price, Purchase, Reward, Se
 from backend.database.models.models import UCCode
 
 
-async def test_db(session):
+async def init_db(session):
     try:
         db_exist = (await session.execute(select(UCCode))).scalars().all()
         if db_exist:
             await session.close()
             return
         
-        mago = User(tg_id=5163648472, username="magoxdd", is_admin=True, bonuses=200)
-        mago = User(tg_id=5163648472, username="magoxdd", is_admin=True, bonuses=1000000)
         setting = Setting(store_is_on=True)
         
         uc_codes_values = {60: [10, 1], 325: [200, 4], 660: [300, 5], 1800: [2000, 8], 3850: [5500, 10], 8100: [10000, 20]}
@@ -36,7 +34,7 @@ async def test_db(session):
                 )
             )
         
-        discounts = {100: 1000, 200: 2000, 300: 300, 500: 5000}
+        discounts = {100: 1000, 200: 2000, 300: 3000, 500: 5000}
         for key, value in discounts.items():
             rewards.append(
                 Reward(
@@ -48,21 +46,9 @@ async def test_db(session):
                 )
             )
         
-        for i in range(100):
-            session.add(
-                User(
-                    tg_id=i,
-                    username=f"test_{i}",
-                    in_black_list=False,
-                    bonuses=1000000
-                )
-            )
         session.add_all(rewards)
         await session.commit()
-        for i in range(100):
-            session.add(UserDiscounts(user_id=i, discount_id=choice(range(1, 4))))
         session.add_all(uc_codes)
-        session.add(mago)
         session.add(setting)
         await session.commit()
         await session.close()
@@ -72,16 +58,20 @@ async def test_db(session):
         await session.close()
 
 
-async def test_admins(session: AsyncSession):
+async def init_admins(session: AsyncSession):
     try:
         zeus_nis = await session.get(User, 5718861071)
         if not zeus_nis:
-            zeus_nis = User(tg_id=5718861071, username="zeucNIS", is_admin=True, bonuses=200)
+            zeus_nis = User(tg_id=5718861071, username="zeucNIS", is_admin=True)
             session.add(zeus_nis)
         zeus_uc = await session.get(User, 494055871)
         if not zeus_uc:
-            zeus_uc = User(tg_id=494055871, username="zeucUC", is_admin=True, bonuses=200)
+            zeus_uc = User(tg_id=494055871, username="zeucUC", is_admin=True)
             session.add(zeus_uc)
+        mago = await session.get(User, 5163648472)
+        if not mago:
+            mago = User(tg_id=5163648472, username="magoxdd", is_admin=True)
+            session.add(mago)
         await session.commit()
     except Exception as e:
         pass
