@@ -4,6 +4,7 @@ from starlette.middleware.cors import CORSMiddleware
 
 from backend.database.connection.connection import DatabaseConnection
 from backend.database.connection.test_db import init_admins, init_db
+
 from backend.middlewares.decode_middleware import DecodeEncodeMiddleware
 from backend.routers import api_router
 from backend.utils.config.config import BOT_TOKEN
