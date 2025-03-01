@@ -1,7 +1,4 @@
-from re import A
-from sqlalchemy import ForeignKeyConstraint, Inspector, MetaData, Table, create_engine
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.schema import DropConstraint, DropTable
 from backend.database.models.base import Base
 from backend.utils.config.config import DB_CONFIG
 

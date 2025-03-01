@@ -28,7 +28,7 @@ async def start_bot(message: Message):
 
     
 @router.message(Command("admin"), IsAdminFilter())
-async def admin_panel(message: Message, database: Database, state: FSMContext):
+async def admin_panel(message: Message, state: FSMContext):
     await state.set_state(AdminMenuStates.main)
     message_text = "Вы находитесь в админ меню"
     await message.answer(
