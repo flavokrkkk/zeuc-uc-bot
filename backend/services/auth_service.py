@@ -37,6 +37,7 @@ class AuthService:
     async def create_access_token(self, username: str, tg_id: int) -> JSONResponse:
         expire = datetime.now() + timedelta(minutes=JWT_CONFIG.JWT_ACCESS_TOKEN_TIME)
         data = {"sub": str(tg_id), "username": username, "exp": expire, "bot_token": BOT_TOKEN}
+        print(data)
         token = encode(data, JWT_CONFIG.JWT_SECRET, algorithm=JWT_CONFIG.JWT_ALGORITHM)
         return JSONResponse(status_code=200, content={"access_token": token})
 
