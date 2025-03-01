@@ -25,5 +25,5 @@ async def login(
     form: LoginUserModel,
     auth_service: Annotated[AuthService, Depends(get_auth_service)]
 ) -> JSONResponse:
-    await auth_service.authenticate_user(**form.model_dump())
-    return await auth_service.create_access_token(**form.model_dump())
+    user = await auth_service.authenticate_user(**form.model_dump())
+    return await auth_service.create_access_token(user.username, user.tg_id)

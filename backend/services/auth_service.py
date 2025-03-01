@@ -26,11 +26,9 @@ class AuthService:
     async def authenticate_user(self, tg_id: int, username: str) -> User:
         user = await self.repository.get_by_attributes(
             (self.repository.model.tg_id, tg_id),
-            (self.repository.model.username, username),
             one_or_none=True
         )
         if not user:
-            print(f"user {username} {tg_id} not found")
             raise UserAlreadyNotRegister
         if user.in_black_list:
             raise UserInBlackList
