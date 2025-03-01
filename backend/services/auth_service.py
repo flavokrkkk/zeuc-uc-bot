@@ -30,6 +30,7 @@ class AuthService:
             one_or_none=True
         )
         if not user:
+            print(f"user {username} {tg_id} not found")
             raise UserAlreadyNotRegister
         if user.in_black_list:
             raise UserInBlackList
@@ -51,7 +52,7 @@ class AuthService:
             tg_id = payload.get("sub")
             username = payload.get("username")
             bot_token = payload.get("bot_token")
-
+            print(payload)
             if tg_id is None or username is None or bot_token != BOT_TOKEN:
                 raise InvalidToken
             
