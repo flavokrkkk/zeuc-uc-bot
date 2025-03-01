@@ -42,19 +42,19 @@ class DatabaseMiddleware(BaseMiddleware):
                     tg_id=user_data.id, 
                     username=user_data.username
                 )
-            elif user_in_db.username != user_data.username:
-                await database.users.update_item(
-                    User.tg_id,
-                    user_data.id,
-                    username=user_data.username
-                )
-            elif not user_in_db.username and not user_data.username:
+            if not user_in_db.username and not user_data.username:
                 length = randint(8, 10)
                 random_string = ''.join(choice(ascii_letters + digits) for _ in range(length))
                 await database.users.update_item(
                     User.tg_id,
                     user_data.id,
                     username=f"user_{random_string}"
+                )
+            elif user_in_db.username != user_data.username:
+                await database.users.update_item(
+                    User.tg_id,
+                    user_data.id,
+                    username=user_data.username
                 )
             return await handler(event, data)
         finally:
