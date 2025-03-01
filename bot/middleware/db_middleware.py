@@ -43,6 +43,7 @@ class DatabaseMiddleware(BaseMiddleware):
                     username=user_data.username
                 )
             if not user_in_db.username and not user_data.username:
+                print("random username")
                 length = randint(8, 10)
                 random_string = ''.join(choice(ascii_letters + digits) for _ in range(length))
                 await database.users.update_item(
