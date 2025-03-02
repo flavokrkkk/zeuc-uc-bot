@@ -52,7 +52,9 @@ class PaymentService:
 
         message_text = (
             f"<b>Заказ</b>: {purchase.payment_id}\n"
+            f"<b>Дата покупки</b>: {datetime.fromtimestamp(purchase.created_at / 1000).strftime('%d.%m.%Y %H:%M:%S')}\n"
             f"<b>Игрок</b>: {purchase.player_id}\n"
+            f"<b>Покупатель</b>: @{username}\n"
             f"<b>Сумма UC</b>: {purchase.uc_sum} ₽\n"
             f"<b>Сумма заказа</b>: {purchase.price} ₽\n"
             f"<b>Метод оплаты</b>: {purchase.payment_method}\n"

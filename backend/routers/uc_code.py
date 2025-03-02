@@ -47,7 +47,8 @@ async def activate_uc_code(
         form.metadata,
         all_activated
     )
-    await payment_service.send_payment_notification(purchase, all_activated)
+    user = await user_service.get_user(form.metadata.tg_id)
+    await payment_service.send_payment_notification(purchase, all_activated, user.username)
     await user_service.send_bonuses_to_referer(form.metadata.tg_id, adding_bonuses)
 
 
