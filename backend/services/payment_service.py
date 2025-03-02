@@ -32,7 +32,7 @@ class PaymentService:
         self.repository = repository
         self.bot = bot
 
-    async def format_purchase_data(self, purchase: Purchase, all_activated: bool) -> str:
+    async def format_purchase_data(self, purchase: Purchase, all_activated: bool, username: str) -> str:
         us_packs_info = []
         for uc_pack in json.loads(purchase.metadata_)['uc_packs']:
             errors = "\n" + "\n".join([
@@ -99,7 +99,7 @@ class PaymentService:
                     player_id=form.player_id
                 )
             
-    async def send_payment_notification(self, purchase: PurchaseModel, all_activated: bool) -> None:
+    async def send_payment_notification(self, purchase: PurchaseModel, all_activated: bool, username: str) -> None:
         keyboard = InlineKeyboardMarkup(
             inline_keyboard=[[
                 InlineKeyboardButton(
@@ -115,7 +115,7 @@ class PaymentService:
         try:
             await self.bot.send_message(
                 chat_id=PAYMENT_NOTIFICATION_CHAT,
-                text=await self.format_purchase_data(purchase, all_activated),
+                text=await self.format_purchase_data(purchase, all_activated, username),
                 reply_markup=keyboard,
                 parse_mode="HTML"
             )
@@ -123,7 +123,7 @@ class PaymentService:
             await asyncio.sleep(e.retry_after)
             await self.bot.send_message(
                 chat_id=PAYMENT_NOTIFICATION_CHAT,
-                text=await self.format_purchase_data(purchase, all_activated),
+                text=await self.format_purchase_data(purchase, all_activated, username),
                 reply_markup=keyboard,
                 parse_mode="HTML"
             )
