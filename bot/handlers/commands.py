@@ -1,8 +1,8 @@
 from textwrap import dedent
-from aiogram import F, Router
+from aiogram import F, Bot, Router
 from aiogram.filters import Command, CommandStart
 from aiogram.fsm.context import FSMContext
-from aiogram.types import CallbackQuery, Message
+from aiogram.types import BufferedInputFile, CallbackQuery, FSInputFile, InputFile, Message
 
 from states.menu import AdminMenuStates
 from utils.filters import IsAdminFilter
@@ -14,17 +14,19 @@ router = Router()
     
 
 @router.message(CommandStart())
-async def start_bot(message: Message):
+async def start_bot(message: Message, bot: Bot):
     message_text = dedent(
         """
         Это автоматический бот пополнения,
         который мгновенно доставит UC на ваш аккаунт 24/7
         """
     )
-    await message.answer(
-        text=message_text,
-        reply_markup=main_menu_keyboard(),
-    )
+    with open("static/images/start_photo.jpg", "rb") as file:
+        await message.answer_photo(
+            photo=BufferedInputFile(file.read(), filename="start_photo.jpg"),
+            caption=message_text,
+            reply_markup=main_menu_keyboard(),
+        )
 
     
 @router.message(Command("admin"), IsAdminFilter())
