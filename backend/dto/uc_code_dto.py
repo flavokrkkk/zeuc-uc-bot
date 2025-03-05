@@ -34,7 +34,7 @@ class UCPackModel(BaseModel):
 
 
 class UCCodeGetBuyUrlModel(BaseModel):
-    method_slug: str
+    method_slug: str = "card"
     amount: int
     player_id: int
     uc_packs: list[UCPackModel]
@@ -62,7 +62,7 @@ class BuyUCCodeCallbackModel(BaseModel):
     order_id: str
     amount: float
     final_amount: float
-    method: str
+    method: str = "card"
     metadata: BuyUCMetadataModel
 
 
@@ -100,6 +100,6 @@ class PaymentUCCodeDataModel(BaseModel):
 
 
 class BuyPointModel(BaseModel):
-    method_slug: str
+    method_slug: str = "card"
     point: int
     amount: int
