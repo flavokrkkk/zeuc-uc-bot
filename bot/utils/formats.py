@@ -6,10 +6,10 @@ from database.models.models import Discount, Purchase, UserRewards
 
 def format_purchase_data(purchase: Purchase, data: dict[str, str], username: str) -> str:
     us_packs_info = []
-    for uc_pack in data['uc_packs']:
+    for uc_pack in data.get('uc_packs'):
         errors = "\n" + "\n".join([
-            "{uc_code} → {message}".format(uc_code=err['uc_code'], message=err['message'])
-            for err in uc_pack['errors']
+            "{uc_code} → {message}".format(uc_code=err.get('uc_code'), message=err.get('message'))
+            for err in uc_pack.get('errors')
         ]) if uc_pack['errors'] else "Нет ошибок"
 
         pack_info = (

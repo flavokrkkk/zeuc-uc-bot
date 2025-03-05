@@ -36,9 +36,9 @@ class PaymentService:
         us_packs_info = []
         for uc_pack in json.loads(purchase.metadata_)['uc_packs']:
             errors = "\n" + "\n".join([
-                "{uc_code} → {message}".format(uc_code=err['uc_code'], message=err['message'])
-                for err in uc_pack['errors']
-            ]) if uc_pack['errors'] else "Нет ошибок"
+                "{uc_code} → {message}".format(uc_code=err.get('uc_code'), message=err.get('message'))
+                for err in uc_pack.get('errors')
+            ]) if uc_pack.get('errors') else "Нет ошибок"
 
             pack_info = (
                 f"<b>Сумма</b>: {uc_pack['total_sum']} ₽\n"
