@@ -44,7 +44,8 @@ async def activate_uc_code(
     user_service: Annotated[UserService, Depends(get_user_service)],
     setting_service: Annotated[SettingService, Depends(get_setting_service)]
 ):
-    service = await setting_service.get_self_payment_service()
+    # service = await setting_service.get_self_payment_service()
+    service = BuyServices.CODEEPAY.value if isinstance(form, CodeepayBuyUCCodeCallbackModel) else BuyServices.FREEKASSA.value 
     if service == BuyServices.CODEEPAY.value:
         purchase = await purchase_service.get_by_order_id(form.order_id)
     elif service == BuyServices.FREEKASSA.value:
@@ -75,7 +76,8 @@ async def get_buy_uc_code_url(
     uc_code_service: Annotated[UCCodeService, Depends(get_uc_code_service)],
     current_user: UserModel = Depends(get_current_user_dependency)
 ) -> BuyUCCodeUrlModel: 
-    service = await setting_service.get_self_payment_service()
+    # service = await setting_service.get_self_payment_service()
+    service = BuyServices.CODEEPAY.value if form.method_slug == "card" else BuyServices.FREEKASSA.value 
     await uc_code_service.check_packs(form.uc_packs, form.uc_sum, form.amount)
     if form.discount:
         form.discount = await discount_service.delete_discount_from_user(current_user.tg_id, form.discount)
