@@ -11,7 +11,7 @@ from backend.services.purchase_service import PurchaseService
 from backend.services.setting_service import SettingService
 from backend.services.uc_code_service import UCCodeService
 from backend.services.user_service import UserService
-from backend.utils.config.enums import BuyServices
+from backend.utils.config.enums import BuyServices, PurchaseStatuses
 from backend.utils.dependencies.dependencies import (
     get_current_user_dependency,
     get_discount_service, 
@@ -48,6 +48,7 @@ async def activate_uc_code(
 ):
     # service = await setting_service.get_self_payment_service()
     all_activated = False
+    purchase = await purchase_service.mark_is_paid(str(intid) if intid else form.order_id)
     try:
         service = BuyServices.CODEEPAY.value if form else BuyServices.FREEKASSA.value 
         if service == BuyServices.CODEEPAY.value:
@@ -65,11 +66,14 @@ async def activate_uc_code(
             purchase = await purchase_service.get_by_order_id(str(intid))
         if purchase.is_paid:
             return
-        all_activated, metadata = await payment_service.activate_codes(json.loads(purchase.metadata_), purchase.player_id)
-        purchase = await purchase_service.mark_is_paid(
+        all_activated, metadata = await payment_service.activate_codes(
+            json.loads(purchase.metadata_), purchase.player_id
+        )
+        await purchase_service.update_purchase(
             str(intid) if intid else form.order_id, 
-            metadata,
-            all_activated
+            metadata_=metadata, 
+            all_activated=all_activated,
+            status=PurchaseStatuses.IN_PROGRESS.value if not all_activated else PurchaseStatuses.COMPLETED.value,
         )
         await user_service.send_bonuses_to_referer(purchase.tg_id, adding_bonuses)
     except Exception as e:

@@ -51,12 +51,7 @@ class PurchaseService:
             for purchase in purchases
         ]
 
-    async def mark_is_paid(
-        self, 
-        payment_id: str, 
-        metadata: dict,
-        all_activated: bool
-    ) -> PurchaseModel:
+    async def mark_is_paid(self, payment_id: str) -> PurchaseModel:
         purchase = await self.repository.get_by_attributes(
             (self.repository.model.payment_id, payment_id),
             one_or_none=True
@@ -67,10 +62,7 @@ class PurchaseService:
         return await self.repository.update_item(
             self.repository.model.payment_id, 
             payment_id, 
-            is_paid=True,
-            status=PurchaseStatuses.IN_PROGRESS.value if not all_activated else PurchaseStatuses.COMPLETED.value,
-            metadata_=json.dumps(metadata, ensure_ascii=False)
-        )
+            is_paid=True)
     
     async def check_is_paid(self, order_id: str) -> bool | dict[str, str | int]:
         purchase: Purchase = await self.repository.get_by_attributes(
@@ -90,3 +82,11 @@ class PurchaseService:
     async def get_last_purchase_id(self):
         purchases = await self.repository.get_all_items()
         return 100 + len(purchases) + 1000000012
+    
+    async def update_purchase(self, purchase_id: str, **kwargs):
+        metadata=json.dumps(metadata, ensure_ascii=False)
+        await self.repository.update_item(
+            self.repository.model.payment_id,
+            purchase_id,
+            **kwargs
+        )
