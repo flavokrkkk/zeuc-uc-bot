@@ -84,7 +84,6 @@ class PurchaseService:
         return 100 + len(purchases) + 1000000012
     
     async def update_purchase(self, purchase_id: str, **kwargs):
-        metadata=json.dumps(metadata, ensure_ascii=False)
         await self.repository.update_item(
             self.repository.model.payment_id,
             purchase_id,

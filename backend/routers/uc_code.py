@@ -71,7 +71,7 @@ async def activate_uc_code(
         )
         await purchase_service.update_purchase(
             str(intid) if intid else form.order_id, 
-            metadata_=metadata, 
+            metadata_=json.dumps(metadata), 
             all_activated=all_activated,
             status=PurchaseStatuses.IN_PROGRESS.value if not all_activated else PurchaseStatuses.COMPLETED.value,
         )
