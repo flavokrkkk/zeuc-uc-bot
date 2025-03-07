@@ -214,9 +214,9 @@ class PaymentService:
         service: BuyServices, 
         last_purchase_id: str | None
     ) -> BuyUCCodeUrlModel:
-        if service == BuyServices.CODEEPAY:
+        if service == BuyServices.CODEEPAY.value:
             return await self.get_codeepay_payment_url(form, tg_id)
-        elif service == BuyServices.FREEKASSA:
+        elif service == BuyServices.FREEKASSA.value:
             return await self.get_freekassa_uc_payment_url(form, tg_id, last_purchase_id)
         
             
