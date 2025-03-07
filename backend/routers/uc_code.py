@@ -44,9 +44,7 @@ async def activate_uc_code(
     user_service: Annotated[UserService, Depends(get_user_service)],
     setting_service: Annotated[SettingService, Depends(get_setting_service)],
     form: CodeepayBuyUCCodeCallbackModel | None = None,
-    AMOUNT: int | None = None,
     intid: int | None = None,
-    MERCHANT_ORDER_ID: int | None = None,
 ):
     # service = await setting_service.get_self_payment_service()
     try:
@@ -55,6 +53,8 @@ async def activate_uc_code(
             purchase = await purchase_service.get_by_order_id(form.order_id)
         elif service == BuyServices.FREEKASSA.value:
             purchase = await purchase_service.get_by_order_id(str(intid))
+        if purchase.is_paid:
+            return 
         adding_bonuses = await uc_code_service.get_uc_packs_bonuses_sum(
             json.loads(purchase.metadata_).get("uc_packs")
         )
