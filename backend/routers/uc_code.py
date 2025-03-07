@@ -45,24 +45,28 @@ async def activate_uc_code(
     setting_service: Annotated[SettingService, Depends(get_setting_service)]
 ):
     # service = await setting_service.get_self_payment_service()
-    service = BuyServices.CODEEPAY.value if isinstance(form, CodeepayBuyUCCodeCallbackModel) else BuyServices.FREEKASSA.value 
-    if service == BuyServices.CODEEPAY.value:
-        purchase = await purchase_service.get_by_order_id(form.order_id)
-    elif service == BuyServices.FREEKASSA.value:
-        purchase = await purchase_service.get_by_order_id(str(form.MERCHANT_ORDER_ID))
-    adding_bonuses = await uc_code_service.get_uc_packs_bonuses_sum(
-        json.loads(purchase.metadata_).get("uc_packs")
-    )
-    all_activated, metadata = await payment_service.activate_codes(purchase)
-    purchase = await purchase_service.mark_is_paid(
-        purchase.payment_id, 
-        form.metadata.internal_order_id if service == BuyServices.CODEEPAY.value else purchase.internal_order_id,
-        metadata,
-        all_activated
-    )
-    user = await user_service.get_user(purchase.tg_id)
-    # await payment_service.send_payment_notification(purchase, all_activated, user.username)
-    await user_service.send_bonuses_to_referer(purchase.tg_id, adding_bonuses)
+    try:
+        service = BuyServices.CODEEPAY.value if isinstance(form, CodeepayBuyUCCodeCallbackModel) else BuyServices.FREEKASSA.value 
+        if service == BuyServices.CODEEPAY.value:
+            purchase = await purchase_service.get_by_order_id(form.order_id)
+        elif service == BuyServices.FREEKASSA.value:
+            purchase = await purchase_service.get_by_order_id(str(form.MERCHANT_ORDER_ID))
+        adding_bonuses = await uc_code_service.get_uc_packs_bonuses_sum(
+            json.loads(purchase.metadata_).get("uc_packs")
+        )
+        all_activated, metadata = await payment_service.activate_codes(purchase)
+        purchase = await purchase_service.mark_is_paid(
+            purchase.payment_id, 
+            form.metadata.internal_order_id if service == BuyServices.CODEEPAY.value else purchase.internal_order_id,
+            metadata,
+            all_activated
+        )
+        await user_service.send_bonuses_to_referer(purchase.tg_id, adding_bonuses)
+    except:
+        all_activated = False
+    finally:
+        user = await user_service.get_user(purchase.tg_id)
+        await payment_service.send_payment_notification(purchase, all_activated, user.username)
 
 
 @router.post("/buy/url")
