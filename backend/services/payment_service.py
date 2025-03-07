@@ -137,7 +137,6 @@ class PaymentService:
     async def activate_codes(self, metadata: dict, player_id) -> bool:
         any_error_is_raised = False
         semaphore = asyncio.Semaphore(10)
-        print(metadata)
         
         for uc_pack in metadata.get("uc_packs"):
             tasks: list[Coroutine] = []

@@ -62,7 +62,8 @@ class PurchaseService:
         return await self.repository.update_item(
             self.repository.model.payment_id, 
             payment_id, 
-            is_paid=True)
+            is_paid=False
+        )
     
     async def check_is_paid(self, order_id: str) -> bool | dict[str, str | int]:
         purchase: Purchase = await self.repository.get_by_attributes(

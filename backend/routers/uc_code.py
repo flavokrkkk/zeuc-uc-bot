@@ -46,46 +46,33 @@ async def activate_uc_code(
     form: CodeepayBuyUCCodeCallbackModel | None = None,
     intid: int | None = None,
 ):
-    # service = await setting_service.get_self_payment_service()
-    all_activated = False
-    purchase = await purchase_service.mark_is_paid(str(intid) if intid else form.order_id)
+    order_id = str(intid) if intid else form.order_id
+    service = BuyServices.FREEKASSA.value if intid else BuyServices.CODEEPAY.value
+
+    purchase = await purchase_service.mark_is_paid(order_id)
+    if not purchase or purchase.is_paid:
+        return
+
     try:
-        service = BuyServices.CODEEPAY.value if form else BuyServices.FREEKASSA.value 
-        if service == BuyServices.CODEEPAY.value:
-            purchase = await purchase_service.get_by_order_id(form.order_id)
-        elif service == BuyServices.FREEKASSA.value:
-            purchase = await purchase_service.get_by_order_id(str(intid))
-        if purchase.is_paid:
-            return 
-        adding_bonuses = await uc_code_service.get_uc_packs_bonuses_sum(
-            json.loads(purchase.metadata_).get("uc_packs")
-        )
-        if service == BuyServices.CODEEPAY.value:
-            purchase = await purchase_service.get_by_order_id(form.order_id)
-        elif service == BuyServices.FREEKASSA.value:
-            purchase = await purchase_service.get_by_order_id(str(intid))
-        if purchase.is_paid:
-            return
-        all_activated, metadata = await payment_service.activate_codes(
-            json.loads(purchase.metadata_), purchase.player_id
-        )
+        metadata = json.loads(purchase.metadata_)
+        adding_bonuses = await uc_code_service.get_uc_packs_bonuses_sum(metadata.get("uc_packs"))
+
+        all_activated, updated_metadata = await payment_service.activate_codes(metadata, purchase.player_id)
+
         await purchase_service.update_purchase(
-            str(intid) if intid else form.order_id, 
-            metadata_=json.dumps(metadata), 
-            all_activated=all_activated,
+            order_id,
+            metadata_=json.dumps(updated_metadata),
             status=PurchaseStatuses.IN_PROGRESS.value if not all_activated else PurchaseStatuses.COMPLETED.value,
         )
-        await user_service.send_bonuses_to_referer(purchase.tg_id, adding_bonuses)
-    except Exception as e:
-        raise e
-    finally:
-        if service == BuyServices.CODEEPAY.value:
-            purchase = await purchase_service.get_by_order_id(form.order_id)
-        elif service == BuyServices.FREEKASSA.value:
-            purchase = await purchase_service.get_by_order_id(str(intid))
-        user = await user_service.get_user(purchase.tg_id)
-        await payment_service.send_payment_notification(purchase, all_activated, user.username)
 
+        await user_service.send_bonuses_to_referer(purchase.tg_id, adding_bonuses)
+
+    except Exception as e:
+        print(f"Ошибка в /buy/callback для order_id {order_id}: {str(e)}")
+
+    purchase = await purchase_service.get_by_order_id(order_id)
+    user = await user_service.get_user(purchase.tg_id)
+    await payment_service.send_payment_notification(purchase, all_activated, user.username)
 
 @router.post("/buy/url")
 async def get_buy_uc_code_url(
