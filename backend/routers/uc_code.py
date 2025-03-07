@@ -72,7 +72,7 @@ async def activate_uc_code(
         if service == BuyServices.CODEEPAY.value:
             purchase = await purchase_service.get_by_order_id(form.order_id)
         elif service == BuyServices.FREEKASSA.value:
-            purchase = await purchase_service.get_by_order_id(str(form.MERCHANT_ORDER_ID))
+            purchase = await purchase_service.get_by_order_id(str(intid))
         user = await user_service.get_user(purchase.tg_id)
         await payment_service.send_payment_notification(purchase, all_activated, user.username)
 
