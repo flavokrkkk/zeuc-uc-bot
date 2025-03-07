@@ -152,7 +152,7 @@ class PaymentService:
                 tasks.append(
                     self.limited_post_request(
                         UCActivateRequestModel(
-                            uc_value=f"{uc_pack.get("uc_amount")} UC",
+                            uc_value=f"{uc_pack.get('uc_amount')} UC",
                             uc_code=uc_code,
                             player_id=metadata.get("player_id"),
                         ),
