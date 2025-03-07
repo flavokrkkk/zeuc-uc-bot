@@ -36,7 +36,7 @@ async def get_all_uc_codes(
 
 
 @router.post("/buy/callback")
-@router.get("buy/callback")
+@router.get("/buy/callback")
 async def activate_uc_code(
     payment_service: Annotated[PaymentService, Depends(get_payment_service)],
     uc_code_service: Annotated[UCCodeService, Depends(get_uc_code_service)],
