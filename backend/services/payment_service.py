@@ -266,7 +266,7 @@ class PaymentService:
             "paymentId": str(uuid4()),
             "i": "44",
             "amount": form.amount - form.discount,
-            "email": "magomedovmarif2@gmail.com",
+            "email": f"{tg_id}@gmail.com",
             "ip": "213.226.127.164",
             "currency": "RUB",
             "success_url": "https://zeusucbot.shop/api/uc_code/buy/callback",
