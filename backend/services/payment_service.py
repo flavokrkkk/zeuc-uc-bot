@@ -134,10 +134,12 @@ class PaymentService:
                 parse_mode="HTML"
             )
 
-    async def activate_codes(self, purchase: Purchase) -> bool:
+    async def activate_codes(self, purchase_id) -> bool:
         any_error_is_raised = False
         semaphore = asyncio.Semaphore(10)
+        purchase = await self.repository.session.get(Purchase, purchase_id)
         metadata = json.loads(purchase.metadata_)
+        
         for uc_pack in metadata.get("uc_packs"):
             tasks: list[Coroutine] = []
             activated = 0
