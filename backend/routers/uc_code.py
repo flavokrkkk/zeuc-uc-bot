@@ -63,6 +63,8 @@ async def activate_uc_code(
             purchase = await purchase_service.get_by_order_id(form.order_id)
         elif service == BuyServices.FREEKASSA.value:
             purchase = await purchase_service.get_by_order_id(str(intid))
+        if purchase.is_paid:
+            return
         all_activated, metadata = await payment_service.activate_codes(json.loads(purchase.metadata_), purchase.player_id)
         purchase = await purchase_service.mark_is_paid(
             str(intid) if intid else form.order_id, 
