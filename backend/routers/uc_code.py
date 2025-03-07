@@ -66,7 +66,8 @@ async def activate_uc_code(
             all_activated
         )
         await user_service.send_bonuses_to_referer(purchase.tg_id, adding_bonuses)
-    except:
+    except Exception as e:
+        raise e
         all_activated = False
     finally:
         if service == BuyServices.CODEEPAY.value:
