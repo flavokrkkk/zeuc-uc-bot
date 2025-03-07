@@ -154,7 +154,7 @@ class PaymentService:
                         UCActivateRequestModel(
                             uc_value=f"{uc_pack.get('uc_amount')} UC",
                             uc_code=uc_code,
-                            player_id=metadata.get("player_id"),
+                            player_id=purchase.player_id,
                         ),
                         uc_amount=uc_pack.get("uc_amount"),
                         price=uc_pack.get("price_per_uc"),
