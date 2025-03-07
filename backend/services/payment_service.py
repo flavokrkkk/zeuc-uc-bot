@@ -1,32 +1,38 @@
 import asyncio
 from datetime import datetime
+import hashlib
+import hmac
 import json
+import re
 from typing import Coroutine
 from uuid import uuid4
 from aiogram import Bot
 from aiogram.exceptions import TelegramRetryAfter
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from aiohttp import ClientSession, ClientTimeout
+from aiohttp import ClientSession, ClientTimeout, payload
 from fastapi import HTTPException
 
 from backend.database.models.models import Purchase
 from backend.dto.purchase_dto import PurchaseModel
 from backend.dto.uc_code_dto import (
     BuyPointModel,
-    BuyUCCodeCallbackModel, 
+    CodeepayBuyUCCodeCallbackModel, 
     BuyUCCodeUrlModel,
     UCActivateRequestModel,
     UCActivationError, 
     UCCodeGetBuyUrlModel,
+    UCPackModel,
 )
 from backend.repositories.uc_code_repository import UCCodeRepository
-from backend.utils.config.config import BOT_TOKEN, CODEEPAY_API_KEY, PAYMENT_NOTIFICATION_CHAT, UCODEIUM_API_KEY
+from backend.utils.config.config import BOT_TOKEN, CODEEPAY_API_KEY, FREEKASSA_API_KEY, PAYMENT_NOTIFICATION_CHAT, UCODEIUM_API_KEY
+from backend.utils.config.enums import BuyServices
 
 
 class PaymentService:
     def __init__(self, repository: UCCodeRepository, bot: Bot):
         self.codeepay_api_url = "https://codeepay.ru/initiate_payment"
         self.ucodeium_api_url = "https://ucodeium.com/api/activate"
+        self.freekassa_api_url = "https://api.fk.life/v1/orders/create"
         self.codeepay_api_key = CODEEPAY_API_KEY
         self.ucodeium_api_key = UCODEIUM_API_KEY
         self.repository = repository
@@ -128,18 +134,18 @@ class PaymentService:
                 parse_mode="HTML"
             )
 
-    async def activate_codes(self, payload: BuyUCCodeCallbackModel) -> bool:
+    async def activate_codes(self, purchase: Purchase) -> bool:
         any_error_is_raised = False
         semaphore = asyncio.Semaphore(10)
-
-        for uc_pack in payload.metadata.uc_packs:
+        metadata = json.loads(purchase.metadata_)
+        for uc_pack in metadata.get("uc_packs"):
             tasks: list[Coroutine] = []
             activated = 0
             error_activation_ids = []
 
             uc_codes = await self.repository.get_activating_codes(
-                uc_pack.uc_amount, 
-                uc_pack.quantity
+                uc_pack.get("uc_amount"), 
+                uc_pack.get("quantity")
             )
 
             for uc_code in uc_codes:
@@ -148,10 +154,10 @@ class PaymentService:
                         UCActivateRequestModel(
                             uc_value=f"{uc_pack.uc_amount} UC",
                             uc_code=uc_code,
-                            player_id=payload.metadata.player_id,
+                            player_id=metadata.get("player_id"),
                         ),
-                        uc_amount=uc_pack.uc_amount,
-                        price=uc_pack.price_per_uc,
+                        uc_amount=uc_pack.get("uc_amount"),
+                        price=uc_pack.get("price_per_uc"),
                         semaphore=semaphore
                     )
                 )
@@ -188,20 +194,33 @@ class PaymentService:
             if len(errors) > 0:
                 any_error_is_raised = True
 
-            uc_pack.activated_codes = activated
-            uc_pack.error_activation_ids = error_activation_ids
-            uc_pack.errors = errors
+            uc_pack["activated_codes"] = activated
+            uc_pack["error_activation_ids"] = error_activation_ids
+            uc_pack["errors"] = errors
 
-        payload.metadata.response =( 
+        metadata["response"] =( 
             {"detail": "Оплата прошла успешно, но возможно не все коды активировались"}
             if any_error_is_raised
             else {"detail": "Оплата прошла успешно"}
         )
 
-        return all(uc_pack.activated_codes == uc_pack.quantity for uc_pack in payload.metadata.uc_packs)
+        return all(uc_pack.get("activated_codes") == uc_pack.get("quantity") for uc_pack in metadata.get("uc_packs")), metadata
             
         
-    async def get_uc_payment_url(self, form: UCCodeGetBuyUrlModel, tg_id: int) -> BuyUCCodeUrlModel:
+    async def get_uc_payment_url(
+        self, 
+        form: UCCodeGetBuyUrlModel, 
+        tg_id: int, 
+        service: BuyServices, 
+        last_purchase_id: str | None
+    ) -> BuyUCCodeUrlModel:
+        if service == BuyServices.CODEEPAY:
+            return await self.get_codeepay_payment_url(form, tg_id)
+        elif service == BuyServices.FREEKASSA:
+            return await self.get_freekassa_uc_payment_url(form, tg_id, last_purchase_id)
+        
+            
+    async def get_codeepay_payment_url(self, form: UCCodeGetBuyUrlModel, tg_id: int) -> BuyUCCodeUrlModel:
         internal_order_id = str(uuid4())
         response = await self.get_payment_url(
             payload={
@@ -214,25 +233,64 @@ class PaymentService:
                     "notification_url": "https://zeusucbot.shop/api/uc_code/buy/callback",
                     "internal_order_id": internal_order_id
                 }
-            }
+            },
+            service=BuyServices.CODEEPAY
         )
         return BuyUCCodeUrlModel(**response, internal_id=internal_order_id)
             
-    async def get_payment_url(self, payload: UCCodeGetBuyUrlModel) -> dict[str, str]:
+    async def get_payment_url(self, payload: UCCodeGetBuyUrlModel, service: BuyServices) -> dict[str, str]:
         async with ClientSession() as session:
             async with session.post(
-                self.codeepay_api_url,
-                headers={"X-Api-Key": self.codeepay_api_key},
+                url=((service == BuyServices.CODEEPAY and self.codeepay_api_url) or self.freekassa_api_url) ,
+                headers=(service == BuyServices.CODEEPAY and {"X-Api-Key": self.codeepay_api_key}) or {},
                 json=payload,
                 ssl=False
             ) as response:
                 if response.status != 200:
                     raise HTTPException(
                         status_code=response.status,
-                        detail=(await response.json())["detail"],
+                        detail=(await response.json()),
                     )
                 return await response.json()
-            
+
+    async def get_freekassa_uc_payment_url(
+        self,
+        form: UCCodeGetBuyUrlModel,
+        tg_id: int,
+        last_purchase_id: str
+    ) -> BuyUCCodeUrlModel:
+        payload: dict[str, str] = {
+            "shopId": 60305,
+            "nonce": last_purchase_id,
+            "paymentId": str(uuid4()),
+            "i": "44",
+            "amount": form.amount - form.discount,
+            "email": "magomedovmarif2@gmail.com",
+            "ip": "213.226.127.164",
+            "currency": "RUB",
+            "success_url": "https://zeusucbot.shop/api/uc_code/buy/callback",
+        }
+
+        sorted_keys = sorted(payload.keys())
+        values_string = "|".join(str(payload[key]) for key in sorted_keys)
+        signature = hmac.new(
+            key=FREEKASSA_API_KEY.encode('utf-8'),
+            msg=values_string.encode('utf-8'),
+            digestmod=hashlib.sha256
+        ).hexdigest()
+        
+        payload["signature"] = signature
+        response = await self.get_payment_url(
+            payload=payload,
+            service=BuyServices.FREEKASSA
+        )
+        return BuyUCCodeUrlModel(
+            url=response['location'],
+            order_id=str(response['orderId']),
+            amount=form.amount - form.discount,
+            internal_id=response["orderHash"]
+        )
+
     async def activate_code_without_callback(self, uc_amount: int, player_id: int) -> None:
         uc_code = await self.repository.get_activating_code(uc_amount)
         await self._post_request(

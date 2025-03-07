@@ -58,12 +58,18 @@ class BuyPointMetadataModel(BaseModel):
     point: int
     
 
-class BuyUCCodeCallbackModel(BaseModel):
+class CodeepayBuyUCCodeCallbackModel(BaseModel):
     order_id: str
     amount: float
     final_amount: float
     method: str = "card"
     metadata: BuyUCMetadataModel
+
+
+class FreekassaBuyUCCodeModel(BaseModel):
+    AMOUNT: int
+    intid: int
+    MERCHANT_ORDER_ID: int
 
 
 class BuyPointCallbackModel(BaseModel):

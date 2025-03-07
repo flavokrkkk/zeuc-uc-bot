@@ -1,19 +1,23 @@
 import asyncio
+import json
 from typing import Annotated
 from fastapi import APIRouter, BackgroundTasks, Depends, WebSocket
 
-from backend.dto.uc_code_dto import BuyUCCodeCallbackModel, BuyUCCodeUrlModel, UCCodeGetBuyUrlModel
+from backend.dto.uc_code_dto import CodeepayBuyUCCodeCallbackModel, BuyUCCodeUrlModel, FreekassaBuyUCCodeModel, UCCodeGetBuyUrlModel
 from backend.dto.user_dto import UserModel
 from backend.services.discount_service import DiscountService
 from backend.services.payment_service import PaymentService
 from backend.services.purchase_service import PurchaseService
+from backend.services.setting_service import SettingService
 from backend.services.uc_code_service import UCCodeService
 from backend.services.user_service import UserService
+from backend.utils.config.enums import BuyServices
 from backend.utils.dependencies.dependencies import (
     get_current_user_dependency,
     get_discount_service, 
     get_payment_service, 
-    get_purchase_service, 
+    get_purchase_service,
+    get_setting_service, 
     get_uc_code_service, 
     get_user_service,
     get_websocket_manager
@@ -33,43 +37,55 @@ async def get_all_uc_codes(
 
 @router.post("/buy/callback")
 async def activate_uc_code(
-    form: BuyUCCodeCallbackModel,
+    form: CodeepayBuyUCCodeCallbackModel | FreekassaBuyUCCodeModel,
     payment_service: Annotated[PaymentService, Depends(get_payment_service)],
     uc_code_service: Annotated[UCCodeService, Depends(get_uc_code_service)],
     purchase_service: Annotated[PurchaseService, Depends(get_purchase_service)],
-    user_service: Annotated[UserService, Depends(get_user_service)]
+    user_service: Annotated[UserService, Depends(get_user_service)],
+    setting_service: Annotated[SettingService, Depends(get_setting_service)]
 ):
-    adding_bonuses = await uc_code_service.get_uc_packs_bonuses_sum(form.metadata.uc_packs)
-    all_activated = await payment_service.activate_codes(form)
+    service = await setting_service.get_self_payment_service()
+    if service == BuyServices.CODEEPAY.value:
+        purchase = await purchase_service.get_by_order_id(form.order_id)
+    elif service == BuyServices.FREEKASSA.value:
+        purchase = await purchase_service.get_by_order_id(str(form.MERCHANT_ORDER_ID))
+    adding_bonuses = await uc_code_service.get_uc_packs_bonuses_sum(
+        json.loads(purchase.metadata_).get("uc_packs")
+    )
+    all_activated, metadata = await payment_service.activate_codes(purchase)
     purchase = await purchase_service.mark_is_paid(
-        form.order_id, 
-        form.metadata.internal_order_id,
-        form.metadata,
+        purchase.payment_id, 
+        form.metadata.internal_order_id if service == BuyServices.CODEEPAY.value else purchase.internal_order_id,
+        metadata,
         all_activated
     )
-    user = await user_service.get_user(form.metadata.tg_id)
-    await payment_service.send_payment_notification(purchase, all_activated, user.username)
-    await user_service.send_bonuses_to_referer(form.metadata.tg_id, adding_bonuses)
+    user = await user_service.get_user(purchase.tg_id)
+    # await payment_service.send_payment_notification(purchase, all_activated, user.username)
+    await user_service.send_bonuses_to_referer(purchase.tg_id, adding_bonuses)
 
 
 @router.post("/buy/url")
 async def get_buy_uc_code_url(
     form: UCCodeGetBuyUrlModel,
     payment_service: Annotated[PaymentService, Depends(get_payment_service)],
+    setting_service: Annotated[SettingService, Depends(get_setting_service)],
     purchase_service: Annotated[PurchaseService, Depends(get_purchase_service)],
     discount_service: Annotated[DiscountService, Depends(get_discount_service)],
     user_service: Annotated[UserService, Depends(get_user_service)],
     uc_code_service: Annotated[UCCodeService, Depends(get_uc_code_service)],
-    current_user: UserModel = Depends(get_current_user_dependency),
+    current_user: UserModel = Depends(get_current_user_dependency)
 ) -> BuyUCCodeUrlModel: 
+    service = await setting_service.get_self_payment_service()
     await uc_code_service.check_packs(form.uc_packs, form.uc_sum, form.amount)
     if form.discount:
-        form.discount = await discount_service.delete_discount_from_user(
-            current_user.tg_id,
-            form.discount
-        )
+        form.discount = await discount_service.delete_discount_from_user(current_user.tg_id, form.discount)
     await user_service.check_player_id(form.player_id)
-    response = await payment_service.get_uc_payment_url(form, current_user.tg_id)
+    last_purchase_id = (
+        await setting_service.get_last_purchase_id() 
+        if BuyServices.FREEKASSA.value == service 
+        else None
+    )
+    response = await payment_service.get_uc_payment_url(form, current_user.tg_id, service, last_purchase_id)
     await purchase_service.create_purchase(form, current_user, response)
     return response
 

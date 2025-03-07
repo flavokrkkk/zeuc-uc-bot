@@ -1,3 +1,4 @@
+from pydantic import BaseModel
 from backend.database.models.models import UCCode
 from backend.dto.uc_code_dto import CreateUCCodeModel, UCCodeModel, UCPackModel
 from backend.errors.uc_code_errors import InvalidUcPackData, UCCodeAlreadyExists, UCCodeNotFound, UCPackNotFound
@@ -59,10 +60,10 @@ class UCCodeService:
             for uc_amount, price, quantity, point in codes
         ]
     
-    async def get_uc_packs_bonuses_sum(self, uc_packs: list[UCPackModel]) -> int:
+    async def get_uc_packs_bonuses_sum(self, uc_packs: list[dict]) -> int:
         bonuses = 0
         for uc_pack in uc_packs:
-            point = await self.repository.get_point_by_uc_amount(uc_pack.uc_amount)
+            point = await self.repository.get_point_by_uc_amount(uc_pack.get("uc_amount"))
             bonuses += point
         return bonuses
     
