@@ -134,11 +134,10 @@ class PaymentService:
                 parse_mode="HTML"
             )
 
-    async def activate_codes(self, purchase_id) -> bool:
+    async def activate_codes(self, metadata: dict, player_id) -> bool:
         any_error_is_raised = False
         semaphore = asyncio.Semaphore(10)
-        purchase = await self.repository.session.get(Purchase, purchase_id)
-        metadata = json.loads(purchase.metadata_)
+        print(metadata)
         
         for uc_pack in metadata.get("uc_packs"):
             tasks: list[Coroutine] = []
@@ -156,7 +155,7 @@ class PaymentService:
                         UCActivateRequestModel(
                             uc_value=f"{uc_pack.get('uc_amount')} UC",
                             uc_code=uc_code,
-                            player_id=purchase.player_id,
+                            player_id=player_id,
                         ),
                         uc_amount=uc_pack.get("uc_amount"),
                         price=uc_pack.get("price_per_uc"),

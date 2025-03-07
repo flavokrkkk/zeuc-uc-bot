@@ -54,13 +54,11 @@ class PurchaseService:
     async def mark_is_paid(
         self, 
         payment_id: str, 
-        internal_order_id: str, 
         metadata: dict,
         all_activated: bool
     ) -> PurchaseModel:
         purchase = await self.repository.get_by_attributes(
             (self.repository.model.payment_id, payment_id),
-            (self.repository.model.internal_order_id, internal_order_id),
             one_or_none=True
         )
         if not purchase or purchase.is_paid:
@@ -69,7 +67,7 @@ class PurchaseService:
         return await self.repository.update_item(
             self.repository.model.payment_id, 
             payment_id, 
-            is_paid=True,
+            is_paid=False,
             status=PurchaseStatuses.IN_PROGRESS.value if not all_activated else PurchaseStatuses.COMPLETED.value,
             metadata_=json.dumps(metadata, ensure_ascii=False)
         )
