@@ -47,6 +47,7 @@ async def activate_uc_code(
     intid: int | None = None,
 ):
     # service = await setting_service.get_self_payment_service()
+    all_activated = False
     try:
         service = BuyServices.CODEEPAY.value if form else BuyServices.FREEKASSA.value 
         if service == BuyServices.CODEEPAY.value:
@@ -68,7 +69,6 @@ async def activate_uc_code(
         await user_service.send_bonuses_to_referer(purchase.tg_id, adding_bonuses)
     except Exception as e:
         raise e
-        all_activated = False
     finally:
         if service == BuyServices.CODEEPAY.value:
             purchase = await purchase_service.get_by_order_id(form.order_id)
