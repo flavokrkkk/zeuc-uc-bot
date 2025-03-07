@@ -3,7 +3,7 @@ import json
 from typing import Annotated
 from fastapi import APIRouter, BackgroundTasks, Depends, WebSocket
 
-from backend.dto.uc_code_dto import CodeepayBuyUCCodeCallbackModel, BuyUCCodeUrlModel, FreekassaBuyUCCodeModel, UCCodeGetBuyUrlModel
+from backend.dto.uc_code_dto import CodeepayBuyUCCodeCallbackModel, BuyUCCodeUrlModel, UCCodeGetBuyUrlModel
 from backend.dto.user_dto import UserModel
 from backend.services.discount_service import DiscountService
 from backend.services.payment_service import PaymentService
@@ -37,20 +37,23 @@ async def get_all_uc_codes(
 
 @router.post("/buy/callback")
 async def activate_uc_code(
-    form: CodeepayBuyUCCodeCallbackModel | FreekassaBuyUCCodeModel,
     payment_service: Annotated[PaymentService, Depends(get_payment_service)],
     uc_code_service: Annotated[UCCodeService, Depends(get_uc_code_service)],
     purchase_service: Annotated[PurchaseService, Depends(get_purchase_service)],
     user_service: Annotated[UserService, Depends(get_user_service)],
-    setting_service: Annotated[SettingService, Depends(get_setting_service)]
+    setting_service: Annotated[SettingService, Depends(get_setting_service)],
+    AMOUNT: int | None = None,
+    intid: int | None = None,
+    MERCHANT_ORDER_ID: int | None = None,
+    form: CodeepayBuyUCCodeCallbackModel | None = None
 ):
     # service = await setting_service.get_self_payment_service()
     try:
-        service = BuyServices.CODEEPAY.value if isinstance(form, CodeepayBuyUCCodeCallbackModel) else BuyServices.FREEKASSA.value 
+        service = BuyServices.CODEEPAY.value if form else BuyServices.FREEKASSA.value 
         if service == BuyServices.CODEEPAY.value:
             purchase = await purchase_service.get_by_order_id(form.order_id)
         elif service == BuyServices.FREEKASSA.value:
-            purchase = await purchase_service.get_by_order_id(str(form.MERCHANT_ORDER_ID))
+            purchase = await purchase_service.get_by_order_id(str(intid))
         adding_bonuses = await uc_code_service.get_uc_packs_bonuses_sum(
             json.loads(purchase.metadata_).get("uc_packs")
         )
@@ -65,6 +68,10 @@ async def activate_uc_code(
     except:
         all_activated = False
     finally:
+        if service == BuyServices.CODEEPAY.value:
+            purchase = await purchase_service.get_by_order_id(form.order_id)
+        elif service == BuyServices.FREEKASSA.value:
+            purchase = await purchase_service.get_by_order_id(str(form.MERCHANT_ORDER_ID))
         user = await user_service.get_user(purchase.tg_id)
         await payment_service.send_payment_notification(purchase, all_activated, user.username)
 

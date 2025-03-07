@@ -66,12 +66,6 @@ class CodeepayBuyUCCodeCallbackModel(BaseModel):
     metadata: BuyUCMetadataModel
 
 
-class FreekassaBuyUCCodeModel(BaseModel):
-    AMOUNT: int
-    intid: int
-    MERCHANT_ORDER_ID: int
-
-
 class BuyPointCallbackModel(BaseModel):
     metadata: BuyPointMetadataModel
 
