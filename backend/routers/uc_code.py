@@ -36,16 +36,17 @@ async def get_all_uc_codes(
 
 
 @router.post("/buy/callback")
+@router.get("buy/callback")
 async def activate_uc_code(
     payment_service: Annotated[PaymentService, Depends(get_payment_service)],
     uc_code_service: Annotated[UCCodeService, Depends(get_uc_code_service)],
     purchase_service: Annotated[PurchaseService, Depends(get_purchase_service)],
     user_service: Annotated[UserService, Depends(get_user_service)],
     setting_service: Annotated[SettingService, Depends(get_setting_service)],
+    form: CodeepayBuyUCCodeCallbackModel | None = None,
     AMOUNT: int | None = None,
     intid: int | None = None,
     MERCHANT_ORDER_ID: int | None = None,
-    form: CodeepayBuyUCCodeCallbackModel | None = None
 ):
     # service = await setting_service.get_self_payment_service()
     try:
