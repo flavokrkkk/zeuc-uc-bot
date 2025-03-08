@@ -268,7 +268,7 @@ class PaymentService:
             "email": f"{tg_id}@gmail.com",
             "ip": "213.226.127.164",
             "currency": "RUB",
-            "success_url": "https://zeusucbot.shop/api/uc_code/buy/callback",
+            "notifications_url": "https://zeusucbot.shop/api/uc_code/buy/callback",
         }
 
         sorted_keys = sorted(payload.keys())
