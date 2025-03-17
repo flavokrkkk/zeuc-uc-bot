@@ -40,10 +40,10 @@ class DatabaseMiddleware(BaseMiddleware):
             if not user_in_db:
                 if not user_data.username:
                     length = randint(8, 10)
-                    user_data.username = ''.join(choice(ascii_letters + digits) for _ in range(length))
+                    username = ''.join(choice(ascii_letters + digits) for _ in range(length))
                 await database.users.add_item(
                     tg_id=user_data.id, 
-                    username=user_data.username
+                    username=username
                 )
             else:
                 if not user_in_db.username or not user_data.username:
