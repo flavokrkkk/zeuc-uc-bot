@@ -6,6 +6,7 @@ from typing import Callable, Awaitable, Any, Dict
 
 from aiogram import BaseMiddleware
 from aiogram.types import  CallbackQuery, Message, TelegramObject, Update
+from passlib import exc
 
 from database.models.models import User
 from database.connection.pg_connection import DatabaseConnection
@@ -38,27 +39,21 @@ class DatabaseMiddleware(BaseMiddleware):
             user_in_db: User = await database.users.get_item(item_id=user_data.id)
 
             if not user_in_db:
-                username = user_data.username if user_data.username else ''.join(
-                    choice(ascii_letters + digits) for _ in range(randint(8, 10))
-                )
+                username = user_data.username if user_data.username else str(user_data.id)
                 await database.users.add_item(
                     tg_id=user_data.id,
                     username=username
                 )
             else:
-                if user_data.username and user_in_db.username != user_data.username:
+                expected_username = user_data.username if user_data.username else str(user_data.id)
+                if user_in_db.username != expected_username:
                     await database.users.update_item(
                         User.tg_id,
                         user_data.id,
-                        username=user_data.username
-                    )
-                elif not user_data.username and user_in_db.username.startswith('user_'):
-                    new_username = ''.join(choice(ascii_letters + digits) for _ in range(randint(8, 10)))
-                    await database.users.update_item(
-                        User.tg_id,
-                        user_data.id,
-                        username=f"user_{new_username}"
+                        username=expected_username
                     )
             return await handler(event, data)
+        except Exception as e:
+            print(e)
         finally:
             await session.close()
