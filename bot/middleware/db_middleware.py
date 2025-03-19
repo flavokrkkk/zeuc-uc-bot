@@ -38,27 +38,26 @@ class DatabaseMiddleware(BaseMiddleware):
             user_in_db: User = await database.users.get_item(item_id=user_data.id)
 
             if not user_in_db:
-                if not user_data.username:
-                    length = randint(8, 10)
-                    username = ''.join(choice(ascii_letters + digits) for _ in range(length))
+                username = user_data.username if user_data.username else ''.join(
+                    choice(ascii_letters + digits) for _ in range(randint(8, 10))
+                )
                 await database.users.add_item(
-                    tg_id=user_data.id, 
+                    tg_id=user_data.id,
                     username=username
                 )
             else:
-                if not user_in_db.username or not user_data.username:
-                    length = randint(8, 10)
-                    random_string = ''.join(choice(ascii_letters + digits) for _ in range(length))
-                    await database.users.update_item(
-                        User.tg_id,
-                        user_data.id,
-                        username=f"user_{random_string}"
-                    )
-                elif user_in_db.username != user_data.username:
+                if user_data.username and user_in_db.username != user_data.username:
                     await database.users.update_item(
                         User.tg_id,
                         user_data.id,
                         username=user_data.username
+                    )
+                elif not user_data.username and user_in_db.username.startswith('user_'):
+                    new_username = ''.join(choice(ascii_letters + digits) for _ in range(randint(8, 10)))
+                    await database.users.update_item(
+                        User.tg_id,
+                        user_data.id,
+                        username=f"user_{new_username}"
                     )
             return await handler(event, data)
         finally:
