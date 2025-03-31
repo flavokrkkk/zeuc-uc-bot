@@ -117,15 +117,11 @@ class UserService:
         if not is_deleted:
             raise UserNotHaveEnoughBonuses
         
-    async def add_bonuses(self, form: BuyPointCallbackModel):
-        await self.repository.update_bonuses(
-            form.metadata.tg_id, 
-            form.metadata.point, 
-            BonusStatuses.GET.value
-        )
+    async def add_bonuses(self, tg_id: int, amount: int) -> JSONResponse:
+        await self.repository.update_bonuses(tg_id, amount, BonusStatuses.GET.value)
         return JSONResponse(
             status_code=200,
-            content={"message": f"Оплата прошла успешно! Начислили {form.metadata.point} бонусов"}
+            content={"message": f"Оплата прошла успешно! Начислили {amount} бонусов"}
         )
 
     async def check_player_id(self, player_id: str):

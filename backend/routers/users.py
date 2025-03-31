@@ -10,6 +10,7 @@ from backend.services.discount_service import DiscountService
 from backend.services.payment_service import PaymentService
 from backend.services.purchase_service import PurchaseService
 from backend.services.reward_service import RewardService
+from backend.services.setting_service import SettingService
 from backend.services.user_service import UserService
 from backend.utils.config.config import BONUS_CIRCLE_PRICE
 from backend.utils.dependencies.dependencies import (
@@ -18,6 +19,7 @@ from backend.utils.dependencies.dependencies import (
     get_payment_service,
     get_purchase_service,
     get_reward_service,
+    get_setting_service,
     get_user_service
 )
 
@@ -96,14 +98,18 @@ async def get_user_bonuses_history(
 async def get_buy_points_url(
     form: BuyPointModel, 
     payment_service: Annotated[PaymentService, Depends(get_payment_service)],
-    current_user: UserModel = Depends(get_current_user_dependency)
+    setting_service: Annotated[SettingService, Depends(get_setting_service)],
+    current_user: UserModel = Depends(get_current_user_dependency),
 ) -> str:
-    return await payment_service.get_point_payment_url(form, current_user.tg_id)
+    last_purchase_id = await setting_service.get_last_purchase_id()
+    return await payment_service.get_point_payment_url(form, current_user.tg_id, last_purchase_id)
 
 
 @router.post("/buy/point/callback")
 async def buy_points_callback(
     form: BuyPointCallbackModel, 
     user_service: Annotated[UserService, Depends(get_user_service)],
+    us_tg_id: int,
+    us_amount: int
 ) -> JSONResponse:
-    return await user_service.add_bonuses(form)
+    return await user_service.add_bonuses(us_tg_id, us_amount)

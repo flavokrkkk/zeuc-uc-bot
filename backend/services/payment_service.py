@@ -257,7 +257,8 @@ class PaymentService:
         self,
         form: UCCodeGetBuyUrlModel,
         tg_id: int,
-        last_purchase_id: str
+        last_purchase_id: str, 
+        **kwargs
     ) -> BuyUCCodeUrlModel:
         payload: dict[str, str] = {
             "shopId": 60305,
@@ -269,6 +270,8 @@ class PaymentService:
             "ip": "213.226.127.164",
             "currency": "RUB",
             "notifications_url": "https://zeusucbot.shop/api/uc_code/buy/callback",
+            "us_tg_id": tg_id,
+            **kwargs
         }
 
         sorted_keys = sorted(payload.keys())
@@ -303,9 +306,9 @@ class PaymentService:
             price=uc_code.price_per_uc.price
         )
 
-    async def get_point_payment_url(self, form: BuyPointModel, tg_id: int) -> str:
+    async def get_point_payment_url(self, form: BuyPointModel, tg_id: int, last_purchase_id: int) -> str:
         internal_order_id = str(uuid4())
-        response = await self.get_payment_url(
+        response = await self.get_uc_payment_url(
             payload={
                 "method_slug": "card",
                 "amount": form.amount,
@@ -315,7 +318,12 @@ class PaymentService:
                     "notification_url": "https://zeusucbot.shop/api/user/buy/point/callback",
                     "internal_order_id": internal_order_id
                 }
-            }
+            },
+            tg_id=tg_id,
+            service=BuyServices.FREEKASSA,
+            last_purchase_id=last_purchase_id,
+            us_tg_id=tg_id,
+            us_amount=form.amount
         )
         return response["url"]
     
