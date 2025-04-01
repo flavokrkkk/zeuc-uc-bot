@@ -334,4 +334,5 @@ class PaymentService:
             payload=payload,
             service=BuyServices.FREEKASSA
         )
+        print(response)
         return response["url"]    
