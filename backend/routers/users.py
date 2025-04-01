@@ -102,7 +102,9 @@ async def get_buy_points_url(
     current_user: UserModel = Depends(get_current_user_dependency),
 ) -> str:
     last_purchase_id = await setting_service.get_last_purchase_id()
-    return await payment_service.get_point_payment_url(form, current_user.tg_id, last_purchase_id)
+    return await payment_service.get_point_payment_url(
+        form.amount, current_user.tg_id, last_purchase_id, form.point
+    )
 
 
 @router.post("/buy/point/callback")

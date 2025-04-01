@@ -306,24 +306,32 @@ class PaymentService:
             price=uc_code.price_per_uc.price
         )
 
-    async def get_point_payment_url(self, form: BuyPointModel, tg_id: int, last_purchase_id: int) -> str:
-        internal_order_id = str(uuid4())
-        response = await self.get_uc_payment_url(
-            payload={
-                "method_slug": "card",
-                "amount": form.amount,
-                "metadata": {
-                    "tg_id": tg_id,
-                    "point": form.point,
-                    "notification_url": "https://zeusucbot.shop/api/user/buy/point/callback",
-                    "internal_order_id": internal_order_id
-                }
-            },
-            tg_id=tg_id,
-            service=BuyServices.FREEKASSA,
-            last_purchase_id=last_purchase_id,
-            us_tg_id=tg_id,
-            us_amount=form.amount
+    async def get_point_payment_url(self, amount: int, tg_id: int, last_purchase_id: int, us_amount: int) -> dict[str, str]:
+        payload: dict[str, str] = {
+            "shopId": 60305,
+            "nonce": last_purchase_id,
+            "paymentId": str(uuid4()),
+            "i": "44",
+            "amount": amount,
+            "email": f"{tg_id}@gmail.com",
+            "ip": "213.226.127.164",
+            "currency": "RUB",
+            "notifications_url": "https://zeusucbot.shop/api/user/buy/point/callback",
+            "us_tg_id": tg_id,
+            "us_amount": us_amount
+        }
+
+        sorted_keys = sorted(payload.keys())
+        values_string = "|".join(str(payload[key]) for key in sorted_keys)
+        signature = hmac.new(
+            key=FREEKASSA_API_KEY.encode('utf-8'),
+            msg=values_string.encode('utf-8'),
+            digestmod=hashlib.sha256
+        ).hexdigest()
+        
+        payload["signature"] = signature
+        response = await self.get_payment_url(
+            payload=payload,
+            service=BuyServices.FREEKASSA
         )
-        return response["url"]
-    
+        return response["url"]    
