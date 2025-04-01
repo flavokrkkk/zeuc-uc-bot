@@ -109,7 +109,6 @@ async def get_buy_points_url(
 
 @router.post("/buy/point/callback")
 async def buy_points_callback(
-    form: BuyPointCallbackModel, 
     user_service: Annotated[UserService, Depends(get_user_service)],
     us_tg_id: int,
     us_amount: int
