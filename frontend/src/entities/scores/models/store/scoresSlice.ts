@@ -31,18 +31,24 @@ export const scoresSlice = createSliceWithThunks({
         const scoresView = payload?.map((score) => {
           if (score.reward_type === ERewardTypes.DISCOUNT) {
             return {
-              title: `${score.discount?.value} скидка на покупку от ${score.discount?.min_payment_value}`,
+              title: `${score.discount?.value} скидка на покупку\n от ${score.discount?.min_payment_value}`,
               reward_id: score.reward_id,
+              type: "discount",
             };
           }
           if (score.reward_type === ERewardTypes.UC_CODE) {
             return {
-              title: `${score.uc_code?.uc_amount} UC`,
+              title: `${score.uc_amount} UC`,
               reward_id: score.reward_id,
+              type: "uc",
             };
           }
 
-          return {} as { title: string; reward_id: number };
+          return {} as {
+            title: string;
+            reward_id: number;
+            type: "uc" | "discount";
+          };
         });
         if (scoresView) {
           state.scoresValue = scoresView;

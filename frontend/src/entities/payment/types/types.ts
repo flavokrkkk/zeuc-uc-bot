@@ -1,17 +1,19 @@
+import { EPaymentMethods } from "@/entities/packs/types/types";
+
 export interface IPaymentWrap {
   amount: number;
-  method_slug: "sbp" | "card";
-  player_id: number;
+  method_slug: EPaymentMethods;
+  player_id: string;
   uc_packs: Array<IPayementRequest>;
   uc_sum: number;
+  discount: number | null;
 }
 
 export interface IPayementRequest {
   uc_amount: number;
-  code: string;
   price_per_uc: number;
   total_sum: number;
-  count: number;
+  quantity: number;
 }
 
 export interface IPaymentResponse {
@@ -24,7 +26,7 @@ export interface IPaymentResponse {
     uc_sum: number;
     price: number;
     payment_id: string;
-    payment_method: "sbp" | "card";
+    payment_method: EPaymentMethods;
     is_paid: false;
     metadata_: {
       tg_id: number;

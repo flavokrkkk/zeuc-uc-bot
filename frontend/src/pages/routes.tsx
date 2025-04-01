@@ -1,19 +1,19 @@
 import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
 import RootPage from "./rootPage";
 import ErrorPage from "./errorPage";
-import { lazy, Suspense } from "react";
+import { Suspense } from "react";
 import { ERouteNames } from "@/shared/libs/utils/pathVariables";
 import { privatePage } from "@/entities/viewer/libs/hoc/privatePage";
 import { routesWithHoc } from "./routes/routesWithHoc";
 import { publicPage } from "@/entities/viewer/libs/hoc/publicPage";
-
-const CatalogPage = lazy(() => import("@pages/catalogPage"));
-const PaymentPage = lazy(() => import("@pages/paymentPage"));
-const PaymentHistoryPage = lazy(() => import("@pages/historyPaymentPage"));
-const ScoresPage = lazy(() => import("@pages/scoresPage"));
-const ReferalPage = lazy(() => import("@pages/referalPage"));
-const TicketsPage = lazy(() => import("@pages/ticketsPage"));
-const MainPage = lazy(() => import("@pages/mainPage"));
+import MainPage from "./mainPage";
+import CatalogPage from "./catalogPage";
+import PaymentPage from "./paymentPage";
+import ReferalPage from "./referalPage";
+import TicketsPage from "./ticketsPage";
+import ScoresPage from "./scoresPage";
+import HistoryPaymentPage from "./historyPaymentPage";
+import BonusPaymentPage from "./bonusPaymentPage";
 
 export const routes = createBrowserRouter([
   {
@@ -51,8 +51,12 @@ export const routes = createBrowserRouter([
               element: <TicketsPage />,
             },
             {
+              path: ERouteNames.BONUS_PAYMENT_PAGE,
+              element: <BonusPaymentPage />,
+            },
+            {
               path: ERouteNames.PAYMENT_HISTORY_PAGE,
-              element: <PaymentHistoryPage />,
+              element: <HistoryPaymentPage />,
             },
             {
               path: ERouteNames.SCORES_PAGE,
@@ -79,6 +83,10 @@ export const routes = createBrowserRouter([
         {
           path: ERouteNames.AUTH_ERROR,
           element: <ErrorPage />,
+        },
+        {
+          path: ERouteNames.CLOSE_ERROR,
+          element: <ErrorPage message="В данный момент магазин закрыт" />,
         },
       ]),
     ],

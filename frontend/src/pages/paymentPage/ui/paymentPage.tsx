@@ -11,6 +11,9 @@ import {
   ButtonColors,
   ButtonRoundSizes,
 } from "@/shared/ui/button/button";
+import { IconTypes } from "@/shared/ui/icon/libs/libs";
+import { Icon } from "@/shared/ui/icon/ui/icon";
+import { ChevronLeft, CreditCard } from "lucide-react";
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -18,15 +21,25 @@ const PaymentPage = () => {
   const {
     totalPrice,
     totalPacks,
+    totalDiscountPrice,
     handleSelectPack,
     handleUnSelectPack,
     handleResetTotalPacks,
   } = usePacks();
 
   const selectedPacks = useAppSelector(packSlectors.selectedPacks);
-  const currentUser = useAppSelector(userSelectors.currentUser);
+  const userInfo = useAppSelector(userSelectors.currentUser);
 
-  const { handleGetPayLink, isPending } = usePaymentMutate({
+  const {
+    handleGetPayLink,
+    isPending,
+    playerId,
+    discountId,
+    playerError,
+    handleCheckId,
+    handleChangeId,
+    handleUseDiscountId,
+  } = usePaymentMutate({
     selectPacks: selectedPacks,
     totalSum: totalPrice,
     totalPacks,
@@ -43,32 +56,70 @@ const PaymentPage = () => {
   return (
     <div className="space-y-5 text-white">
       <Link to={ERouteNames.CATALOG_PAGE} onClick={handleResetTotalPacks}>
-        Назад
+        <div className="flex items-center">
+          <span>
+            <ChevronLeft />
+          </span>
+          <span>Назад</span>
+        </div>
       </Link>
-      <h1 className="text-2xl mb-4">Ваш заказ</h1>
+      <div className="flex justify-between">
+        <h1 className="text-2xl mb-4">Ваш заказ</h1>
+        <div className="flex items-center space-x-1">
+          <span>{userInfo?.bonuses}</span>
+          <span>
+            <Icon type={IconTypes.POINT_OUTLINED} className="h-6 w-6" />
+          </span>
+        </div>
+      </div>
+
       <PaymentInfo
+        discountId={discountId}
         totalPacks={totalPacks}
-        totalPrice={totalPrice}
+        totalPrice={totalPrice - totalDiscountPrice}
         selectedPacks={selectedPacks}
-        userInfo={currentUser}
+        handleUseDiscountId={handleUseDiscountId}
         handleSelectPack={handleSelectPack}
         handleUnSelectPack={handleUnSelectPack}
       />
       <section className="space-y-10">
         <SearchUser
           isLabel
+          error={playerError}
+          value={playerId.toString()}
           buttonText="Проверить ID"
-          searchPlaceholder="Введите Pubg ID"
+          onClick={handleCheckId}
+          onChange={handleChangeId}
+          searchPlaceholder="Введите Player ID"
         />
-        <Button
-          isDisabled={isPending}
-          className="h-14 w-full cursor-pointer bg-gray-200 border border-gray-300 flex items-center justify-center rounded-md"
-          bgColor={ButtonColors.GREEN}
-          rounded={ButtonRoundSizes.ROUNDED_XL}
-          onClick={handleGetPayLink}
-        >
-          Оплатить
-        </Button>
+        <div className="flex flex-col w-full space-y-4">
+          <Button
+            value="sbp"
+            isDisabled={isPending || playerError !== "success"}
+            className="h-14 w-full cursor-pointer bg-gray-200 border border-gray-300 flex items-center justify-center rounded-md"
+            bgColor={ButtonColors.GREEN}
+            rounded={ButtonRoundSizes.ROUNDED_XL}
+            onClick={handleGetPayLink}
+          >
+            <span className="flex space-x-2 items-center">
+              <Icon type={IconTypes.SBP_OUTLINED} />
+              <span>Оплатить через СБП</span>
+            </span>
+          </Button>
+          <Button
+            value="card"
+            isDisabled={isPending || playerError !== "success"}
+            className="h-14 w-full cursor-pointer bg-gray-200 border border-gray-300 flex items-center justify-center rounded-md"
+            bgColor={ButtonColors.GREEN}
+            rounded={ButtonRoundSizes.ROUNDED_XL}
+            onClick={handleGetPayLink}
+          >
+            <span className="flex space-x-2 items-center">
+              <CreditCard />
+              <span>Оплатить картой</span>
+            </span>
+          </Button>
+        </div>
       </section>
     </div>
   );

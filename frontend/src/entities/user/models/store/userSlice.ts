@@ -8,9 +8,18 @@ import { IUserState } from "./types";
 import { TelegramUser } from "@/shared/types/telegram";
 import { MutationObserver } from "@tanstack/react-query";
 import { queryClient } from "@/shared/api/queryClient";
-import { setUserCredentials } from "../../libs/userService";
+import {
+  getCurrentUser,
+  getUserDiscount,
+  setUserCredentials,
+} from "../../libs/userService";
 import { setAccessToken } from "@/entities/token/libs/tokenService";
-import { ICurrentUserResponse, IUserResponse } from "../../types/types";
+import {
+  ICurrentUserResponse,
+  IUserDiscount,
+  IUserPurchases,
+  IUserResponse,
+} from "../../types/types";
 import { decrypt } from "@/shared/helpers/cryptoHash";
 
 const createSliceWithThunks = buildCreateSlice({
@@ -30,11 +39,19 @@ export const userSlice = createSliceWithThunks({
   initialState,
   selectors: {
     userInfo: (state) => state.user,
+    userDiscount: (state) => state.userDiscount,
     currentUser: (state) => state.currentUser,
     userPaymentHistory: (state) => state.userPaymentHistory,
     userBonusesHistory: (state) => state.userBonusesHistory,
   },
   reducers: (create) => ({
+    setPointsUser: create.reducer(
+      (state, { payload }: PayloadAction<number>) => {
+        if (state.currentUser) {
+          state.currentUser.bonuses = state.currentUser.bonuses + payload;
+        }
+      }
+    ),
     setUserCredentials: create.asyncThunk<
       TelegramUser,
       Partial<TelegramUser> & { id: number; username: string },
@@ -67,22 +84,54 @@ export const userSlice = createSliceWithThunks({
         },
       }
     ),
-    setCurrentUser: create.reducer(
-      (state, { payload }: PayloadAction<ICurrentUserResponse>) => {
-        state.currentUser = payload;
+    getAsyncCurrentUser: create.asyncThunk<
+      ICurrentUserResponse,
+      void,
+      { rejectValue: string }
+    >(
+      async (_, { rejectWithValue }) => {
+        try {
+          const response = await getCurrentUser();
+          return response;
+        } catch (e) {
+          return rejectWithValue(String(e));
+        }
+      },
+      {
+        fulfilled: (state, { payload }) => {
+          state.currentUser = payload;
+        },
       }
     ),
-    setUserDiscount: create.reducer(
-      (state, { payload }: PayloadAction<IUserState["userDiscount"]>) => {
-        state.userDiscount = payload;
+    getAsyncDiscount: create.asyncThunk<
+      Array<IUserDiscount>,
+      void,
+      { rejectValue: string }
+    >(
+      async (_, { rejectWithValue }) => {
+        try {
+          const response = await getUserDiscount();
+          return response;
+        } catch (e) {
+          return rejectWithValue(String(e));
+        }
+      },
+      {
+        fulfilled: (state, { payload }) => {
+          state.userDiscount = payload;
+        },
       }
     ),
     setPaymentHistory: create.reducer(
       (state, { payload }: PayloadAction<IUserState["userPaymentHistory"]>) => {
         state.userPaymentHistory = payload.map((payload) => ({
           ...payload,
-          id: crypto.randomUUID(),
         }));
+      }
+    ),
+    setPaymentHistoryItem: create.reducer(
+      (state, { payload }: PayloadAction<IUserPurchases>) => {
+        state.userPaymentHistory.push({ ...payload });
       }
     ),
     setBonusesHistory: create.reducer(
@@ -91,6 +140,11 @@ export const userSlice = createSliceWithThunks({
           ...payload,
           id: crypto.randomUUID(),
         }));
+      }
+    ),
+    setCurrentUser: create.reducer(
+      (state, { payload }: PayloadAction<ICurrentUserResponse>) => {
+        state.currentUser = payload;
       }
     ),
   }),

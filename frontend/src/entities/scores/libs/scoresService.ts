@@ -2,6 +2,8 @@ import { axiosAuth } from "@/shared/api/baseQueryInstance";
 import { EScoresEndpoints } from "./utils/endpoints";
 import { IQueryMetadata } from "@/shared/api/types";
 import { IScore } from "../types/types";
+import { EBonusStatuses } from "./utils/rewards";
+import { ICurrentUserResponse } from "@/entities/user/types/types";
 
 class ScoresService {
   private static instance: ScoresService;
@@ -26,7 +28,22 @@ class ScoresService {
     return data;
   }
 
-  public async setScoreGift(body: { reward_id: number; player_id: number }) {
+  public async setWriteBonuses(requestBody: {
+    amount: number;
+    status: EBonusStatuses;
+  }): Promise<{ user: ICurrentUserResponse; rewards_key?: string }> {
+    const { data } = await axiosAuth.patch<{
+      user: ICurrentUserResponse;
+      rewards_key?: string;
+    }>(EScoresEndpoints.SET_WRITE, requestBody);
+    return data;
+  }
+
+  public async setScoreGift(body: {
+    reward_id: number;
+    player_id: number;
+    rewards_key: string;
+  }) {
     const { data } = await axiosAuth.post(`${EScoresEndpoints.SET_GIFTS}`, {
       ...body,
     });
@@ -34,4 +51,5 @@ class ScoresService {
   }
 }
 
-export const { getAllReward, setScoreGift } = ScoresService.getInstance();
+export const { getAllReward, setScoreGift, setWriteBonuses } =
+  ScoresService.getInstance();

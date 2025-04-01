@@ -4,4 +4,5 @@ export const enum EUserEndpoints {
   GET_PURCHASES = "user/purchases",
   GET_BONUSES = "user/bonuses/history",
   GET_DICOUNTS = "user/discounts",
+  GET_USER_POINTS = "user/buy/points",
 }

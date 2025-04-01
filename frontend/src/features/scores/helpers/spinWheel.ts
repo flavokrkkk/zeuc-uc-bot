@@ -1,9 +1,9 @@
 export const spinWheel = (
-  segments: Array<{ title: string; reward_id: number }>,
+  segments: Array<{ title: string; reward_id: number; type: string }>,
   wheelRef: React.MutableRefObject<HTMLCanvasElement | null>,
   spinning: boolean,
   onFinished: (
-    winner: { title: string; reward_id: number },
+    winner: { title: string; reward_id: number; type: string },
     winnerIndex: number
   ) => void,
   setSpinning: (action: boolean) => void,
@@ -11,6 +11,7 @@ export const spinWheel = (
 ) => {
   setWinnerIndex(null);
   if (spinning) return;
+
   setSpinning(true);
 
   const wheel = wheelRef.current;
@@ -46,9 +47,8 @@ export const spinWheel = (
       });
 
       const winningSegmentIndex = finalSegmentAngles.findIndex((angle) => {
-        return Number(angle) >= 315;
+        return Number(angle) >= 310;
       });
-
       setWinnerIndex(winningSegmentIndex);
       onFinished(segments[winningSegmentIndex], winningSegmentIndex);
       setSpinning(false);

@@ -1,12 +1,14 @@
 import {
   deleteAccessToken,
   getAccessToken,
+  setStateCloseShop,
 } from "@/entities/token/libs/tokenService";
 import axios, {
   AxiosInstance,
   AxiosRequestConfig,
   AxiosResponse,
   AxiosError,
+  isAxiosError,
 } from "axios";
 
 import { RequestOptions } from "https";
@@ -28,7 +30,27 @@ export class AxiosClient {
 
     if (withAuth) {
       this.addAuthInterceptor();
+    } else {
+      this.addInterceptor();
     }
+  }
+
+  private addInterceptor() {
+    this.baseQueryV1Instance.interceptors.response.use(
+      async (config) => {
+        return config;
+      },
+      (error: Error) => {
+        if (isAxiosError(error)) {
+          if (error.status === 423) {
+            deleteAccessToken();
+            setStateCloseShop(false);
+            window.location.href = "http://localhost:3000/error/close";
+          }
+        }
+        return Promise.reject(error);
+      }
+    );
   }
 
   private addAuthInterceptor() {
@@ -73,18 +95,25 @@ export class AxiosClient {
               "9fGDzagmHOCYEvjw"
             );
             response.data = decryptedData;
+            setStateCloseShop(true);
           } catch (error) {
             console.error("Ошибка при расшифровке:", error);
           }
         }
         return response;
       },
-      (error) => {
+      (error: Error) => {
+        if (isAxiosError(error)) {
+          if (error.status === 423) {
+            deleteAccessToken();
+            setStateCloseShop(false);
+            window.location.href = "http://localhost:3000/error/close";
+          }
+        }
         return Promise.reject(error);
       }
     );
   }
-
   public getInstance() {
     return this.baseQueryV1Instance;
   }
@@ -170,5 +199,5 @@ export class AxiosClient {
   }
 }
 
-export const axiosNoAuth = new AxiosClient("http://193.233.20.72/api/");
-export const axiosAuth = new AxiosClient("http://193.233.20.72//api/", true);
+export const axiosNoAuth = new AxiosClient("https://zeusucbot.shop/api/");
+export const axiosAuth = new AxiosClient("https://zeusucbot.shop/api/", true);
