@@ -319,3 +319,4 @@ class PaymentService:
             },
             service=BuyServices.CODEEPAY
         )
+        return response["url"]
