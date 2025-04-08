@@ -1,7 +1,7 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-from bot.utils.config.enums import BuyServices
-from bot.utils.decorators import add_back_to_menu_button
+from utils.config.enums import BuyServices
+from utils.decorators import add_back_to_menu_button
 
 
 @add_back_to_menu_button(is_admin=True)

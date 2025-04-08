@@ -2,11 +2,11 @@ from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
-from bot.database.db_main import Database
-from bot.keyboards.commands import back_to_menu
-from bot.keyboards.switch_payment_service import switch_payment_service_keyboard
-from bot.states.menu import AdminMenuStates
-from bot.states.switch_payment_service import SwitchPaymentserviceStates
+from database.db_main import Database
+from keyboards.commands import back_to_menu
+from keyboards.switch_payment_service import switch_payment_service_keyboard
+from states.menu import AdminMenuStates
+from states.switch_payment_service import SwitchPaymentserviceStates
 
 
 router = Router()
