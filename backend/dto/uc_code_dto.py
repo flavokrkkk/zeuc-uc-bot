@@ -53,7 +53,6 @@ class BuyUCMetadataModel(BaseModel):
 
 
 class BuyPointMetadataModel(BaseModel):
-    internal_order_id: str
     tg_id: int
     point: int
     
@@ -100,6 +99,6 @@ class PaymentUCCodeDataModel(BaseModel):
 
 
 class BuyPointModel(BaseModel):
-    method_slug: str = "card"
+    method_slug: str = "sbp"
     point: int
     amount: int

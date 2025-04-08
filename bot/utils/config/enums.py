@@ -10,3 +10,8 @@ class PurchaseStatuses(Enum):
 class BonusStatuses(Enum):
     GET = "Получен"
     USE = "Использован"
+
+
+class BuyServices(Enum):
+    CODEEPAY = "codeepay"
+    FREEKASSA = "freekassa"

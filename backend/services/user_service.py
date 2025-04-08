@@ -1,7 +1,7 @@
 from uuid import uuid4
 from starlette.responses import JSONResponse
 from backend.database.models.models import Reward, User
-from backend.dto.uc_code_dto import BuyPointCallbackModel
+from backend.dto.uc_code_dto import BuyPointCallbackModel, BuyPointMetadataModel
 from backend.dto.user_dto import BonusesHistoryModel, UserForCircleBonusesModel, UserModel
 from backend.errors.purchase_errors import InvalidPlayerId
 from backend.errors.user_errors import (
@@ -117,11 +117,11 @@ class UserService:
         if not is_deleted:
             raise UserNotHaveEnoughBonuses
         
-    async def add_bonuses(self, tg_id: int, amount: int) -> JSONResponse:
-        await self.repository.update_bonuses(tg_id, amount, BonusStatuses.GET.value)
+    async def add_bonuses(self, metadata: BuyPointMetadataModel) -> JSONResponse:
+        await self.repository.update_bonuses(metadata.tg_id, metadata.point, BonusStatuses.GET.value)
         return JSONResponse(
             status_code=200,
-            content={"message": f"Оплата прошла успешно! Начислили {amount} бонусов"}
+            content={"message": f"Оплата прошла успешно! Начислили {metadata.point} бонусов"}
         )
 
     async def check_player_id(self, player_id: str):

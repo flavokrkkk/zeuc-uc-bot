@@ -98,19 +98,14 @@ async def get_user_bonuses_history(
 async def get_buy_points_url(
     form: BuyPointModel, 
     payment_service: Annotated[PaymentService, Depends(get_payment_service)],
-    setting_service: Annotated[SettingService, Depends(get_setting_service)],
     current_user: UserModel = Depends(get_current_user_dependency),
 ) -> str:
-    last_purchase_id = await setting_service.get_last_purchase_id()
-    return await payment_service.get_point_payment_url(
-        form.amount, current_user.tg_id, last_purchase_id, form.point
-    )
+    return await payment_service.get_point_payment_url(form, current_user.tg_id)
 
 
 @router.post("/buy/point/callback")
 async def buy_points_callback(
     user_service: Annotated[UserService, Depends(get_user_service)],
-    us_tg_id: int,
-    us_amount: int
+    form: BuyPointCallbackModel
 ) -> JSONResponse:
-    return await user_service.add_bonuses(us_tg_id, us_amount)
+    return await user_service.add_bonuses(form.metadata)

@@ -306,32 +306,16 @@ class PaymentService:
             price=uc_code.price_per_uc.price
         )
 
-    async def get_point_payment_url(self, amount: int, tg_id: int, last_purchase_id: int, us_amount: int) -> dict[str, str]:
-        payload: dict[str, str] = {
-            "shopId": 60305,
-            "nonce": last_purchase_id,
-            "paymentId": str(uuid4()),
-            "i": "44",
-            "amount": amount,
-            "email": f"{tg_id}@gmail.com",
-            "ip": "213.226.127.164",
-            "currency": "RUB",
-            "notifications_url": "https://zeusucbot.shop/api/user/buy/point/callback",
-            "us_tg_id": tg_id,
-            "us_amount": us_amount
-        }
-
-        sorted_keys = sorted(payload.keys())
-        values_string = "|".join(str(payload[key]) for key in sorted_keys)
-        signature = hmac.new(
-            key=FREEKASSA_API_KEY.encode('utf-8'),
-            msg=values_string.encode('utf-8'),
-            digestmod=hashlib.sha256
-        ).hexdigest()
-        
-        payload["signature"] = signature
+    async def get_point_payment_url(self, form: BuyPointModel, tg_id: int) -> dict[str, str]:
         response = await self.get_payment_url(
-            payload=payload,
-            service=BuyServices.FREEKASSA
+            payload={
+                "method_slug": "sbp",
+                "amount": form.amount,
+                "metadata": {
+                    "tg_id": tg_id,
+                    "notification_url": "https://zeusucbot.shop/api/users/buy/point/callback",
+                    "point": form.point
+                }
+            },
+            service=BuyServices.CODEEPAY
         )
-        return response['location']

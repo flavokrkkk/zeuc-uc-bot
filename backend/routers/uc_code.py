@@ -47,7 +47,6 @@ async def activate_uc_code(
     intid: int | None = None,
 ):
     order_id = str(intid) if intid else form.order_id
-    service = BuyServices.FREEKASSA.value if intid else BuyServices.CODEEPAY.value
 
     purchase = await purchase_service.mark_is_paid(order_id)
     if not purchase or purchase.is_paid:
@@ -85,17 +84,20 @@ async def get_buy_uc_code_url(
     uc_code_service: Annotated[UCCodeService, Depends(get_uc_code_service)],
     current_user: UserModel = Depends(get_current_user_dependency)
 ) -> BuyUCCodeUrlModel: 
-    # service = await setting_service.get_self_payment_service()
-    service = BuyServices.CODEEPAY.value if form.method_slug == "card" else BuyServices.FREEKASSA.value 
+    service = await setting_service.get_self_payment_service()
     await uc_code_service.check_packs(form.uc_packs, form.uc_sum, form.amount)
+
     if form.discount:
         form.discount = await discount_service.delete_discount_from_user(current_user.tg_id, form.discount)
+
     await user_service.check_player_id(form.player_id)
+
     last_purchase_id = (
         await setting_service.get_last_purchase_id() 
         if BuyServices.FREEKASSA.value == service 
         else None
     )
+
     response = await payment_service.get_uc_payment_url(form, current_user.tg_id, service, last_purchase_id)
     await purchase_service.create_purchase(form, current_user, response)
     return response
