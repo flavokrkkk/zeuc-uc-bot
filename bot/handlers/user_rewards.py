@@ -15,7 +15,7 @@ from states.user_rewards import UserRewardsStates
 router = Router()
 
 
-@router.callback_query(AdminMenuStates.main)
+@router.callback_query(AdminMenuStates.main, F.data == "user_rewards")
 async def user_rewards_callback(callback_query: CallbackQuery, state: FSMContext):
     await state.set_state(UserRewardsStates.choose_option)
     await callback_query.message.edit_text(

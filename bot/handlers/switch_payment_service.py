@@ -25,7 +25,6 @@ async def choose_payment_service(callback: CallbackQuery, state: FSMContext, dat
 
 @router.callback_query(SwitchPaymentserviceStates.choose_payment_service)
 async def switch_payment_service(callback: CallbackQuery, state: FSMContext, database: Database):
-    
     await database.settings.switch_payment_service(callback.data)
     await state.set_state(SwitchPaymentserviceStates.success)
     await callback.message.edit_text(
