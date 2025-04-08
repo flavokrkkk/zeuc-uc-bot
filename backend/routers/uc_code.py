@@ -83,8 +83,9 @@ async def get_buy_uc_code_url(
     user_service: Annotated[UserService, Depends(get_user_service)],
     uc_code_service: Annotated[UCCodeService, Depends(get_uc_code_service)],
     current_user: UserModel = Depends(get_current_user_dependency)
-) -> BuyUCCodeUrlModel: 
-    service = await setting_service.get_self_payment_service()
+) -> BuyUCCodeUrlModel:
+    if form.method_slug == "sbp":
+        service = await setting_service.get_self_payment_service()
     await uc_code_service.check_packs(form.uc_packs, form.uc_sum, form.amount)
 
     if form.discount:
@@ -94,7 +95,7 @@ async def get_buy_uc_code_url(
 
     last_purchase_id = (
         await setting_service.get_last_purchase_id() 
-        if BuyServices.FREEKASSA.value == service 
+        if service and BuyServices.FREEKASSA.value == service 
         else None
     )
 
