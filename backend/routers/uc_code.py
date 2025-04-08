@@ -84,7 +84,7 @@ async def get_buy_uc_code_url(
     uc_code_service: Annotated[UCCodeService, Depends(get_uc_code_service)],
     current_user: UserModel = Depends(get_current_user_dependency)
 ) -> BuyUCCodeUrlModel:
-    sevice = None
+    service = None
     if form.method_slug == "sbp":
         service = await setting_service.get_self_payment_service()
     await uc_code_service.check_packs(form.uc_packs, form.uc_sum, form.amount)
