@@ -313,7 +313,7 @@ class PaymentService:
                 "amount": form.amount,
                 "metadata": {
                     "tg_id": tg_id,
-                    "notification_url": "https://zeusucbot.shop/api/users/buy/point/callback",
+                    "notification_url": "https://zeusucbot.shop/api/user/buy/point/callback",
                     "point": form.point
                 }
             },
