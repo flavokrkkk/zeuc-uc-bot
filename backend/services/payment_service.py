@@ -224,7 +224,7 @@ class PaymentService:
         internal_order_id = str(uuid4())
         response = await self.get_payment_url(
             payload={
-                "method_slug": "card",
+                "method_slug": form.method_slug,
                 "amount": form.amount - form.discount,
                 "metadata": {
                     "tg_id": tg_id,
