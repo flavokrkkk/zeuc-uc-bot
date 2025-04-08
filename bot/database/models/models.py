@@ -2,7 +2,7 @@ from uuid import uuid4
 from sqlalchemy import DECIMAL, BigInteger, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from database.models.base import Base
-from utils.config.enums import PurchaseStatuses
+from utils.config.enums import BuyServices, PurchaseStatuses
 
 
 class Setting(Base):
@@ -10,6 +10,8 @@ class Setting(Base):
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
     store_is_on: Mapped[bool] = mapped_column(default=True)
+    last_purchase_id: Mapped[int] = mapped_column(BigInteger, default=1000000020)
+    payment_service: Mapped[str] = mapped_column(default=BuyServices.FREEKASSA.value)
 
 
 class User(Base):

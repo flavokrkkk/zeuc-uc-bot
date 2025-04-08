@@ -23,4 +23,7 @@ class SettingsRepository(SqlAlchemyRepository):
         await self.session.commit()
         return store_is_on
     
-        
+    async def switch_payment_service(self, payment_service: str):
+        setting = await self.get_item()
+        setting.payment_service = payment_service
+        await self.session.commit()

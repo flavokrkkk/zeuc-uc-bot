@@ -8,6 +8,7 @@ from handlers.purchases import router as payment_router
 from handlers.bonuses import router as bonuses_router
 from handlers.rewards import router as rewards_router
 from handlers.user_rewards import router as user_rewards_router
+from handlers.switch_payment_service import router as switch_payment_service_router
 
 
 router = Router()
@@ -22,3 +23,4 @@ router.include_router(payment_router)
 router.include_router(bonuses_router)
 router.include_router(rewards_router)
 router.include_router(user_rewards_router)
+router.include_router(switch_payment_service_router)
