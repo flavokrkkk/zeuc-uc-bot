@@ -71,3 +71,7 @@ class PurchaseRepository(SqlAlchemyRepository):
             .order_by(self.model.created_at.desc())
         )
         return (await self.session.execute(query)).scalars().all() 
+    
+    async def get_total_sum(self): 
+        query = select(func.sum(self.model.price))
+        return (await self.session.execute(query)).scalar()
