@@ -79,7 +79,7 @@ async def get_bot_stats(callback: CallbackQuery, state: FSMContext, database: Da
 
     message_text = (
         f"Пользователей: {users_count}\n"
-        f"Пользователей, которые купили: {users_who_buyed}\n",
+        f"Пользователей, которые купили: {users_who_buyed}\n"
         f"Общая сумма продаж за все время: {total_sum}"
     )
     await callback.message.edit_text(

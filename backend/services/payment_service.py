@@ -305,7 +305,7 @@ class PaymentService:
             uc_amount=uc_amount,
             price=uc_code.price_per_uc.price
         )
-        await self.repository.activate_code(uc_amount)
+        await self.repository.activate_code(uc_code.code)
 
     async def get_point_payment_url(self, form: BuyPointModel, tg_id: int) -> dict[str, str]:
         response = await self.get_payment_url(
