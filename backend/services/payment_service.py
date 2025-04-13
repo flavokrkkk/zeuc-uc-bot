@@ -296,7 +296,7 @@ class PaymentService:
 
     async def activate_code_without_callback(self, uc_amount: int, player_id: int) -> None:
         uc_code = await self.repository.get_activating_code(uc_amount)
-        await self._post_request(
+        response = await self._post_request(
             UCActivateRequestModel(
                 uc_value=f"{uc_amount} UC",
                 uc_code=uc_code.code,
@@ -305,6 +305,7 @@ class PaymentService:
             uc_amount=uc_amount,
             price=uc_code.price_per_uc.price
         )
+        await self.repository.activate_code(uc_amount)
 
     async def get_point_payment_url(self, form: BuyPointModel, tg_id: int) -> dict[str, str]:
         response = await self.get_payment_url(

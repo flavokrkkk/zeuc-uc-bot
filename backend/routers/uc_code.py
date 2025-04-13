@@ -89,7 +89,7 @@ async def get_buy_uc_code_url(
     else:
         service = BuyServices.CODEEPAY.value
     await uc_code_service.check_packs(form.uc_packs, form.uc_sum, form.amount)
-
+ 
     if form.discount:
         form.discount = await discount_service.delete_discount_from_user(current_user.tg_id, form.discount)
 
